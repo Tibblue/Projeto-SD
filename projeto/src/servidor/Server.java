@@ -9,10 +9,10 @@ package servidor;
  *
  * @author KIKO
  */
-public class server {
+public class Server {
     private String nome;
     private String tipo;
-    private float preço;
+    private float precoHora;
 
     public String getNome() {
         return nome;
@@ -30,13 +30,18 @@ public class server {
         this.tipo = tipo;
     }
 
-    public float getPreço() {
-        return preço;
+    public float getPrecoHora() {
+        return precoHora;
     }
 
-    public void setPreço(float preço) {
-        this.preço = preço;
+    public void setPrecoHora(float precoHora) {
+        this.precoHora = precoHora;
     }
     
+    public Server(String nome, String tipo, float precoHora){
+        this.nome = nome;
+        this.tipo = tipo;
+        this.precoHora = precoHora;
+    }
 
 }

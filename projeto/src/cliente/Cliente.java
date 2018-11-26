@@ -7,10 +7,9 @@ package cliente;
 
 /**
  *
- * @author gcama
+ * @author KIKO
  */
-public class Cliente 
-{
+public class Cliente {
     private String email;
     private String password;
 }
