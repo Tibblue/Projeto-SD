@@ -15,7 +15,7 @@ import java.net.Socket;
  * @author KIKO
  */
 public class Servidor extends Thread{
-    public static final int PORT_NUMBER = 4100;
+    public final int PORT_NUMBER = 4100;
     private ServerSocket serverSocket;
     private Socket clienteSocket;
      
@@ -32,7 +32,8 @@ public class Servidor extends Thread{
             }
             System.out.println("New client connected from " + 
                                 clienteSocket.getInetAddress().getHostAddress());
-            
+            // cria uma nova thread para a conexao
+            new ServidorThread(clienteSocket).run();
             
         }
 
