@@ -1,7 +1,7 @@
 package cliente;
 
+import servidor.Server;
 import java.util.ArrayList;
-import servidor.Servidor;
 
 /**
  *
@@ -10,7 +10,7 @@ import servidor.Servidor;
 public class Cliente {
     private String email;
     private String password; // será preciso???
-    private ArrayList<Servidor> servidores; 
+    private ArrayList<Server> servidores; 
     
     public Cliente(){
     
