@@ -1,9 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cliente;
+
+import java.util.ArrayList;
+import servidor.Servidor;
 
 /**
  *
@@ -11,5 +9,23 @@ package cliente;
  */
 public class Cliente {
     private String email;
-    private String password;
+    private String password; // será preciso???
+    private ArrayList<Servidor> servidores; 
+    
+    public Cliente(){
+    
+    }
+    
+    public Cliente(String email, String password){
+        this.email = email;
+        this.password = password;
+    }
+    
+    public void login(){ // probs nao é aqui ._. => move to server
+        
+    }
+    
+    public static void main(String[] args){
+        Cliente cliente = new Cliente();
+    }
 }
