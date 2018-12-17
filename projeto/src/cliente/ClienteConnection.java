@@ -29,7 +29,7 @@ public class ClienteConnection{
             }
             socket.close();
             System.out.println("[Cliente] Ligação terminada!!!");
-        } 
+        }
         catch (IOException e) {
             System.out.println("[Cliente] EXCEÇAO !!!");
             System.out.println(e);

@@ -3,6 +3,7 @@ package servidor;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -14,12 +15,13 @@ public class MainServidor extends Thread{
     private final int PORT = 1234;
     private final ServerSocket serverSocket;
     private Socket clienteSocket;
-    private BancoServers bancoServers;
+    
+    private HashMap<String,String> bancoUsers;
+    private final BD bancoServers;
      
     public MainServidor() throws IOException {
         this.serverSocket = new ServerSocket(this.PORT);
-        this.bancoServers = new BancoServers();
-        this.bancoServers.load();
+        this.bancoServers = new BD();
     }
     
     // Interrompe o MainServidor
@@ -52,6 +54,15 @@ public class MainServidor extends Thread{
             }
             
         }
+    }
+    
+    public static void main(String[] args){
+        try{
+            MainServidor servidor = new MainServidor();
+            servidor.start();
+        }
+        catch(Exception e){}
+        
     }
     
 }

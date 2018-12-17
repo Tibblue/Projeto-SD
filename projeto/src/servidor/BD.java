@@ -8,15 +8,19 @@ import java.util.HashMap;
  *
  * @author KIKO
  */
-public class BancoServers {
-    private HashMap<String,ArrayList<Server>> servidores;
+public class BD {
+    public final HashMap<String,String> users;
+    public final HashMap<String,ArrayList<Server>> servidores;
     
-    public BancoServers(){
+    public BD(){
+        this.users = new HashMap<>();
         this.servidores = new HashMap<>();
-    }
-    
-    // funcao que vai carregar os servidores por nós definidos para a hash
-    public void load(){
+        
+        // USERS
+        this.users.put("kiko@email.com", "kiko");
+        this.users.put("camaz@email.com", "camaz");
+        
+        // SERVERS
         // criar servidor
         Server batatas1 = new Server("batatas1","potato1.small",1.00);
         Server batatas2 = new Server("batatas2","potato1.medium",2.00);
@@ -30,7 +34,5 @@ public class BancoServers {
         this.servidores.put("potato1.small", potato1small);
         this.servidores.put("potato1.medium", potato1medium);
     }
-    
-    
     
 }
