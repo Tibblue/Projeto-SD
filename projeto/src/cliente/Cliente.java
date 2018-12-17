@@ -25,6 +25,12 @@ public class Cliente {
         
     }
     
+    public float getPrice()
+    {
+        return this.servidores.stream().map(a -> a.getPrice)
+                                       .sum();
+    }
+
     public static void main(String[] args){
         Cliente cliente = new Cliente();
     }
