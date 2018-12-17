@@ -1,7 +1,6 @@
 package servidor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -33,6 +32,33 @@ public class BD {
         // adicionar server a hash
         this.servidores.put("potato1.small", potato1small);
         this.servidores.put("potato1.medium", potato1medium);
+    }
+    
+    public String listUsers(){
+        StringBuilder str = new StringBuilder();
+        str.append("#----------  Users  ----------#\n");
+        for(String key : this.users.keySet()){
+            str.append("Email: " + key);
+            str.append(" / Password: " + this.users.get(key) + "\n");
+        }
+        str.append("#----------  -----  ----------#\n");
+        return str.toString();
+    }
+    
+    public String listServidores(){
+        StringBuilder str = new StringBuilder();
+        str.append("#----- Servers -----#\n");
+        for(String key : this.servidores.keySet()){
+            str.append(" Tipo => " + key + "\n");
+            ArrayList<Server> array = this.servidores.get(key);
+            for(Server server : array){
+                str.append(" Nome -> " + server.getNome() + "\n");
+                str.append(" Preço -> " + server.getPrice() + "\n");
+                str.append(" Reserva -> " + server.getIdReserva() + "\n");
+            }
+        }
+        str.append("#----- ------- -----#\n");
+        return str.toString();
     }
     
 }

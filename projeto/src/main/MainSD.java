@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 // Main capaz de iniciar um AgenteUDP ou ReverseProxy
 public class MainSD {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         System.out.println("1 - Cliente");
         System.out.println("2 - Servidor");
@@ -28,8 +28,8 @@ public class MainSD {
                     System.exit(0);
                     break;
             }
-        } catch (UnknownHostException e) {
-            System.out.println("<MAIN> Host Address indisponivel");
+        } catch (IOException e) {
+            System.out.println("<MAIN> IO ardeu");
             System.out.println(e);
         }
     }
