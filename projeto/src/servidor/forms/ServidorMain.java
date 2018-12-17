@@ -6,7 +6,7 @@
 package servidor.forms;
 
 import java.io.IOException;
-import servidor.Servidor;
+import servidor.MainServidor;
 
 /**
  *
@@ -14,11 +14,11 @@ import servidor.Servidor;
  */
 public class ServidorMain {
     private ServidorForm form;
-    private Servidor servidor;
+    private MainServidor servidor;
     
     public ServidorMain() throws IOException {
         this.form = new ServidorForm();
-        this.servidor = new Servidor();
+        this.servidor = new MainServidor();
     }
     
     public void run(){

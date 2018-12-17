@@ -11,6 +11,7 @@ public class Cliente {
     private String email;
     private String password; // será preciso???
     private ArrayList<Server> servidores; 
+    private ClienteConnection connection;
     
     public Cliente(){
     
@@ -25,9 +26,8 @@ public class Cliente {
         
     }
     
-    public float getPrice()
-    {
-        return this.servidores.stream().map(a -> a.getPrice)
+    public double getPrice(){
+        return this.servidores.stream().mapToDouble(a -> a.getPrice())
                                        .sum();
     }
 

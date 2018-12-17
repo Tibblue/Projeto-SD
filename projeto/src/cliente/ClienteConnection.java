@@ -24,14 +24,14 @@ public class ClienteConnection{
                 writer.join();
                 listener.join();
             } catch (InterruptedException e) {
-                System.out.println("Cliente> Execução interrompida!!!");
+                System.out.println("[Cliente] Execução interrompida!!!");
                 System.out.println(e);
             }
             socket.close();
-            System.out.println("Cliente> Ligação terminada!!!");
+            System.out.println("[Cliente] Ligação terminada!!!");
         } 
         catch (IOException e) {
-            System.out.println("Cliente> EXCEÇAO !!!");
+            System.out.println("[Cliente] EXCEÇAO !!!");
             System.out.println(e);
         }
 

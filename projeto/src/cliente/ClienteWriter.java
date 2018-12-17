@@ -27,11 +27,12 @@ public class ClienteWriter implements Runnable{
             String msg;
             // lê continuamente do STDIN, e envia para o servidor
             while ((msg = systemIn.readLine()) != null && !msg.equals("exit")) {
+                System.out.println("[ClienteWriter] Enviado> "+msg);
                 out.println(msg);
                 out.flush();
             }
         } catch (Exception e) {
-            System.out.println("Cliente> EXCEÇAO !!!");
+            System.out.println("[ClienteWriter] EXCEÇAO !!!");
             System.out.println(e);
         }
 

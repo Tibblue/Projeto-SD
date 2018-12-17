@@ -24,11 +24,11 @@ public class ClienteListener implements Runnable{
             String msg;
             // lê continuamente da entrada do socket mensagens enviadas pelo server
             while ((msg = in.readLine()) != null && !msg.equals("exit")) {
-                System.out.println("Chat>" + msg);
+                System.out.println("[ClienteListener] Server>" + msg);
             }
             in.close();
         } catch (Exception e) {
-            System.out.println("Cliente> EXCEÇAO !!!");
+            System.out.println("[ClienteListener] EXCEÇAO !!!");
             System.out.println(e);
         }
 

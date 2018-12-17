@@ -1,47 +1,92 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servidor;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
  * @author KIKO
  */
 public class Server {
+    private final ReentrantLock lockConta;
     private String nome;
-    private String tipo;
-    private float precoHora;
+    private final String tipo;
+    private final double price;
+    private boolean isLeilao;
+    private int idReserva;
 
+    // LOCKS
+    public void lock() {
+        this.lockConta.lock();
+    }
+    public void unlock() {
+        this.lockConta.unlock();
+    }
+    
+    // GETS
     public String getNome() {
         return nome;
     }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getTipo() {
         return tipo;
     }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public double getPrice() {
+        return price;
+    }
+    public boolean getIsLeilao() {
+        boolean leilao;
+        this.lockConta.lock();
+        leilao = this.isLeilao;
+        this.lockConta.unlock();
+        return leilao;
+    }
+    public int getIdReserva() {
+        int reserva;
+        this.lockConta.lock();
+        reserva = this.idReserva;
+        this.lockConta.unlock();
+        return reserva;
+    }
+    // pelo id de id sabemos se estamos a usar o server ou nao
+    public boolean getUsed() {
+        int id;
+        this.lockConta.lock();
+        id = this.idReserva;
+        this.lockConta.unlock();
+        if(id==0) return false;
+        else return true;
     }
 
-    public float getPrecoHora() {
-        return precoHora;
+    // SETS
+    public synchronized void setIsLeilao(boolean isLeilao) {
+        this.lockConta.lock();
+        this.isLeilao = isLeilao;
+        this.lockConta.unlock();
     }
-
-    public void setPrecoHora(float precoHora) {
-        this.precoHora = precoHora;
+    public synchronized void setIdReserva(int idReserva) {
+        this.lockConta.lock();
+        this.idReserva = idReserva;
+        this.lockConta.unlock();
     }
     
-    public Server(String nome, String tipo, float precoHora){
+    
+    public Server(String nome, String tipo, double price){
+        this.lockConta = new ReentrantLock();
         this.nome = nome;
         this.tipo = tipo;
-        this.precoHora = precoHora;
+        this.price = price;
+        this.idReserva = 0;
+    }
+    
+    public synchronized void reserva(int id){
+        // o id da id é calculado pelo BancoServers
+        // aqui apenas se faz set dele
+        this.setIdReserva(id);
     }
 
+    public synchronized void reservaLeilao(int id){
+        // o id da id é calculado pelo BancoServers
+        // aqui apenas se faz set dele
+        this.setIdReserva(id);
+        this.setIsLeilao(true);
+    }
 }

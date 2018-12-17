@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servidor;
 
 import java.io.*;
@@ -11,13 +6,13 @@ import java.net.Socket;
  *
  * @author KIKO
  */
-public class ServidorThread extends Thread {
+public class MainServidorWorker extends Thread {
     private final Socket clienteSocket;
     private final InputStream fromClient;
     private final OutputStream toClient;
     private byte[] mensagem;
     
-    public ServidorThread(Socket cliente) throws IOException {
+    public MainServidorWorker(Socket cliente) throws IOException {
         this.clienteSocket = cliente;
         this.fromClient = cliente.getInputStream();
         this.toClient = cliente.getOutputStream();
@@ -36,9 +31,9 @@ public class ServidorThread extends Thread {
             }
 //            while( fromClient.read(mensagem, 0, 1024) != -1 ) {
 ////                String msg = new String(packetRecebido.getData(), packetRecebido.getOffset(), packetRecebido.getLength());
-//                System.out.println("  [ServidorThread] Mensagem: ");
+//                System.out.println("  [MainServidorWorker] Mensagem: ");
 //                System.out.println(mensagem);
-//                System.out.println("  [ServidorThread] End of message");
+//                System.out.println("  [MainServidorWorker] End of message");
 ////                toServer.write(mensagem, 0, 1024);
 ////                toServer.flush();
 ////                System.out.println("   [ClientTCPReceiver] flushed");

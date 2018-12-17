@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servidor;
 
 import java.io.*;
@@ -14,18 +9,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author KIKO
  */
-public class Servidor extends Thread{
+public class MainServidor extends Thread{
     private AtomicBoolean running = new AtomicBoolean(true);
-    
-    public final int PORT = 4100;
-    private ServerSocket serverSocket;
+    private final int PORT = 1234;
+    private final ServerSocket serverSocket;
     private Socket clienteSocket;
+    private BancoServers bancoServers;
      
-    public Servidor() throws IOException {
+    public MainServidor() throws IOException {
         this.serverSocket = new ServerSocket(this.PORT);
+        this.bancoServers = new BancoServers();
+        this.bancoServers.load();
     }
     
-    // Interrompe o Servidor
+    // Interrompe o MainServidor
     public void stopServidor(){
         this.running.set(false);
         this.interrupt();
@@ -47,7 +44,7 @@ public class Servidor extends Thread{
             }
             try{
                 // cria uma nova thread para a conexao
-                new ServidorThread(clienteSocket).run();
+                new MainServidorWorker(clienteSocket).run();
             }
             catch(IOException e){
                 System.out.println("[Servidor] Erro a criar Thread para o cliente");
