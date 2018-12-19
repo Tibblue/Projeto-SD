@@ -27,8 +27,6 @@ public class LoginForm extends javax.swing.JFrame {
         this.jLabel1.requestFocus();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-        
- 
     }
 
     /**
@@ -158,7 +156,7 @@ public class LoginForm extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
