@@ -28,7 +28,7 @@ public class BD {
         // USERS
         this.users.put("kiko@email.com", "kiko");
         this.users.put("camaz@email.com", "camaz");
-                
+        
         // SERVERS
         // criar servidor
         Server batatas1 = new Server("batatas1","potato1.small",1.00);
@@ -47,12 +47,10 @@ public class BD {
     public String listUsers(){
         StringBuilder str = new StringBuilder();
         str.append("#----------  Users  ----------#\n");
-        this.users.keySet().stream().map((key) -> {
-            str.append("Email: ").append(key);
-            return key;
-        }).forEach((key) -> {
-            str.append(" / Password: ").append(this.users.get(key)).append("\n");
-        });
+        for(String key : this.users.keySet()){
+            str.append("Email: ").append(key).append(" / ");
+            str.append("Password: ").append(this.users.get(key)).append("\n");
+        }
         str.append("#----------  -----  ----------#\n");
         return str.toString();
     }
@@ -63,18 +61,11 @@ public class BD {
         for(String key : this.servidores.keySet()){
             str.append(" Tipo => ").append(key).append("\n");
             ArrayList<Server> array = this.servidores.get(key);
-            array.stream().map((server) -> {
+            for(Server server : array){
                 str.append(" Nome -> ").append(server.getNome()).append("\n");
-                return server;
-            }).map((server) -> {
                 str.append(" Preço -> ").append(server.getPrice()).append("\n");
-                return server;
-            }).forEach(new Consumer<Server>() {
-                @Override
-                public void accept(Server server) {
-                    str.append(" Reserva -> ").append(server.getIdReserva()).append("\n");
-                }
-            });
+                str.append(" Reserva -> ").append(server.getIdReserva()).append("\n");
+            }
         }
         str.append("#----- ------- -----#\n");
         return str.toString();
@@ -118,7 +109,7 @@ public class BD {
     }
     
     // Servers
-    public static void saveServers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException
+    public static void saveServers(String nomeFicheiro, HashMap<String,String> servers) throws FileNotFoundException
     {
        try
        {
@@ -126,7 +117,7 @@ public class BD {
            FileOutputStream fos = new FileOutputStream(file);
            ObjectOutputStream oos = new ObjectOutputStream(fos);
            
-           oos.writeObject(users);
+           oos.writeObject(servers);
            oos.flush();
            oos.close();
            fos.close();
