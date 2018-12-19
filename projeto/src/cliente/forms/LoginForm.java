@@ -19,8 +19,8 @@ public class LoginForm extends javax.swing.JFrame {
      * Creates new form loginForm
      */
     
-    BD data;
-    public LoginForm(BD data) {
+    BaseDados data;
+    public LoginForm(BaseDados data) {
         initComponents();
         this.data = data;
         passwordField.setEchoChar((char) 0);

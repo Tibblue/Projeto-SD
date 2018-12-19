@@ -5,15 +5,15 @@ import servidor.MainServidor;
 
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import servidor.BD;
+import servidor.BaseDados;
 import cliente.forms.LoginForm;
 import cliente.Cliente;
 
-// Main capaz de iniciar um AgenteUDP ou ReverseProxy
+// Main capaz de iniciar um Cliente ou Servidor
 public class MainSD {
     public static void main(String[] args) {
         
-        BD data = new BD();
+        BaseDados data = new BaseDados();
         
         /*try{          PARA QUANDO TIVERMOS PERSISTENCIA
             data = data.load();
@@ -37,7 +37,7 @@ public class MainSD {
                     cliente.run();
                     break;
                 case 2:
-                    MainServidor servidor = new MainServidor();
+                    MainServidor servidor = new MainServidor(data);
                     servidor.start();
                     break;
                 default:

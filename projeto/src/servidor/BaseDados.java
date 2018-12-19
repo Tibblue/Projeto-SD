@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
  *
  * @author KIKO
  */
-public class BD {
+public class BaseDados {
     public final HashMap<String,String> users;
     public final HashMap<String,ArrayList<Server>> servidores;
     
-    public BD(){
+    public BaseDados(){
         this.users = new HashMap<>();
         this.servidores = new HashMap<>();
         

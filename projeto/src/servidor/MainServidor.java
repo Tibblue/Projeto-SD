@@ -3,7 +3,6 @@ package servidor;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -11,17 +10,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author KIKO
  */
 public class MainServidor extends Thread{
-    private AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicBoolean running = new AtomicBoolean(true);
     private final int PORT = 1234;
     private final ServerSocket serverSocket;
     private Socket clienteSocket;
     
-    private HashMap<String,String> bancoUsers;
-    private final BD bancoServers;
+    private final BaseDados bd;
      
     public MainServidor() throws IOException {
         this.serverSocket = new ServerSocket(this.PORT);
-        this.bancoServers = new BD();
+        this.bd = new BaseDados();
+    }
+    
+    public MainServidor(BaseDados bd) throws IOException {
+        this.serverSocket = new ServerSocket(this.PORT);
+        this.bd = bd;
     }
     
     // Interrompe o MainServidor
@@ -34,23 +37,26 @@ public class MainServidor extends Thread{
     public void run() {
         System.out.println("[Servidor] Iniciando o Servidor");
         while(this.running.get()){
-            String print;
-            print = this.bancoServers.listUsers(); // debuging
-            System.out.println(print);
-            print = this.bancoServers.listServidores(); // debuging
-            System.out.println(print);
+            // debuging prints
+            System.out.println(this.bd.listUsers());
+            System.out.println(this.bd.listServidores());
+            
             System.out.println("[Servidor] Servidor à escuta na porta " + 
                                 this.serverSocket.getLocalSocketAddress());
             try{
-                // fica a escuta por pedidos
+                // fica a escuta por pedidos para aceitar
                 this.clienteSocket = this.serverSocket.accept();
             }
             catch(IOException e){
                 System.out.println("[Servidor] Erro a aceitar ligação do cliente");
                 System.out.println(e);
             }
+            /*
+            depois de o servidor aceitar a ligaçao o cliente tenta autenticar-se
+            TODO zona de verificaçao de autenticaçao
+            */
             try{
-                // cria uma nova thread para a conexao
+                // cria uma nova thread (worker) para a conexao
                 new MainServidorWorker(clienteSocket).run();
             }
             catch(IOException e){
@@ -66,8 +72,8 @@ public class MainServidor extends Thread{
             MainServidor servidor = new MainServidor();
             servidor.start();
         }
-        catch(Exception e){}
-        
+        catch(Exception e){
+        }
     }
     
 }
