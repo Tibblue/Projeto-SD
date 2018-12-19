@@ -38,8 +38,8 @@ public class MainServidor extends Thread{
         System.out.println("[Servidor] Iniciando o Servidor");
         while(this.running.get()){
             // debuging prints
-            System.out.println(this.bd.listUsers());
-            System.out.println(this.bd.listServidores());
+            System.out.println(this.bd.toStringUsers());
+            System.out.println(this.bd.toStringServidores());
             
             System.out.println("[Servidor] Servidor à escuta na porta " + 
                                 this.serverSocket.getLocalSocketAddress());

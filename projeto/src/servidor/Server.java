@@ -57,7 +57,8 @@ public class Server {
         if(id==0) return false;
         else return true;
     }
-
+    // TODO GETUSER by email
+    
     // SETS
     public synchronized void setIsLeilao(boolean isLeilao) {
         this.lockConta.lock();

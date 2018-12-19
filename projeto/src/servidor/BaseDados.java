@@ -1,16 +1,11 @@
 package servidor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import cliente.User;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -18,16 +13,18 @@ import java.util.stream.Collectors;
  * @author KIKO
  */
 public class BaseDados {
-    public final HashMap<String,String> users;
+    public final HashMap<String,String> usersOLD;
+//    public final HashMap<String,User> users;
     public final HashMap<String,ArrayList<Server>> servidores;
     
     public BaseDados(){
-        this.users = new HashMap<>();
+        this.usersOLD = new HashMap<>();
         this.servidores = new HashMap<>();
         
         // USERS
-        this.users.put("kiko@email.com", "kiko");
-        this.users.put("camaz@email.com", "camaz");
+        this.usersOLD.put("kiko@email.com", "kiko");
+        this.usersOLD.put("camaz@email.com", "camaz");
+        this.usersOLD.put("vitor@email.com", "vitor");
         
         // SERVERS
         // criar servidor
@@ -44,18 +41,26 @@ public class BaseDados {
         this.servidores.put("potato1.medium", potato1medium);
     }
     
-    public String listUsers(){
+    /**
+     * Retorna a lista de Users
+     * @return String
+     */
+    public String toStringUsers(){
         StringBuilder str = new StringBuilder();
         str.append("#----------  Users  ----------#\n");
-        for(String key : this.users.keySet()){
+        for(String key : this.usersOLD.keySet()){
             str.append("Email: ").append(key).append(" / ");
-            str.append("Password: ").append(this.users.get(key)).append("\n");
+            str.append("Password: ").append(this.usersOLD.get(key)).append("\n");
         }
         str.append("#----------  -----  ----------#\n");
         return str.toString();
     }
     
-    public String listServidores(){
+    /**
+     * Retorna a lista de Servidores
+     * @return String
+     */
+    public String toStringServidores(){
         StringBuilder str = new StringBuilder();
         str.append("#----- Servers -----#\n");
         for(String key : this.servidores.keySet()){

@@ -1,5 +1,5 @@
 package main;
-import cliente.Cliente;
+import cliente.User;
 import java.io.IOException;
 import servidor.MainServidor;
 
@@ -7,9 +7,9 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import servidor.BaseDados;
 import cliente.forms.LoginForm;
-import cliente.Cliente;
+import cliente.User;
 
-// Main capaz de iniciar um Cliente ou Servidor
+// Main capaz de iniciar um User ou Servidor
 public class MainSD {
     public static void main(String[] args) {
         
@@ -32,7 +32,7 @@ public class MainSD {
             switch(in){
                 case 1:
                     LoginForm form = new LoginForm(data);
-                    Cliente cliente = new Cliente();
+                    User cliente = new User();
                     form.setVisible(true);
                     cliente.run();
                     break;

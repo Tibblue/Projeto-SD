@@ -7,9 +7,9 @@ import java.util.ArrayList;
  *
  * @author KIKO
  */
-public class Cliente {
+public class User {
     public static void main(String[] args){
-        Cliente cliente = new Cliente();
+        User cliente = new User();
         ClienteConnection connection = new ClienteConnection(1234);
         connection.connect();
     }
@@ -18,27 +18,27 @@ public class Cliente {
         connection.connect();
     }
     
+    private ClienteConnection connection;
     private String email;
     private String password; // será preciso???
-    private ArrayList<Server> servidores; 
-    private ClienteConnection connection;
+    private ArrayList<Server> servidoresAlocados; 
     
-    public Cliente(){
+    public User(){
         this.connection = new ClienteConnection(1234);
     }
     
-    public Cliente(String email, String password){
+    public User(String email, String password){
         this.connection = new ClienteConnection(1234);
         this.email = email;
         this.password = password;
     }
     
-    public void login(){ // probs nao é aqui ._. => move to server
-        
+    public boolean login(String password){
+        return true;
     }
     
     public double getPrice(){
-        return this.servidores.stream().mapToDouble(a -> a.getPrice())
+        return this.servidoresAlocados.stream().mapToDouble(a -> a.getPrice())
                                        .sum();
     }
 
