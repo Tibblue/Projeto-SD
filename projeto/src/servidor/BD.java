@@ -1,7 +1,17 @@
 package servidor;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -18,7 +28,7 @@ public class BD {
         // USERS
         this.users.put("kiko@email.com", "kiko");
         this.users.put("camaz@email.com", "camaz");
-        
+                
         // SERVERS
         // criar servidor
         Server batatas1 = new Server("batatas1","potato1.small",1.00);
@@ -37,10 +47,12 @@ public class BD {
     public String listUsers(){
         StringBuilder str = new StringBuilder();
         str.append("#----------  Users  ----------#\n");
-        for(String key : this.users.keySet()){
-            str.append("Email: " + key);
-            str.append(" / Password: " + this.users.get(key) + "\n");
-        }
+        this.users.keySet().stream().map((key) -> {
+            str.append("Email: ").append(key);
+            return key;
+        }).forEach((key) -> {
+            str.append(" / Password: ").append(this.users.get(key)).append("\n");
+        });
         str.append("#----------  -----  ----------#\n");
         return str.toString();
     }
@@ -49,16 +61,122 @@ public class BD {
         StringBuilder str = new StringBuilder();
         str.append("#----- Servers -----#\n");
         for(String key : this.servidores.keySet()){
-            str.append(" Tipo => " + key + "\n");
+            str.append(" Tipo => ").append(key).append("\n");
             ArrayList<Server> array = this.servidores.get(key);
-            for(Server server : array){
-                str.append(" Nome -> " + server.getNome() + "\n");
-                str.append(" Preço -> " + server.getPrice() + "\n");
-                str.append(" Reserva -> " + server.getIdReserva() + "\n");
-            }
+            array.stream().map((server) -> {
+                str.append(" Nome -> ").append(server.getNome()).append("\n");
+                return server;
+            }).map((server) -> {
+                str.append(" Preço -> ").append(server.getPrice()).append("\n");
+                return server;
+            }).forEach(new Consumer<Server>() {
+                @Override
+                public void accept(Server server) {
+                    str.append(" Reserva -> ").append(server.getIdReserva()).append("\n");
+                }
+            });
         }
         str.append("#----- ------- -----#\n");
         return str.toString();
     }
+    
+    public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException
+    {
+       try
+       {
+           File file = new File(nomeFicheiro);
+           FileOutputStream fos = new FileOutputStream(file);
+           ObjectOutputStream oos = new ObjectOutputStream(fos);
+           
+           oos.writeObject(users);
+           oos.flush();
+           oos.close();
+           fos.close();
+       }
+       catch(Exception e)
+       {
+       }        
+    }
+    
+    public static HashMap<String,String> loadUsers(String nomeFicheiro) throws FileNotFoundException
+    {   
+       HashMap<String,String> users = new HashMap<>();
+       try
+       {
+           File toRead = new File(nomeFicheiro);
+            try (FileInputStream fis = new FileInputStream(toRead); 
+                    ObjectInputStream ois = new ObjectInputStream(fis)) {
+                
+                users = (HashMap<String,String>) ois.readObject();
+                
+            }
+       }
+       catch(IOException | ClassNotFoundException e)
+       {
+       } 
+       return users;
+    }
+    
+    // Servers
+    public static void saveServers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException
+    {
+       try
+       {
+           File file = new File(nomeFicheiro);
+           FileOutputStream fos = new FileOutputStream(file);
+           ObjectOutputStream oos = new ObjectOutputStream(fos);
+           
+           oos.writeObject(users);
+           oos.flush();
+           oos.close();
+           fos.close();
+       }
+       catch(Exception e)
+       {
+       }        
+    }
+    
+    public static HashMap<String,ArrayList<Server>> loadServers(String nomeFicheiro) throws FileNotFoundException
+    {   
+       HashMap<String,ArrayList<Server>> servers = new HashMap<>();
+       try
+       {
+           File toRead = new File(nomeFicheiro);
+            try (FileInputStream fis = new FileInputStream(toRead); 
+                    ObjectInputStream ois = new ObjectInputStream(fis)) {
+                
+                servers = (HashMap<String,ArrayList<Server>>) ois.readObject();
+                
+            }
+       }
+       catch(IOException | ClassNotFoundException e)
+       {
+       } 
+       return servers;
+    }
+    
+    public synchronized ArrayList<Server> getServersByType(String type)
+    {
+        return this.servidores.get(type);
+    }    
+    
+    public synchronized List<Server> getFreeUsersByType(String type)
+    {
+        ArrayList<Server> servers = new ArrayList<>();
+        
+        servers = this.servidores.get(type);
+        
+        return servers.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
+    }
+    
+    public synchronized void resetAllServersOfType(String type)
+    {
+        List<Server> servers = this.servidores.get(type);
+        
+        servers.stream().forEach((s) -> {
+            s.setIdReserva(0);
+        });
+    }
+    
     
 }

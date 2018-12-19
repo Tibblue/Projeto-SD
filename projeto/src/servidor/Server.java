@@ -49,9 +49,11 @@ public class Server {
     // pelo id de id sabemos se estamos a usar o server ou nao
     public boolean getUsed() {
         int id;
+        
         this.lockConta.lock();
         id = this.idReserva;
         this.lockConta.unlock();
+        
         if(id==0) return false;
         else return true;
     }
@@ -67,8 +69,7 @@ public class Server {
         this.idReserva = idReserva;
         this.lockConta.unlock();
     }
-    
-    
+       
     public Server(String nome, String tipo, double price){
         this.lockConta = new ReentrantLock();
         this.nome = nome;
@@ -88,5 +89,10 @@ public class Server {
         // aqui apenas se faz set dele
         this.setIdReserva(id);
         this.setIsLeilao(true);
+    }
+    
+    public synchronized void resetServer()
+    {
+        this.idReserva = 0;
     }
 }
