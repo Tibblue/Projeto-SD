@@ -11,9 +11,29 @@ public class Server {
     private String nome;
     private final String tipo;
     private final double price;
+    private double lastBid;
     private boolean isLeilao;
     private int idReserva;
 
+    
+    public Server(String nome, String tipo, double price){
+        this.lockConta = new ReentrantLock();
+        this.nome = nome;
+        this.tipo = tipo;
+        this.price = price;
+        this.lastBid = 0.0;
+        this.idReserva = 0;
+    }
+
+    public Server() {
+        this.lockConta = new ReentrantLock();
+        this.nome = "";
+        this.tipo = "";
+        this.price = 0.0;
+        this.lastBid = 0.0;
+        this.idReserva = 999999;
+    }
+    
     // LOCKS
     public void lock() {
         this.lockConta.lock();
@@ -24,13 +44,16 @@ public class Server {
     
     // GETS
     public String getNome() {
-        return nome;
+        return this.nome;
     }
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
     public double getPrice() {
-        return price;
+        return this.price;
+    }
+    public double getLastBid(){
+        return this.lastBid;
     }
     public boolean getIsLeilao() {
         boolean leilao;
@@ -70,14 +93,16 @@ public class Server {
         this.idReserva = idReserva;
         this.lockConta.unlock();
     }
-       
-    public Server(String nome, String tipo, double price){
-        this.lockConta = new ReentrantLock();
-        this.nome = nome;
-        this.tipo = tipo;
-        this.price = price;
-        this.idReserva = 0;
+    public boolean setNewBid(double valor){
+        if(valor>this.lastBid){
+            this.lockConta.lock();
+            this.lastBid=valor;
+            this.lockConta.unlock();
+            return true;
+        }
+        return false;
     }
+    
     
     public synchronized void reserva(int id){
         // o id da id é calculado pelo BancoServers

@@ -5,7 +5,13 @@
  */
 package cliente.forms;
 
+import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
+import servidor.BaseDados;
+import servidor.Server;
 
 /**
  *
@@ -16,8 +22,62 @@ public class MenuForm extends javax.swing.JFrame {
     /**
      * Creates new form MenuForm
      */
-    public MenuForm() {
+    DefaultTableModel modelDemand;
+    DefaultTableModel modelBid;
+    DefaultTableModel modelMy;
+    BaseDados data;
+    
+    public MenuForm(BaseDados data) {
+        this.data = data;
+        fillDemandTable();
+        fillBidTable();
         initComponents();
+        this.setTitle("Minhas Apostas");
+        this.setLocationRelativeTo(null);
+        this.setResizable(false);
+        
+    }
+    
+    public void fillDemandTable(){
+        String[] colunas = {"Tipo","Número","Preço/hora"};
+        Object[][] data = new Object[this.data.getAllServers().size()][3];
+        int i=0;
+        for (String tipo : this.data.getAllServers().keySet()){
+            double minPreco=100000000;
+            for(Server s : this.data.getAllServers().get(tipo)){
+                if(s.getPrice()<minPreco && !s.getUsed()) minPreco=s.getPrice();
+            }
+            data[i][0] = tipo;
+            data[i][1] = this.data.getAllServers().get(tipo).size();
+            data[i][2] = minPreco;
+            i++;
+        }
+        modelDemand = new DefaultTableModel(data,colunas);
+                
+        bidServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        bidServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        bidServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+    }
+    
+    public void fillBidTable(){
+        String[] colunas = {"Tipo","Número","Preço/hora"};
+        Object[][] data = new Object[this.data.getAllServers().size()][3];
+        int i=0;
+        for (String tipo : this.data.getAllServers().keySet()){
+            double minBid=100000000;
+            for(Server s : this.data.getAllServers().get(tipo)){
+                if(s.getLastBid()<minBid && !s.getUsed()) minBid=s.getLastBid();
+            }
+            data[i][0] = tipo;
+            data[i][1] = this.data.getAllServers().get(tipo).size();
+            data[i][2] = minBid;
+            i++;
+        }
+        modelBid = new DefaultTableModel(data,colunas);
+                
+        serversTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        serversTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        serversTable.getColumnModel().getColumn(2).setPreferredWidth(100);
     }
 
     /**
@@ -30,106 +90,129 @@ public class MenuForm extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
-        jPanel3 = new javax.swing.JPanel();
+        demandPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        serversTable = new javax.swing.JTable();
+        logoutButton1 = new javax.swing.JButton();
+        buyButton = new javax.swing.JButton();
+        bidPanel = new javax.swing.JPanel();
+        bidSpinner = new javax.swing.JSpinner();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        bidServersTable = new javax.swing.JTable();
+        logoutButton2 = new javax.swing.JButton();
+        bidButton = new javax.swing.JButton();
+        myServersPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Tem de ter uma lista do tipo de servidores existentes com:");
+        jTabbedPane1.setFocusable(false);
+        jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
-        jLabel2.setText("- nome do tipo, preço p/hora.");
+        serversTable.setModel(modelDemand);
+        jScrollPane1.setViewportView(serversTable);
 
-        jLabel3.setText("Botão para alocar servidor.");
+        logoutButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        logoutButton1.setText("LOGOUT");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(81, 81, 81)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel1)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel2)))
-                .addContainerGap(49, Short.MAX_VALUE))
+        buyButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        buyButton.setText("USE SERVER");
+        buyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buyButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout demandPanelLayout = new javax.swing.GroupLayout(demandPanel);
+        demandPanel.setLayout(demandPanelLayout);
+        demandPanelLayout.setHorizontalGroup(
+            demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(demandPanelLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(demandPanelLayout.createSequentialGroup()
+                        .addComponent(logoutButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(99, 99, 99)
-                .addComponent(jLabel1)
+        demandPanelLayout.setVerticalGroup(
+            demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(demandPanelLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addGroup(demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Demand server", demandPanel);
+
+        bidSpinner.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        bidSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0f, null, null, 0.01f));
+
+        bidServersTable.setModel(modelBid);
+        jScrollPane2.setViewportView(bidServersTable);
+
+        logoutButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        logoutButton2.setText("LOGOUT");
+
+        bidButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        bidButton.setText("BID SERVER");
+        bidButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bidButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout bidPanelLayout = new javax.swing.GroupLayout(bidPanel);
+        bidPanel.setLayout(bidPanelLayout);
+        bidPanelLayout.setHorizontalGroup(
+            bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bidPanelLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(logoutButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addComponent(bidSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addComponent(bidButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16))
+            .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bidPanelLayout.createSequentialGroup()
+                    .addGap(15, 15, 15)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(16, Short.MAX_VALUE)))
+        );
+        bidPanelLayout.setVerticalGroup(
+            bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bidPanelLayout.createSequentialGroup()
+                .addContainerGap(410, Short.MAX_VALUE)
+                .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(logoutButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bidButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bidSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17))
+            .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bidPanelLayout.createSequentialGroup()
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(61, Short.MAX_VALUE)))
         );
 
-        jTabbedPane1.addTab("Demand server", jPanel1);
+        jTabbedPane1.addTab("Bid server", bidPanel);
 
-        jLabel4.setText("Ter lista de servidores com: nome, tipo, licitação atual");
-
-        jLabel5.setText("e um spinner para nova licitação (superior à atual) e botão de licitar. ");
-
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0.0f, null, null, 0.01f));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(136, 136, 136))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(23, 23, 23))))
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(60, 60, 60)
-                    .addComponent(jLabel4)
-                    .addContainerGap(98, Short.MAX_VALUE)))
+        javax.swing.GroupLayout myServersPanelLayout = new javax.swing.GroupLayout(myServersPanel);
+        myServersPanel.setLayout(myServersPanelLayout);
+        myServersPanelLayout.setHorizontalGroup(
+            myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 485, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(175, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(150, 150, 150)
-                    .addComponent(jLabel4)
-                    .addContainerGap(151, Short.MAX_VALUE)))
+        myServersPanelLayout.setVerticalGroup(
+            myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 465, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Bid server", jPanel2);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 500, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 317, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("My servers", jPanel3);
+        jTabbedPane1.addTab("My servers", myServersPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -143,13 +226,50 @@ public class MenuForm extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane1)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void bidButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bidButtonActionPerformed
+        double bid = new Double(bidSpinner.getValue().toString());
+        int row = bidServersTable.getSelectedRow();
+        String tipo = bidServersTable.getModel().getValueAt(row, 0).toString();
+        double minBid = new Double(bidServersTable.getModel().getValueAt(row, 2).toString());
+        Server servidor = new Server();
+        
+        for(Server s : data.getAllServers().get(tipo))
+            if(s.getLastBid()==minBid) servidor = s;
+
+
+        boolean r = servidor.setNewBid(bid);
+        //Falta adicionar também à lista de servers do cliente!
+        if(r){
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
+            JOptionPane.showMessageDialog(null, "Licitação efetuada!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
+            
+        } else{
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/forbidden.png"));
+            JOptionPane.showMessageDialog(null, "Valor licitado não é superior à licitação atual", "Aviso", JOptionPane.INFORMATION_MESSAGE, icon);
+        }
+    }//GEN-LAST:event_bidButtonActionPerformed
+
+    private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
+        int row = bidServersTable.getSelectedRow();
+        String tipo = bidServersTable.getModel().getValueAt(row, 0).toString();
+        double minPreco = new Double(bidServersTable.getModel().getValueAt(row, 2).toString());
+        Server servidor = new Server();
+        
+        for(Server s : data.getAllServers().get(tipo))
+            if(s.getPrice()==minPreco) servidor = s;
+        
+        //Declarar como utilizado & adicionar à lista de servers do cliente!
+        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
+        JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
+    }//GEN-LAST:event_buyButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -172,15 +292,18 @@ public class MenuForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JSpinner jSpinner1;
+    private javax.swing.JButton bidButton;
+    private javax.swing.JPanel bidPanel;
+    private javax.swing.JTable bidServersTable;
+    private javax.swing.JSpinner bidSpinner;
+    private javax.swing.JButton buyButton;
+    private javax.swing.JPanel demandPanel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton logoutButton1;
+    private javax.swing.JButton logoutButton2;
+    private javax.swing.JPanel myServersPanel;
+    private javax.swing.JTable serversTable;
     // End of variables declaration//GEN-END:variables
 }

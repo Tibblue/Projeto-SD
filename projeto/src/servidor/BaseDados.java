@@ -151,6 +151,10 @@ public class BaseDados {
        return servers;
     }
     
+    public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
+        return this.servidores;
+    }
+    
     public synchronized ArrayList<Server> getServersByType(String type)
     {
         return this.servidores.get(type);
