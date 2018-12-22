@@ -6,17 +6,20 @@
 package servidor.forms;
 
 import javax.swing.UIManager;
+import servidor.BaseDados;
 
 /**
  *
  * @author KIKO
  */
 public class ServidorForm extends javax.swing.JFrame {
+    private BaseDados bd;
 
     /**
      * Creates new form servidorForm
      */
-    public ServidorForm() {
+    public ServidorForm(BaseDados bd) {
+        this.bd = bd;
         initComponents();
     }
 

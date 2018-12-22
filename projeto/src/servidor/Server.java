@@ -8,13 +8,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Server {
     private final ReentrantLock lockConta;
-    private String nome;
+    private final String nome;
     private final String tipo;
     private final double price;
     private double lastBid;
     private boolean isLeilao;
     private int idReserva;
-
     
     public Server(String nome, String tipo, double price){
         this.lockConta = new ReentrantLock();

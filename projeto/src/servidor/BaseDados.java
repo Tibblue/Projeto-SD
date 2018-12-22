@@ -41,41 +41,44 @@ public class BaseDados {
         this.servidores.put("potato1.medium", potato1medium);
     }
     
-    /**
-     * Retorna a lista de Users
-     * @return String
-     */
-    public String toStringUsers(){
-        StringBuilder str = new StringBuilder();
-        str.append("#----------  Users  ----------#\n");
-        for(String key : this.usersOLD.keySet()){
-            str.append("Email: ").append(key).append(" / ");
-            str.append("Password: ").append(this.usersOLD.get(key)).append("\n");
-        }
-        str.append("#----------  -----  ----------#\n");
-        return str.toString();
+    public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
+        return this.servidores;
     }
     
-    /**
-     * Retorna a lista de Servidores
-     * @return String
-     */
-    public String toStringServidores(){
-        StringBuilder str = new StringBuilder();
-        str.append("#----- Servers -----#\n");
-        for(String key : this.servidores.keySet()){
-            str.append(" Tipo => ").append(key).append("\n");
-            ArrayList<Server> array = this.servidores.get(key);
-            for(Server server : array){
-                str.append(" Nome -> ").append(server.getNome()).append("\n");
-                str.append(" Preço -> ").append(server.getPrice()).append("\n");
-                str.append(" Reserva -> ").append(server.getIdReserva()).append("\n");
-            }
-        }
-        str.append("#----- ------- -----#\n");
-        return str.toString();
+    public synchronized HashMap<String,String> getAllUsers(){
+        return this.usersOLD;
     }
     
+    
+    
+    
+    
+    public synchronized ArrayList<Server> getServersByType(String type)
+    {
+        return this.servidores.get(type);
+    }    
+    
+    public synchronized List<Server> getFreeUsersByType(String type)
+    {
+        ArrayList<Server> servers = new ArrayList<>();
+        
+        servers = this.servidores.get(type);
+        
+        return servers.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
+    }
+    
+    public synchronized void resetAllServersOfType(String type)
+    {
+        List<Server> servers = this.servidores.get(type);
+        
+        servers.stream().forEach((s) -> {
+            s.setIdReserva(0);
+        });
+    }
+    
+    
+    
+    // Users
     public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException
     {
        try
@@ -151,32 +154,39 @@ public class BaseDados {
        return servers;
     }
     
-    public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
-        return this.servidores;
+    /**
+     * Retorna a lista de Users
+     * @return String
+     */
+    public String toStringUsers(){
+        StringBuilder str = new StringBuilder();
+        str.append("#----------  Users  ----------#\n");
+        for(String key : this.usersOLD.keySet()){
+            str.append("Email: ").append(key).append(" / ");
+            str.append("Password: ").append(this.usersOLD.get(key)).append("\n");
+        }
+        str.append("#----------  -----  ----------#");
+        return str.toString();
     }
     
-    public synchronized ArrayList<Server> getServersByType(String type)
-    {
-        return this.servidores.get(type);
-    }    
-    
-    public synchronized List<Server> getFreeUsersByType(String type)
-    {
-        ArrayList<Server> servers = new ArrayList<>();
-        
-        servers = this.servidores.get(type);
-        
-        return servers.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
+    /**
+     * Retorna a lista de Servidores
+     * @return String
+     */
+    public String toStringServidores(){
+        StringBuilder str = new StringBuilder();
+        str.append("#----- Servers -----#\n");
+        for(String key : this.servidores.keySet()){
+            str.append(" Tipo => ").append(key).append("\n");
+            ArrayList<Server> array = this.servidores.get(key);
+            for(Server server : array){
+                str.append(" Nome -> ").append(server.getNome()).append("\n");
+                str.append(" Preço -> ").append(server.getPrice()).append("\n");
+                str.append(" Reserva -> ").append(server.getIdReserva()).append("\n");
+            }
+        }
+        str.append("#----- ------- -----#");
+        return str.toString();
     }
-    
-    public synchronized void resetAllServersOfType(String type)
-    {
-        List<Server> servers = this.servidores.get(type);
-        
-        servers.stream().forEach((s) -> {
-            s.setIdReserva(0);
-        });
-    }
-    
     
 }

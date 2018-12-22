@@ -1,28 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cliente.forms;
 
+import cliente.ClienteConnection;
+import servidor.BaseDados;
 import java.awt.Color;
-import javax.swing.UIManager;
-import servidor.*;
 
 /**
  *
  * @author KIKO
  */
 public class LoginForm extends javax.swing.JFrame {
-
+    private ClienteConnection connection;
+    private BaseDados bd; // temporary
+    
     /**
      * Creates new form loginForm
      */
-    
-    BaseDados data;
-    public LoginForm(BaseDados data) {
+    public LoginForm(BaseDados bd) {
+        this.bd = bd; // temporary
         initComponents();
-        this.data = data;
         passwordField.setEchoChar((char) 0);
         this.jLabel1.requestFocus();
         this.setLocationRelativeTo(null);
@@ -49,6 +44,11 @@ public class LoginForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         loginButton.setText("LOGIN");
+        loginButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginButtonActionPerformed(evt);
+            }
+        });
 
         emailField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         emailField.setForeground(new java.awt.Color(153, 153, 153));
@@ -150,6 +150,17 @@ public class LoginForm extends javax.swing.JFrame {
         this.passwordField.setEchoChar('*');
         this.passwordField.setForeground(Color.black);
     }//GEN-LAST:event_passwordFieldMouseClicked
+
+    private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
+        // KIKO did this
+        this.connection = new ClienteConnection(1234);
+        if(this.connection.connect(this.emailField.getText(),this.passwordField.getText())){
+            // sucesso, podes continuar para o menu agora
+//            MenuForm menu = new MenuForm(this.connection,this.bd);
+//            menu.setVisible(true);
+        }
+        this.passwordField.setText("");
+    }//GEN-LAST:event_loginButtonActionPerformed
 
     /**
      * @param args the command line arguments

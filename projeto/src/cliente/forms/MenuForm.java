@@ -1,36 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cliente.forms;
 
-import java.util.ArrayList;
+import cliente.ClienteConnection;
+import servidor.BaseDados;
+import servidor.Server;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
-import servidor.BaseDados;
-import servidor.Server;
 
 /**
  *
  * @author KIKO
  */
 public class MenuForm extends javax.swing.JFrame {
+    DefaultTableModel modelDemand;
+    DefaultTableModel modelBid;
+    DefaultTableModel modelMy;
+    private ClienteConnection connection;
+    private BaseDados db; // temporary
 
     /**
      * Creates new form MenuForm
      */
-    DefaultTableModel modelDemand;
-    DefaultTableModel modelBid;
-    DefaultTableModel modelMy;
-    BaseDados data;
-    
-    public MenuForm(BaseDados data) {
-        this.data = data;
-        fillDemandTable();
-        fillBidTable();
+    public MenuForm(ClienteConnection connection, BaseDados db) {
+        this.connection = connection;
+        this.db = db; // temporary
+//        fillDemandTable();
+//        fillBidTable();
         initComponents();
         this.setTitle("Minhas Apostas");
         this.setLocationRelativeTo(null);
@@ -40,15 +36,15 @@ public class MenuForm extends javax.swing.JFrame {
     
     public void fillDemandTable(){
         String[] colunas = {"Tipo","Número","Preço/hora"};
-        Object[][] data = new Object[this.data.getAllServers().size()][3];
+        Object[][] data = new Object[this.db.getAllServers().size()][3];
         int i=0;
-        for (String tipo : this.data.getAllServers().keySet()){
+        for (String tipo : this.db.getAllServers().keySet()){
             double minPreco=100000000;
-            for(Server s : this.data.getAllServers().get(tipo)){
+            for(Server s : this.db.getAllServers().get(tipo)){
                 if(s.getPrice()<minPreco && !s.getUsed()) minPreco=s.getPrice();
             }
             data[i][0] = tipo;
-            data[i][1] = this.data.getAllServers().get(tipo).size();
+            data[i][1] = this.db.getAllServers().get(tipo).size();
             data[i][2] = minPreco;
             i++;
         }
@@ -61,15 +57,15 @@ public class MenuForm extends javax.swing.JFrame {
     
     public void fillBidTable(){
         String[] colunas = {"Tipo","Número","Preço/hora"};
-        Object[][] data = new Object[this.data.getAllServers().size()][3];
+        Object[][] data = new Object[this.db.getAllServers().size()][3];
         int i=0;
-        for (String tipo : this.data.getAllServers().keySet()){
+        for (String tipo : this.db.getAllServers().keySet()){
             double minBid=100000000;
-            for(Server s : this.data.getAllServers().get(tipo)){
+            for(Server s : this.db.getAllServers().get(tipo)){
                 if(s.getLastBid()<minBid && !s.getUsed()) minBid=s.getLastBid();
             }
             data[i][0] = tipo;
-            data[i][1] = this.data.getAllServers().get(tipo).size();
+            data[i][1] = this.db.getAllServers().get(tipo).size();
             data[i][2] = minBid;
             i++;
         }
@@ -113,6 +109,11 @@ public class MenuForm extends javax.swing.JFrame {
 
         logoutButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         logoutButton1.setText("LOGOUT");
+        logoutButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButton1ActionPerformed(evt);
+            }
+        });
 
         buyButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         buyButton.setText("USE SERVER");
@@ -157,6 +158,11 @@ public class MenuForm extends javax.swing.JFrame {
 
         logoutButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         logoutButton2.setText("LOGOUT");
+        logoutButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButton2ActionPerformed(evt);
+            }
+        });
 
         bidButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         bidButton.setText("BID SERVER");
@@ -241,7 +247,7 @@ public class MenuForm extends javax.swing.JFrame {
         double minBid = new Double(bidServersTable.getModel().getValueAt(row, 2).toString());
         Server servidor = new Server();
         
-        for(Server s : data.getAllServers().get(tipo))
+        for(Server s : db.getAllServers().get(tipo))
             if(s.getLastBid()==minBid) servidor = s;
 
 
@@ -263,13 +269,25 @@ public class MenuForm extends javax.swing.JFrame {
         double minPreco = new Double(bidServersTable.getModel().getValueAt(row, 2).toString());
         Server servidor = new Server();
         
-        for(Server s : data.getAllServers().get(tipo))
+        for(Server s : db.getAllServers().get(tipo))
             if(s.getPrice()==minPreco) servidor = s;
         
         //Declarar como utilizado & adicionar à lista de servers do cliente!
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
         JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
     }//GEN-LAST:event_buyButtonActionPerformed
+
+    private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
+        // fecha o menu
+        this.connection.closeConnection();
+        // abre o login
+    }//GEN-LAST:event_logoutButton1ActionPerformed
+
+    private void logoutButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton2ActionPerformed
+        // fecha o menu
+        this.connection.closeConnection();
+        // abre o login
+    }//GEN-LAST:event_logoutButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,9 +304,6 @@ public class MenuForm extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MenuForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

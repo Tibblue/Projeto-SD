@@ -8,36 +8,39 @@ import java.util.ArrayList;
  * @author KIKO
  */
 public class User {
-    public static void main(String[] args){
-        User cliente = new User();
-        ClienteConnection connection = new ClienteConnection(1234);
-        connection.connect();
-    }
-    
-    public void run(){
-        connection.connect();
-    }
-    
-    private ClienteConnection connection;
-    private String email;
-    private String password; // será preciso???
-    private ArrayList<Server> servidoresAlocados; 
-    
-    public User(){
-        this.connection = new ClienteConnection(1234);
-    }
+    private final String email;
+    private final String password;
+    private final ArrayList<Server> servidoresAlocados; 
     
     public User(String email, String password){
-        this.connection = new ClienteConnection(1234);
         this.email = email;
         this.password = password;
+        this.servidoresAlocados = new ArrayList<>();
     }
     
-    public boolean login(String password){
-        return true;
+    // GETTERS
+    public String getEmail() {
+        return this.email;
+    }
+    public String getPassword() {
+        return this.password;
+    }
+    public ArrayList<Server> getServidoresAlocados() {
+        // TODO add locks
+        return this.servidoresAlocados;
     }
     
-    public double getPrice(){
+    
+    public void addServer(Server server){
+        // TODO add locks
+        this.servidoresAlocados.add(server);
+    }
+    public void removeServer(Server server){
+        // TODO add locks
+        this.servidoresAlocados.remove(server);
+    }
+    
+    public double getTotalPrice(){
         return this.servidoresAlocados.stream().mapToDouble(a -> a.getPrice())
                                        .sum();
     }

@@ -4,12 +4,23 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
+import servidor.forms.ServidorForm;
 
 /**
  *
  * @author KIKO
  */
 public class MainServidor extends Thread{
+    public static void main(String[] args){
+        try{
+            BaseDados bd = new BaseDados();
+            MainServidor servidor = new MainServidor(bd);
+            servidor.start();
+        }
+        catch(IOException e){
+            System.out.println("[Servidor] MAIN ERROR !!!");
+        }
+    }
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final int PORT = 1234;
     private final ServerSocket serverSocket;
@@ -27,37 +38,28 @@ public class MainServidor extends Thread{
         this.bd = bd;
     }
     
-    // Interrompe o MainServidor
-    public void stopServidor(){
-        this.running.set(false);
-        this.interrupt();
-        System.out.println("[Servidor] Servidor terminado !!!");
-    }
-    
+    @Override
     public void run() {
         System.out.println("[Servidor] Iniciando o Servidor");
         while(this.running.get()){
-            // debuging prints
+            // debuging prints da lista de Users e Servers
             System.out.println(this.bd.toStringUsers());
             System.out.println(this.bd.toStringServidores());
             
             System.out.println("[Servidor] Servidor à escuta na porta " + 
                                 this.serverSocket.getLocalSocketAddress());
             try{
-                // fica a escuta por pedidos para aceitar
+                // fica a escuta de pedidos para aceitar
                 this.clienteSocket = this.serverSocket.accept();
             }
             catch(IOException e){
                 System.out.println("[Servidor] Erro a aceitar ligação do cliente");
                 System.out.println(e);
             }
-            /*
-            depois de o servidor aceitar a ligaçao o cliente tenta autenticar-se
-            TODO zona de verificaçao de autenticaçao
-            */
             try{
                 // cria uma nova thread (worker) para a conexao
-                new MainServidorWorker(clienteSocket).run();
+                // worker trata da autenticacao
+                new MainServidorWorker(clienteSocket,bd).start();
             }
             catch(IOException e){
                 System.out.println("[Servidor] Erro a criar Thread para o cliente");
@@ -67,13 +69,11 @@ public class MainServidor extends Thread{
         }
     }
     
-    public static void main(String[] args){
-        try{
-            MainServidor servidor = new MainServidor();
-            servidor.start();
-        }
-        catch(Exception e){
-        }
+    // Interrompe o MainServidor
+    public void stopServidor(){
+        this.running.set(false);
+        this.interrupt();
+        System.out.println("[Servidor] Servidor terminado !!!");
     }
     
 }

@@ -8,20 +8,24 @@ import java.util.Scanner;
 import servidor.BaseDados;
 import cliente.forms.LoginForm;
 import cliente.User;
+import servidor.forms.ServidorForm;
 
 // Main capaz de iniciar um User ou Servidor
 public class MainSD {
     public static void main(String[] args) {
+        BaseDados bd = new BaseDados();
         
-        BaseDados data = new BaseDados();
-        
-        /*try{          PARA QUANDO TIVERMOS PERSISTENCIA
+        /* PARA QUANDO TIVERMOS PERSISTENCIA
+        // persistencia da BD
+        try{
             data = data.load();
-        } catch (IOException i){
+        } 
+        catch (IOException i){
             betess = betess.povoar();
             betess.save(betess);
-        }*/
+        }
         //betess = betess.load(); Acho que não é preciso fazer este
+        */
         
         Scanner input = new Scanner(System.in);
         System.out.println("1 - Cliente");
@@ -31,14 +35,15 @@ public class MainSD {
         try{
             switch(in){
                 case 1:
-                    LoginForm form = new LoginForm(data);
-                    User cliente = new User();
-                    form.setVisible(true);
-                    cliente.run();
+                    // LoginForm receber o data é temporario para debug
+                    LoginForm login = new LoginForm(bd);
+                    login.setVisible(true);
                     break;
                 case 2:
-                    MainServidor servidor = new MainServidor(data);
+                    MainServidor servidor = new MainServidor(bd);
                     servidor.start();
+//                    ServidorForm form = new ServidorForm(db);
+//                    form.setVisible(true);
                     break;
                 default:
                     System.exit(0);
