@@ -11,9 +11,20 @@ public class Server {
     private final String nome;
     private final String tipo;
     private final double price;
+    private int idReserva;
     private double lastBid;
     private boolean isLeilao;
-    private int idReserva;
+    private String owner; // ?email do user que esta a usar?
+    
+    public Server() {
+        this.lockServer = new ReentrantLock();
+        this.nome = "";
+        this.tipo = "";
+        this.price = 0.0;
+        this.lastBid = 0.0;
+        this.isLeilao = false;
+        this.idReserva = 999999;
+    }
     
     public Server(String nome, String tipo, double price){
         this.lockServer = new ReentrantLock();
@@ -21,18 +32,10 @@ public class Server {
         this.tipo = tipo;
         this.price = price;
         this.lastBid = 0.0;
+        this.isLeilao = false;
         this.idReserva = 0;
     }
 
-    public Server() {
-        this.lockServer = new ReentrantLock();
-        this.nome = "";
-        this.tipo = "";
-        this.price = 0.0;
-        this.lastBid = 0.0;
-        this.idReserva = 999999;
-    }
-    
     // LOCKS
     public void lock() {
         this.lockServer.lock();
@@ -52,7 +55,11 @@ public class Server {
         return this.price;
     }
     public double getLastBid(){
-        return this.lastBid;
+        double lastBid1;
+        this.lockServer.lock();
+        lastBid1 = this.lastBid;
+        this.lockServer.unlock();
+        return lastBid1;
     }
     public boolean getIsLeilao() {
         boolean leilao;
@@ -71,7 +78,6 @@ public class Server {
     // pelo id de id sabemos se estamos a usar o server ou nao
     public boolean getUsed() {
         int id;
-        
         this.lockServer.lock();
         id = this.idReserva;
         this.lockServer.unlock();
@@ -116,8 +122,7 @@ public class Server {
         this.setIsLeilao(true);
     }
     
-    public synchronized void resetServer()
-    {
+    public synchronized void freeServer(){
         this.idReserva = 0;
     }
 }

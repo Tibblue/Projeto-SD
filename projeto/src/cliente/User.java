@@ -38,8 +38,11 @@ public class User {
         return this.password;
     }
     public double getDebt() {
-        // TODO add locks
-        return debt;
+        double debt1;
+        this.lockUser.lock();
+        debt1 = this.debt;
+        this.lockUser.unlock();
+        return debt1;
     }
     public ArrayList<Server> getServidoresAlocados() {
         // TODO add locks
@@ -48,8 +51,9 @@ public class User {
 
     // SETTERS
     public void setDebt(double debt) {
-        // TODO add locks
+        this.lockUser.lock();
         this.debt = debt;
+        this.lockUser.unlock();
     }
     
     

@@ -13,12 +13,13 @@ import java.util.stream.Collectors;
  * @author KIKO
  */
 public class BaseDados {
-    private final ReentrantLock lockBD;
+//    private final ReentrantLock lockBD;
     private final HashMap<String,User> users;
     private final HashMap<String,ArrayList<Server>> servidores;
+//    private final HashMap<String,ArrayList<Server>> reservas;
     
     public BaseDados(){
-        this.lockBD = new ReentrantLock();
+//        this.lockBD = new ReentrantLock();
         this.users = new HashMap<>();
         this.servidores = new HashMap<>();
         
@@ -59,26 +60,25 @@ public class BaseDados {
 //        this.lockBD.unlock();
 //    }
     
-    
+    // GETTERS
     public synchronized User getUser(String email){
         // TODO add locks
         return this.users.get(email);
     }
-    
     public synchronized HashMap<String,User> getAllUsers(){
         // TODO add locks
         return this.users;
     }
     
+    public synchronized ArrayList<Server> getServersByType(String type){
+        // TODO add locks
+        return this.servidores.get(type);
+    }
     public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
         // TODO add locks
         return this.servidores;
     }
     
-    public synchronized ArrayList<Server> getServersByType(String type){
-        // TODO add locks
-        return this.servidores.get(type);
-    }    
     
     public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
         // TODO add locks
@@ -116,6 +116,9 @@ public class BaseDados {
         return lista;
     }
     
+    public synchronized void freeServer(int idReserva){
+        
+    }
     
     
     
