@@ -37,7 +37,7 @@ public class MainServidorWorker extends Thread {
                 else if( !bd.getAllUsers().containsKey(email) ){
                     System.out.println("[Worker] User nao existe - Terminando conexao");
                 }
-                else if( !bd.getAllUsers().get(email).equals(password) ){
+                else if( !bd.getAllUsers().get(email).getPassword().equals(password) ){
                     System.out.println("[Worker] Password errada - Terminando conexao");
                 }
                 else{

@@ -1,11 +1,11 @@
 package servidor;
 
 import cliente.User;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -13,68 +13,125 @@ import java.util.stream.Collectors;
  * @author KIKO
  */
 public class BaseDados {
-    public final HashMap<String,String> usersOLD;
-//    public final HashMap<String,User> users;
-    public final HashMap<String,ArrayList<Server>> servidores;
+    private final ReentrantLock lockBD;
+    private final HashMap<String,User> users;
+    private final HashMap<String,ArrayList<Server>> servidores;
     
     public BaseDados(){
-        this.usersOLD = new HashMap<>();
+        this.lockBD = new ReentrantLock();
+        this.users = new HashMap<>();
         this.servidores = new HashMap<>();
         
         // USERS
-        this.usersOLD.put("kiko@email.com", "kiko");
-        this.usersOLD.put("camaz@email.com", "camaz");
-        this.usersOLD.put("vitor@email.com", "vitor");
+        // criar user
+        User kiko = new User("kiko@email.com", "kiko");
+        User vitor = new User("vitor@email.com", "vitor");
+        User camaz = new User("camaz@email.com", "camaz");
+        User raul = new User("raul@email.com", "raul");
+        // inserir no hashmap
+        this.users.put(kiko.getEmail(), kiko);
+        this.users.put(vitor.getEmail(), vitor);
+        this.users.put(camaz.getEmail(), camaz);
+        this.users.put(raul.getEmail(), raul);
         
         // SERVERS
         // criar servidor
-        Server batatas1 = new Server("batatas1","potato1.small",1.00);
-        Server batatas2 = new Server("batatas2","potato1.medium",2.00);
+        Server batatas1 = new Server("batatas1","potato.small",1.00);
+        Server batatas2 = new Server("batatas2","potato.small",1.00);
+        Server batatas3 = new Server("batatas3","potato.medium",2.00);
         // criar ArrayList para cada tipo de server
-        ArrayList<Server> potato1small = new ArrayList<>();
-        ArrayList<Server> potato1medium = new ArrayList<>();
+        ArrayList<Server> potatosmall = new ArrayList<>();
+        ArrayList<Server> potatomedium = new ArrayList<>();
         // adicionar servidor ao ser ArrayList respetivo
-        potato1small.add(batatas1);
-        potato1medium.add(batatas2);
+        potatosmall.add(batatas1);
+        potatosmall.add(batatas2);
+        potatomedium.add(batatas3);
         // adicionar server a hash
-        this.servidores.put("potato1.small", potato1small);
-        this.servidores.put("potato1.medium", potato1medium);
+        this.servidores.put("potato.small", potatosmall);
+        this.servidores.put("potato.medium", potatomedium);
+    }
+    
+    // LOCKS
+//    public void lock() {
+//        this.lockBD.lock();
+//    }
+//    public void unlock() {
+//        this.lockBD.unlock();
+//    }
+    
+    
+    public synchronized User getUser(String email){
+        // TODO add locks
+        return this.users.get(email);
+    }
+    
+    public synchronized HashMap<String,User> getAllUsers(){
+        // TODO add locks
+        return this.users;
     }
     
     public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
+        // TODO add locks
         return this.servidores;
     }
     
-    public synchronized HashMap<String,String> getAllUsers(){
-        return this.usersOLD;
-    }
-    
-    
-    
-    
-    
-    public synchronized ArrayList<Server> getServersByType(String type)
-    {
+    public synchronized ArrayList<Server> getServersByType(String type){
+        // TODO add locks
         return this.servidores.get(type);
     }    
     
-    public synchronized List<Server> getFreeUsersByType(String type)
+    public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
+        // TODO add locks
+        HashMap<String,ArrayList<Server>> lista = new HashMap<>();
+        for(String tipo : this.servidores.keySet()){
+            ArrayList<Server> aux = new ArrayList<>();
+            for(Server server : this.servidores.get(tipo)){
+                if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
+                    aux.add(server);
+                }
+            }
+            if(!aux.isEmpty()){
+                lista.put(tipo, aux);
+            }
+        }
+        return lista;
+    }
+    
+    // TODO? fazer outra funcao que so devolve o mais barato pra cada tipo
+    public synchronized HashMap<String,ArrayList<Server>> getBidableServers(){
+        // TODO add locks
+        HashMap<String,ArrayList<Server>> lista = new HashMap<>();
+        for(String tipo : this.servidores.keySet()){
+            ArrayList<Server> aux = new ArrayList<>();
+            for(Server server : this.servidores.get(tipo)){
+                // TODO double check este if qd nao tiver com sono
+                if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
+                    aux.add(server);
+                }
+            }
+            if(!aux.isEmpty()){
+                lista.put(tipo, aux);
+            }
+        }
+        return lista;
+    }
+    
+    
+    
+    
+    public synchronized List<Server> getFreeServersByType(String type)
     {
-        ArrayList<Server> servers = new ArrayList<>();
-        
-        servers = this.servidores.get(type);
-        
+        ArrayList<Server> servers = this.servidores.get(type);
         return servers.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
     }
     
-    public synchronized void resetAllServersOfType(String type)
-    {
-        List<Server> servers = this.servidores.get(type);
-        
-        servers.stream().forEach((s) -> {
-            s.setIdReserva(0);
-        });
-    }
+//    public synchronized void resetAllServersOfType(String type)
+//    {
+//        List<Server> servers = this.servidores.get(type);
+//        servers.stream().forEach((s) -> {
+//            s.setIdReserva(0);
+//        });
+//    }
     
     
     
@@ -161,9 +218,9 @@ public class BaseDados {
     public String toStringUsers(){
         StringBuilder str = new StringBuilder();
         str.append("#----------  Users  ----------#\n");
-        for(String key : this.usersOLD.keySet()){
-            str.append("Email: ").append(key).append(" / ");
-            str.append("Password: ").append(this.usersOLD.get(key)).append("\n");
+        for(User user : this.users.values()){
+            str.append("Email: ").append(user.getEmail()).append(" / ");
+            str.append("Password: ").append(user.getPassword()).append("\n");
         }
         str.append("#----------  -----  ----------#");
         return str.toString();

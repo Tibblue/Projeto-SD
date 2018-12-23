@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author KIKO
  */
 public class Server {
-    private final ReentrantLock lockConta;
+    private final ReentrantLock lockServer;
     private final String nome;
     private final String tipo;
     private final double price;
@@ -16,7 +16,7 @@ public class Server {
     private int idReserva;
     
     public Server(String nome, String tipo, double price){
-        this.lockConta = new ReentrantLock();
+        this.lockServer = new ReentrantLock();
         this.nome = nome;
         this.tipo = tipo;
         this.price = price;
@@ -25,7 +25,7 @@ public class Server {
     }
 
     public Server() {
-        this.lockConta = new ReentrantLock();
+        this.lockServer = new ReentrantLock();
         this.nome = "";
         this.tipo = "";
         this.price = 0.0;
@@ -35,10 +35,10 @@ public class Server {
     
     // LOCKS
     public void lock() {
-        this.lockConta.lock();
+        this.lockServer.lock();
     }
     public void unlock() {
-        this.lockConta.unlock();
+        this.lockServer.unlock();
     }
     
     // GETS
@@ -56,25 +56,25 @@ public class Server {
     }
     public boolean getIsLeilao() {
         boolean leilao;
-        this.lockConta.lock();
+        this.lockServer.lock();
         leilao = this.isLeilao;
-        this.lockConta.unlock();
+        this.lockServer.unlock();
         return leilao;
     }
     public int getIdReserva() {
         int reserva;
-        this.lockConta.lock();
+        this.lockServer.lock();
         reserva = this.idReserva;
-        this.lockConta.unlock();
+        this.lockServer.unlock();
         return reserva;
     }
     // pelo id de id sabemos se estamos a usar o server ou nao
     public boolean getUsed() {
         int id;
         
-        this.lockConta.lock();
+        this.lockServer.lock();
         id = this.idReserva;
-        this.lockConta.unlock();
+        this.lockServer.unlock();
         
         if(id==0) return false;
         else return true;
@@ -83,20 +83,20 @@ public class Server {
     
     // SETS
     public synchronized void setIsLeilao(boolean isLeilao) {
-        this.lockConta.lock();
+        this.lockServer.lock();
         this.isLeilao = isLeilao;
-        this.lockConta.unlock();
+        this.lockServer.unlock();
     }
     public synchronized void setIdReserva(int idReserva) {
-        this.lockConta.lock();
+        this.lockServer.lock();
         this.idReserva = idReserva;
-        this.lockConta.unlock();
+        this.lockServer.unlock();
     }
     public boolean setNewBid(double valor){
         if(valor>this.lastBid){
-            this.lockConta.lock();
+            this.lockServer.lock();
             this.lastBid=valor;
-            this.lockConta.unlock();
+            this.lockServer.unlock();
             return true;
         }
         return false;
