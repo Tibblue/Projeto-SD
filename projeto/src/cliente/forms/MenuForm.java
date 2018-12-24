@@ -25,8 +25,9 @@ public class MenuForm extends javax.swing.JFrame {
     public MenuForm(ClienteConnection connection, BaseDados db) {
         this.connection = connection;
         this.db = db; // temporary
-//        fillDemandTable();
-//        fillBidTable();
+        fillDemandTable();
+        fillBidTable();
+        fillMyServersTable();
         initComponents();
         this.setTitle("Minhas Apostas");
         this.setLocationRelativeTo(null);
@@ -75,6 +76,26 @@ public class MenuForm extends javax.swing.JFrame {
         serversTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         serversTable.getColumnModel().getColumn(2).setPreferredWidth(100);
     }
+    
+    public void fillMyServersTable(){
+        String[] colunas = {"Tipo","Número"};
+        Object[][] data = new Object[this.db.getAllServers().size()][2];
+        int i=0;
+        for (String tipo : this.db.getAllServers().keySet()){
+            double minPreco=100000000;
+            for(Server s : this.db.getAllServers().get(tipo)){
+                if(s.getPrice()<minPreco && !s.getUsed()) minPreco=s.getPrice();
+            }
+            data[i][0] = tipo;
+            data[i][1] = this.db.getAllServers().get(tipo).size();
+            i++;
+        }
+        modelMy = new DefaultTableModel(data,colunas);
+                
+        bidServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        bidServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        bidServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -98,13 +119,17 @@ public class MenuForm extends javax.swing.JFrame {
         logoutButton2 = new javax.swing.JButton();
         bidButton = new javax.swing.JButton();
         myServersPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        bidServersTable1 = new javax.swing.JTable();
+        logoutButton3 = new javax.swing.JButton();
+        bidButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTabbedPane1.setFocusable(false);
         jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
-        serversTable.setModel(modelDemand);
+        serversTable.setModel(this.modelDemand);
         jScrollPane1.setViewportView(serversTable);
 
         logoutButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
@@ -153,7 +178,7 @@ public class MenuForm extends javax.swing.JFrame {
         bidSpinner.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         bidSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0f, null, null, 0.01f));
 
-        bidServersTable.setModel(modelBid);
+        bidServersTable.setModel(this.modelBid);
         jScrollPane2.setViewportView(bidServersTable);
 
         logoutButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
@@ -207,15 +232,48 @@ public class MenuForm extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Bid server", bidPanel);
 
+        bidServersTable1.setModel(this.modelMy);
+        jScrollPane3.setViewportView(bidServersTable1);
+
+        logoutButton3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        logoutButton3.setText("LOGOUT");
+        logoutButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButton3ActionPerformed(evt);
+            }
+        });
+
+        bidButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        bidButton1.setText("REMOVE SERVER");
+        bidButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bidButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout myServersPanelLayout = new javax.swing.GroupLayout(myServersPanel);
         myServersPanel.setLayout(myServersPanelLayout);
         myServersPanelLayout.setHorizontalGroup(
             myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 485, Short.MAX_VALUE)
+            .addGroup(myServersPanelLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(myServersPanelLayout.createSequentialGroup()
+                        .addComponent(logoutButton3)
+                        .addGap(167, 167, 167)
+                        .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         myServersPanelLayout.setVerticalGroup(
             myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 465, Short.MAX_VALUE)
+            .addGroup(myServersPanelLayout.createSequentialGroup()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(logoutButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(33, 33, 33))
         );
 
         jTabbedPane1.addTab("My servers", myServersPanel);
@@ -289,6 +347,14 @@ public class MenuForm extends javax.swing.JFrame {
         // abre o login
     }//GEN-LAST:event_logoutButton2ActionPerformed
 
+    private void logoutButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_logoutButton3ActionPerformed
+
+    private void bidButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bidButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bidButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -308,16 +374,20 @@ public class MenuForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bidButton;
+    private javax.swing.JButton bidButton1;
     private javax.swing.JPanel bidPanel;
     private javax.swing.JTable bidServersTable;
+    private javax.swing.JTable bidServersTable1;
     private javax.swing.JSpinner bidSpinner;
     private javax.swing.JButton buyButton;
     private javax.swing.JPanel demandPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton logoutButton1;
     private javax.swing.JButton logoutButton2;
+    private javax.swing.JButton logoutButton3;
     private javax.swing.JPanel myServersPanel;
     private javax.swing.JTable serversTable;
     // End of variables declaration//GEN-END:variables

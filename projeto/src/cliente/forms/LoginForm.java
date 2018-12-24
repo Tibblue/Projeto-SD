@@ -15,6 +15,8 @@ public class LoginForm extends javax.swing.JFrame {
     /**
      * Creates new form loginForm
      */
+    private boolean usernameTouch = false;
+    private boolean passwordTouch = false;
     public LoginForm(BaseDados bd) {
         this.bd = bd; // temporary
         initComponents();
@@ -141,14 +143,21 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_emailFieldActionPerformed
 
     private void emailFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_emailFieldMouseClicked
-        this.emailField.setText("");
-        this.emailField.setForeground(Color.black);
+        if(!usernameTouch){
+            this.emailField.setText("");
+            this.emailField.setForeground(Color.black);
+            usernameTouch = true;
+        }
     }//GEN-LAST:event_emailFieldMouseClicked
 
     private void passwordFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordFieldMouseClicked
-        this.passwordField.setText("");
-        this.passwordField.setEchoChar('*');
-        this.passwordField.setForeground(Color.black);
+        if(!passwordTouch){
+            this.passwordField.setText("");
+            this.passwordField.setEchoChar('*');
+            this.passwordField.setForeground(Color.black);
+            passwordTouch = true;
+        }
+        
     }//GEN-LAST:event_passwordFieldMouseClicked
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
