@@ -169,8 +169,9 @@ public class LoginForm extends javax.swing.JFrame {
         if( user!=null ){
             // sucesso, podes continuar para o menu agora
 //            User userTemp = this.bd.getUser(this.emailField.getText()); // temporary
-            MenuForm menu = new MenuForm(user,this.connection,this.bd);
+            MenuForm menu = new MenuForm(this,user,this.connection,this.bd);
             menu.setVisible(true);
+            this.setVisible(false);
         }
         this.passwordField.setText("");
     }//GEN-LAST:event_loginButtonActionPerformed

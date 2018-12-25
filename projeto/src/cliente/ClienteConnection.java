@@ -31,9 +31,8 @@ public class ClienteConnection{
             String login = in.readLine();
             System.out.println(login);
             if( login.equals("SUCCESS") ){
-                // conexao recbe a info do User mandada pelo servidor
+                // conexao recebe a info do User mandada pelo servidor
                 String userString = in.readLine();
-                System.out.println("USER enviado pelo server> " + userString);
                 // TODO converter a string numa instancia de User
                 User user = new User(userString);
                System.out.println(user.toStringUser());

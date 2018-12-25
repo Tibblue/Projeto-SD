@@ -25,11 +25,13 @@ public class BaseDados {
         
         // USERS
         // criar user
+        User debug = new User("kiko", "Password");
         User kiko = new User("kiko@email.com", "kiko");
         User vitor = new User("vitor@email.com", "vitor");
         User camaz = new User("camaz@email.com", "camaz");
         User raul = new User("raul@email.com", "raul");
         // inserir no hashmap
+        this.users.put(debug.getEmail(), debug);
         this.users.put(kiko.getEmail(), kiko);
         this.users.put(vitor.getEmail(), vitor);
         this.users.put(camaz.getEmail(), camaz);

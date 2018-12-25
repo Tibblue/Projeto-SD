@@ -5,6 +5,7 @@ import cliente.User;
 import servidor.BaseDados;
 import servidor.Server;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -14,19 +15,22 @@ import javax.swing.table.DefaultTableModel;
  * @author KIKO
  */
 public class MenuForm extends javax.swing.JFrame {
-    DefaultTableModel modelDemand;
-    DefaultTableModel modelBid;
-    DefaultTableModel modelMy;
+    private final JFrame login;
     private final User user;
     private final ClienteConnection connection;
     private final BaseDados db; // temporary
+    DefaultTableModel modelDemand;
+    DefaultTableModel modelBid;
+    DefaultTableModel modelMy;
 
     /**
      * Creates new form MenuForm
+     * @param login Login Form reference
      * @param user User that loged in
      * @param connection Connection to the server
      */
-    public MenuForm(User user, ClienteConnection connection, BaseDados db) {
+    public MenuForm(JFrame login, User user, ClienteConnection connection, BaseDados db) {
+        this.login = login;
         this.user = user;
         this.connection = connection;
         this.db = db; // temporary
@@ -57,7 +61,6 @@ public class MenuForm extends javax.swing.JFrame {
         }
         modelDemand = new DefaultTableModel(data,colunas);
     }
-    
     public void fillBidTable(){
         String[] colunas = {"Tipo","Número","Preço/hora"};
         Object[][] data = new Object[this.db.getAllServers().size()][3];
@@ -74,7 +77,6 @@ public class MenuForm extends javax.swing.JFrame {
         }
         modelBid = new DefaultTableModel(data,colunas);
     }
-    
     public void fillMyServersTable(){
         String[] colunas = {"ID Reserva","Nome"};
         Object[][] data = new Object[this.user.getServidoresAlocados().size()][2];
@@ -188,7 +190,7 @@ public class MenuForm extends javax.swing.JFrame {
         logoutButton2.setText("LOGOUT");
         logoutButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutButton2ActionPerformed(evt);
+                logoutButton1ActionPerformed(evt);
             }
         });
 
@@ -242,7 +244,7 @@ public class MenuForm extends javax.swing.JFrame {
         logoutButton3.setText("LOGOUT");
         logoutButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutButton3ActionPerformed(evt);
+                logoutButton1ActionPerformed(evt);
             }
         });
 
@@ -325,9 +327,10 @@ public class MenuForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Valor licitado não é superior à licitação atual", "Aviso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         
-        MenuForm menu = new MenuForm(this.user,this.connection,this.db);
-        this.setVisible(false);
+        MenuForm menu = new MenuForm(this.login,this.user,this.connection,this.db);
         menu.setVisible(true);
+        this.setVisible(false);
+        // this.dispose();
     }//GEN-LAST:event_bidButtonActionPerformed
 
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
@@ -343,26 +346,20 @@ public class MenuForm extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
         JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
         
-        MenuForm menu = new MenuForm(this.user,this.connection,this.db);
-        this.setVisible(false);
+        MenuForm menu = new MenuForm(this.login,this.user,this.connection,this.db);
         menu.setVisible(true);
+        this.setVisible(false);
+        // this.dispose();
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
         // fecha o menu
         this.connection.closeConnection();
         // abre o login
+        this.login.setVisible(true);
+        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_logoutButton1ActionPerformed
-
-    private void logoutButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton2ActionPerformed
-        // fecha o menu
-        this.connection.closeConnection();
-        // abre o login
-    }//GEN-LAST:event_logoutButton2ActionPerformed
-
-    private void logoutButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_logoutButton3ActionPerformed
 
     private void bidButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bidButton1ActionPerformed
         // TODO add your handling code here:
