@@ -34,6 +34,7 @@ public class MenuForm extends javax.swing.JFrame {
         fillBidTable();
         fillMyServersTable();
         initComponents();
+        adjustColumnSizes();
         this.setTitle("Minhas Apostas");
         this.setLocationRelativeTo(null);
         this.setResizable(false);
@@ -55,10 +56,6 @@ public class MenuForm extends javax.swing.JFrame {
             i++;
         }
         modelDemand = new DefaultTableModel(data,colunas);
-                
-        serversTable.getColumnModel().getColumn(0).setPreferredWidth(200);
-        serversTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        serversTable.getColumnModel().getColumn(2).setPreferredWidth(100);
     }
     
     public void fillBidTable(){
@@ -76,32 +73,33 @@ public class MenuForm extends javax.swing.JFrame {
             i++;
         }
         modelBid = new DefaultTableModel(data,colunas);
-                
-        bidServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
-        bidServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        bidServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
     }
     
     public void fillMyServersTable(){
-        String[] colunas = {"Tipo","Número"};
-        Object[][] data = new Object[this.db.getAllServers().size()][2];
+        String[] colunas = {"ID Reserva","Nome"};
+        Object[][] data = new Object[this.user.getServidoresAlocados().size()][2];
         int i=0;
-        for (String tipo : this.db.getAllServers().keySet()){
-            double minPreco=100000000;
-            for(Server s : this.db.getAllServers().get(tipo)){
-                if(s.getPrice()<minPreco && !s.getUsed()) minPreco=s.getPrice();
-            }
-            data[i][0] = tipo;
-            data[i][1] = this.db.getAllServers().get(tipo).size();
+        for (Server s : this.user.getServidoresAlocados()){
+            data[i][0] = s.getIdReserva();
+            data[i][1] = s.getNome();
             i++;
         }
         modelMy = new DefaultTableModel(data,colunas);
-                
+    }
+
+    private void adjustColumnSizes(){
+        demandServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        demandServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        demandServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        
         bidServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
         bidServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         bidServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+                
+        myServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        myServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -114,7 +112,7 @@ public class MenuForm extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         demandPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        serversTable = new javax.swing.JTable();
+        demandServersTable = new javax.swing.JTable();
         logoutButton1 = new javax.swing.JButton();
         buyButton = new javax.swing.JButton();
         bidPanel = new javax.swing.JPanel();
@@ -125,7 +123,7 @@ public class MenuForm extends javax.swing.JFrame {
         bidButton = new javax.swing.JButton();
         myServersPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        bidServersTable1 = new javax.swing.JTable();
+        myServersTable = new javax.swing.JTable();
         logoutButton3 = new javax.swing.JButton();
         bidButton1 = new javax.swing.JButton();
 
@@ -134,8 +132,8 @@ public class MenuForm extends javax.swing.JFrame {
         jTabbedPane1.setFocusable(false);
         jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
-        serversTable.setModel(this.modelDemand);
-        jScrollPane1.setViewportView(serversTable);
+        demandServersTable.setModel(this.modelDemand);
+        jScrollPane1.setViewportView(demandServersTable);
 
         logoutButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         logoutButton1.setText("LOGOUT");
@@ -169,13 +167,13 @@ public class MenuForm extends javax.swing.JFrame {
         );
         demandPanelLayout.setVerticalGroup(
             demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(demandPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, demandPanelLayout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addGap(17, 17, 17))
         );
 
         jTabbedPane1.addTab("Demand server", demandPanel);
@@ -206,24 +204,24 @@ public class MenuForm extends javax.swing.JFrame {
         bidPanel.setLayout(bidPanelLayout);
         bidPanelLayout.setHorizontalGroup(
             bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bidPanelLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bidPanelLayout.createSequentialGroup()
+                .addContainerGap(14, Short.MAX_VALUE)
                 .addComponent(logoutButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addGap(71, 71, 71)
                 .addComponent(bidSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bidButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
             .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(bidPanelLayout.createSequentialGroup()
-                    .addGap(15, 15, 15)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bidPanelLayout.createSequentialGroup()
+                    .addContainerGap(15, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(16, Short.MAX_VALUE)))
+                    .addGap(16, 16, 16)))
         );
         bidPanelLayout.setVerticalGroup(
             bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bidPanelLayout.createSequentialGroup()
-                .addContainerGap(410, Short.MAX_VALUE)
+                .addGap(408, 408, 408)
                 .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(logoutButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bidButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,8 +235,8 @@ public class MenuForm extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Bid server", bidPanel);
 
-        bidServersTable1.setModel(this.modelMy);
-        jScrollPane3.setViewportView(bidServersTable1);
+        myServersTable.setModel(this.modelMy);
+        jScrollPane3.setViewportView(myServersTable);
 
         logoutButton3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         logoutButton3.setText("LOGOUT");
@@ -261,13 +259,15 @@ public class MenuForm extends javax.swing.JFrame {
         myServersPanelLayout.setHorizontalGroup(
             myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(myServersPanelLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
                 .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(myServersPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, myServersPanelLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
                         .addComponent(logoutButton3)
                         .addGap(167, 167, 167)
-                        .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
         myServersPanelLayout.setVerticalGroup(
@@ -324,6 +324,10 @@ public class MenuForm extends javax.swing.JFrame {
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/forbidden.png"));
             JOptionPane.showMessageDialog(null, "Valor licitado não é superior à licitação atual", "Aviso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
+        
+        MenuForm menu = new MenuForm(this.user,this.connection,this.db);
+        this.setVisible(false);
+        menu.setVisible(true);
     }//GEN-LAST:event_bidButtonActionPerformed
 
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
@@ -338,6 +342,10 @@ public class MenuForm extends javax.swing.JFrame {
         //Declarar como utilizado & adicionar à lista de servers do cliente!
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
         JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
+        
+        MenuForm menu = new MenuForm(this.user,this.connection,this.db);
+        this.setVisible(false);
+        menu.setVisible(true);
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
@@ -382,10 +390,10 @@ public class MenuForm extends javax.swing.JFrame {
     private javax.swing.JButton bidButton1;
     private javax.swing.JPanel bidPanel;
     private javax.swing.JTable bidServersTable;
-    private javax.swing.JTable bidServersTable1;
     private javax.swing.JSpinner bidSpinner;
     private javax.swing.JButton buyButton;
     private javax.swing.JPanel demandPanel;
+    private javax.swing.JTable demandServersTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -394,6 +402,6 @@ public class MenuForm extends javax.swing.JFrame {
     private javax.swing.JButton logoutButton2;
     private javax.swing.JButton logoutButton3;
     private javax.swing.JPanel myServersPanel;
-    private javax.swing.JTable serversTable;
+    private javax.swing.JTable myServersTable;
     // End of variables declaration//GEN-END:variables
 }
