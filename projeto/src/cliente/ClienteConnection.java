@@ -20,7 +20,7 @@ public class ClienteConnection{
         this.PORT = port;
     }
     
-    public boolean connect(String email, String password){
+    public User connect(String email, String password){
         try {
             socket = new Socket("127.0.0.1", 1234);
             // autenticao
@@ -29,16 +29,21 @@ public class ClienteConnection{
             out.flush();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String login = in.readLine();
-                System.out.println(login);
+            System.out.println(login);
             if( login.equals("SUCCESS") ){
-                // TODO receber o USER INFO mandado pelo servidor
+                // conexao recbe a info do User mandada pelo servidor
+                String userString = in.readLine();
+                System.out.println("USER enviado pelo server> " + userString);
+                // TODO converter a string numa instancia de User
+                User user = new User(userString);
+               System.out.println(user.toStringUser());
                 
                 System.out.println("[ClienteCon] Login OK");
                 this.writer = new Thread(new ClienteWriter(socket));
                 this.listener = new Thread(new ClienteListener(socket));
                 this.writer.start();
                 this.listener.start();
-                return true;
+                return user;
 //                try {
 //                    this.writer.join();
 //                    this.listener.join();
@@ -50,13 +55,13 @@ public class ClienteConnection{
             else{
                 System.out.println("[ClienteCon] Email/Password incorretos!!!");
                 this.socket.close();
-                return false;
+                return null;
             }
         }
         catch (IOException e) {
             System.out.println("[ClienteCon] Socket RIP !!!");
             System.out.println(e);
-            return false;
+            return null;
         }
     }
     

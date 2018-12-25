@@ -1,6 +1,7 @@
 package cliente.forms;
 
 import cliente.ClienteConnection;
+import cliente.User;
 import servidor.BaseDados;
 import servidor.Server;
 import javax.swing.ImageIcon;
@@ -16,13 +17,17 @@ public class MenuForm extends javax.swing.JFrame {
     DefaultTableModel modelDemand;
     DefaultTableModel modelBid;
     DefaultTableModel modelMy;
-    private ClienteConnection connection;
-    private BaseDados db; // temporary
+    private final User user;
+    private final ClienteConnection connection;
+    private final BaseDados db; // temporary
 
     /**
      * Creates new form MenuForm
+     * @param user User that loged in
+     * @param connection Connection to the server
      */
-    public MenuForm(ClienteConnection connection, BaseDados db) {
+    public MenuForm(User user, ClienteConnection connection, BaseDados db) {
+        this.user = user;
         this.connection = connection;
         this.db = db; // temporary
         fillDemandTable();
@@ -51,9 +56,9 @@ public class MenuForm extends javax.swing.JFrame {
         }
         modelDemand = new DefaultTableModel(data,colunas);
                 
-        bidServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
-        bidServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        bidServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        serversTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        serversTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        serversTable.getColumnModel().getColumn(2).setPreferredWidth(100);
     }
     
     public void fillBidTable(){
@@ -72,9 +77,9 @@ public class MenuForm extends javax.swing.JFrame {
         }
         modelBid = new DefaultTableModel(data,colunas);
                 
-        serversTable.getColumnModel().getColumn(0).setPreferredWidth(200);
-        serversTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        serversTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        bidServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        bidServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        bidServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
     }
     
     public void fillMyServersTable(){

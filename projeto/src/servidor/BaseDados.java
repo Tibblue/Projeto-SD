@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 public class BaseDados {
 //    private final ReentrantLock lockBD;
     private final HashMap<String,User> users;
-    private final HashMap<String,ArrayList<Server>> servidores;
+    private final HashMap<String,ArrayList<Server>> servers;
 //    private final HashMap<String,ArrayList<Server>> reservas;
     
     public BaseDados(){
 //        this.lockBD = new ReentrantLock();
         this.users = new HashMap<>();
-        this.servidores = new HashMap<>();
+        this.servers = new HashMap<>();
         
         // USERS
         // criar user
@@ -48,8 +48,8 @@ public class BaseDados {
         potatosmall.add(batatas2);
         potatomedium.add(batatas3);
         // adicionar server a hash
-        this.servidores.put("potato.small", potatosmall);
-        this.servidores.put("potato.medium", potatomedium);
+        this.servers.put("potato.small", potatosmall);
+        this.servers.put("potato.medium", potatomedium);
     }
     
     // LOCKS
@@ -72,20 +72,20 @@ public class BaseDados {
     
     public synchronized ArrayList<Server> getServersByType(String type){
         // TODO add locks
-        return this.servidores.get(type);
+        return this.servers.get(type);
     }
     public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
         // TODO add locks
-        return this.servidores;
+        return this.servers;
     }
     
     
     public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
         // TODO add locks
         HashMap<String,ArrayList<Server>> lista = new HashMap<>();
-        for(String tipo : this.servidores.keySet()){
+        for(String tipo : this.servers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
-            for(Server server : this.servidores.get(tipo)){
+            for(Server server : this.servers.get(tipo)){
                 if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
                     aux.add(server);
                 }
@@ -101,9 +101,9 @@ public class BaseDados {
     public synchronized HashMap<String,ArrayList<Server>> getBidableServers(){
         // TODO add locks
         HashMap<String,ArrayList<Server>> lista = new HashMap<>();
-        for(String tipo : this.servidores.keySet()){
+        for(String tipo : this.servers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
-            for(Server server : this.servidores.get(tipo)){
+            for(Server server : this.servers.get(tipo)){
                 // TODO double check este if qd nao tiver com sono
                 if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
                     aux.add(server);
@@ -124,7 +124,7 @@ public class BaseDados {
     
     public synchronized List<Server> getFreeServersByType(String type)
     {
-        ArrayList<Server> servers = this.servidores.get(type);
+        ArrayList<Server> servers = this.servers.get(type);
         return servers.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
     }
     
@@ -219,14 +219,12 @@ public class BaseDados {
      * @return String
      */
     public String toStringUsers(){
-        StringBuilder str = new StringBuilder();
-        str.append("#----------  Users  ----------#\n");
-        for(User user : this.users.values()){
-            str.append("Email: ").append(user.getEmail()).append(" / ");
-            str.append("Password: ").append(user.getPassword()).append("\n");
-        }
-        str.append("#----------  -----  ----------#");
-        return str.toString();
+        StringBuilder users = new StringBuilder();
+        users.append("#----------  Users  ----------#\n");
+        for(User user : this.users.values())
+            users.append(user.toStringUser());
+        users.append("#----------  -----  ----------#");
+        return users.toString();
     }
     
     /**
@@ -234,19 +232,14 @@ public class BaseDados {
      * @return String
      */
     public String toStringServidores(){
-        StringBuilder str = new StringBuilder();
-        str.append("#----- Servers -----#\n");
-        for(String key : this.servidores.keySet()){
-            str.append(" Tipo => ").append(key).append("\n");
-            ArrayList<Server> array = this.servidores.get(key);
-            for(Server server : array){
-                str.append(" Nome -> ").append(server.getNome()).append("\n");
-                str.append(" Preço -> ").append(server.getPrice()).append("\n");
-                str.append(" Reserva -> ").append(server.getIdReserva()).append("\n");
-            }
+        StringBuilder servers = new StringBuilder();
+        servers.append("#---------- Servers ----------#\n");
+        for(String key : this.servers.keySet()){
+            for(Server server : this.servers.get(key))
+                servers.append(server.toStringServer());
         }
-        str.append("#----- ------- -----#");
-        return str.toString();
+        servers.append("#---------- ------- ----------#");
+        return servers.toString();
     }
     
 }

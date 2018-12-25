@@ -41,8 +41,13 @@ public class MainServidorWorker extends Thread {
                     System.out.println("[Worker] Password errada - Terminando conexao");
                 }
                 else{
+                    // mensagem de confirmação do sucesso de autenticacao
                     out.println("SUCCESS");
                     out.flush();
+                    // mensagem com a info do User
+                    out.println(bd.getUser(email).toStringUserToSend());
+                    out.flush();
+                    // Worker comeca a processar a conexao normalmente
                     System.out.println("[Worker] Login OK - Processando conexao");
                     String msg;
                     while ((msg = in.readLine()) != null && !msg.equals("LOGOUT")) {

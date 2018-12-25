@@ -21,9 +21,9 @@ public class Server {
         this.nome = "";
         this.tipo = "";
         this.price = 0.0;
+        this.idReserva = 999999;
         this.lastBid = 0.0;
         this.isLeilao = false;
-        this.idReserva = 999999;
     }
     
     public Server(String nome, String tipo, double price){
@@ -31,9 +31,19 @@ public class Server {
         this.nome = nome;
         this.tipo = tipo;
         this.price = price;
+        this.idReserva = 0;
         this.lastBid = 0.0;
         this.isLeilao = false;
-        this.idReserva = 0;
+    }
+
+    public Server(String nome, String tipo, double price, int idReserva, double lastBid, boolean isLeilao){
+        this.lockServer = new ReentrantLock();
+        this.nome = nome;
+        this.tipo = tipo;
+        this.price = price;
+        this.idReserva = idReserva;
+        this.lastBid = lastBid;
+        this.isLeilao = isLeilao;
     }
 
     // LOCKS
@@ -125,4 +135,40 @@ public class Server {
     public synchronized void freeServer(){
         this.idReserva = 0;
     }
+    
+    /**
+     * Retorna a lista de Servidores
+     * Mesmo propósito da toString default, 
+     * mas mais adequado para mensagens entre servidor e cliente
+     * @return String
+     */
+    public String toStringServerToSend(){
+        StringBuilder server = new StringBuilder();
+        server.append("SERVER ");
+        server.append(this.tipo).append(" ");
+        server.append(this.nome).append(" ");
+        server.append(this.price).append(" ");
+        server.append(this.idReserva).append(" ");
+        server.append(this.lastBid).append(" ");
+        server.append(this.isLeilao).append(" ");
+        return server.toString();
+    }
+    
+    /**
+     * Retorna a lista de Servidores
+     * Mesmo propósito da toString default, 
+     * mas mais pretty
+     * @return String
+     */
+    public String toStringServer(){
+        StringBuilder server = new StringBuilder();
+        server.append("=>Tipo: ").append(this.tipo).append("\n");
+        server.append("  Nome: ").append(this.nome).append("\n");
+        server.append("  Preço: ").append(this.price).append("\n");
+        server.append("  Reserva: ").append(this.idReserva).append("\n");
+        server.append("  Last Bid: ").append(this.lastBid).append("\n");
+        server.append("  Leilão? ").append(this.isLeilao).append("\n");
+        return server.toString();
+    }
+    
 }

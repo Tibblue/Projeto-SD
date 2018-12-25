@@ -1,6 +1,7 @@
 package cliente.forms;
 
 import cliente.ClienteConnection;
+import cliente.User;
 import servidor.BaseDados;
 import java.awt.Color;
 
@@ -163,10 +164,13 @@ public class LoginForm extends javax.swing.JFrame {
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         // KIKO did this
         this.connection = new ClienteConnection(1234);
-        if(this.connection.connect(this.emailField.getText(),this.passwordField.getText())){
+        // TODO mudar return da connect de bool pra User
+        User user = this.connection.connect(this.emailField.getText(),this.passwordField.getText());
+        if( user!=null ){
             // sucesso, podes continuar para o menu agora
-//            MenuForm menu = new MenuForm(this.connection,this.bd);
-//            menu.setVisible(true);
+//            User userTemp = this.bd.getUser(this.emailField.getText()); // temporary
+            MenuForm menu = new MenuForm(user,this.connection,this.bd);
+            menu.setVisible(true);
         }
         this.passwordField.setText("");
     }//GEN-LAST:event_loginButtonActionPerformed
