@@ -140,24 +140,6 @@ public class Server implements Serializable {
     /**
      * Retorna a lista de Servidores
      * Mesmo propósito da toString default, 
-     * mas mais adequado para mensagens entre servidor e cliente
-     * @return String
-     */
-    public String toStringServerToSend(){
-        StringBuilder server = new StringBuilder();
-        server.append("SERVER ");
-        server.append(this.tipo).append(" ");
-        server.append(this.nome).append(" ");
-        server.append(this.price).append(" ");
-        server.append(this.idReserva).append(" ");
-        server.append(this.lastBid).append(" ");
-        server.append(this.isLeilao).append(" ");
-        return server.toString();
-    }
-    
-    /**
-     * Retorna a lista de Servidores
-     * Mesmo propósito da toString default, 
      * mas mais pretty
      * @return String
      */

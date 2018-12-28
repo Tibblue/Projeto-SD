@@ -39,12 +39,6 @@ public class ClienteConnection{
             String login = this.in.readLine();
             System.out.println(login);
             if( login.equals("SUCCESS") ){
-//                // conexao recebe a info do User mandada pelo servidor
-//                String userString = this.in.readLine();
-//                // converte a string numa instancia de User
-//                User user = new User(userString);
-//                System.out.println(user.toStringUser());
-                
                 System.out.println("[ClienteCon] Login OK");
 //                this.writer = new Thread(new ClienteWriter(socket));
 //                this.listener = new Thread(new ClienteListener(socket));

@@ -82,10 +82,7 @@ public class MainServidorWorker extends Thread {
                 // mensagem de confirmação do sucesso de autenticacao
                 out.println("SUCCESS");
                 out.flush();
-//                // mensagem com a info do User
-//                out.println(bd.getUser(email).toStringUserToSend());
-//                out.flush();
-
+                
                 this.sendUser(toClient);
                 return true;
             }

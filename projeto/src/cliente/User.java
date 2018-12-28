@@ -105,22 +105,6 @@ public class User implements Serializable {
     /**
      * Retorna a lista de Users
      * Mesmo propósito da toString default, 
-     * mas mais adequado para mensagens entre servidor e cliente
-     * @return String
-     */
-    public String toStringUserToSend(){
-        StringBuilder user = new StringBuilder();
-        user.append("USER ");
-        user.append(this.email).append(" ");
-        user.append(this.password).append(" ");
-        for(Server server : this.servidoresAlocados)
-            user.append(server.toStringServerToSend());
-        return user.toString();
-    }
-    
-    /**
-     * Retorna a lista de Users
-     * Mesmo propósito da toString default, 
      * mas mais pretty
      * @return String
      */
