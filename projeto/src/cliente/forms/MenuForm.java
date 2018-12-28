@@ -2,6 +2,8 @@ package cliente.forms;
 
 import cliente.ClienteConnection;
 import cliente.User;
+import java.util.ArrayList;
+import java.util.HashMap;
 import servidor.BaseDados;
 import servidor.Server;
 import javax.swing.ImageIcon;
@@ -16,8 +18,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class MenuForm extends javax.swing.JFrame {
     private final JFrame login;
-    private final User user;
     private final ClienteConnection connection;
+    private final User user;
+    private HashMap<String,ArrayList<Server>> bdServers;
     private final BaseDados db; // temporary
     DefaultTableModel modelDemand;
     DefaultTableModel modelBid;
@@ -355,7 +358,7 @@ public class MenuForm extends javax.swing.JFrame {
         MenuForm menu = new MenuForm(this.login,this.user,this.connection,this.db);
         menu.setVisible(true);
         this.setVisible(false);
-        // this.dispose();
+        this.dispose();
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed

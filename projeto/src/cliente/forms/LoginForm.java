@@ -15,12 +15,12 @@ import javax.swing.JOptionPane;
 public class LoginForm extends javax.swing.JFrame {
     private ClienteConnection connection;
     private BaseDados bd; // temporary
+    private boolean usernameTouch = false;
+    private boolean passwordTouch = false;
     
     /**
      * Creates new form loginForm
      */
-    private boolean usernameTouch = false;
-    private boolean passwordTouch = false;
     public LoginForm(BaseDados bd) {
         this.bd = bd; // temporary
         initComponents();

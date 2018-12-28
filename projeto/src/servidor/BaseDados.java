@@ -103,7 +103,6 @@ public class BaseDados {
         lockAllUsers();
         HashMap<String,User> usrs = this.users;
         unlockAllUsers();
-        
         return usrs;
     }
     public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
@@ -153,6 +152,7 @@ public class BaseDados {
         user.addServer(server);
         this.users.put(email, user);
     }
+    
     
     public synchronized void newBid(String tipo, double bid)
     {
@@ -273,6 +273,8 @@ public class BaseDados {
 //        });
 //    }
         
+    
+    
     // Users
     public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException
     {
