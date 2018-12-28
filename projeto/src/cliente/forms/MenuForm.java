@@ -337,11 +337,6 @@ public class MenuForm extends javax.swing.JFrame {
         int row = demandServersTable.getSelectedRow();
         String tipo = demandServersTable.getModel().getValueAt(row, 0).toString();
         
-//        double minPreco = new Double(demandServersTable.getModel().getValueAt(row, 2).toString());
-//        Server servidor;
-//        for(Server s : db.getAllServers().get(tipo))
-//            if(s.getPrice()==minPreco) servidor = s;
-        
         //Efetuar o pedido ao servidor
         // TODO ACABAR !!!!!
         String response = this.connection.sendRequest("BUY " + user.getEmail() + " " + tipo);

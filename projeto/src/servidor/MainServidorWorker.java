@@ -24,37 +24,34 @@ public class MainServidorWorker extends Thread {
     
     @Override
     public void run(){
-        try{
-            try ( BufferedReader in = new BufferedReader(new InputStreamReader(this.fromClient));
-                    PrintWriter out = new PrintWriter(this.toClient)) {
-                // receber a autenticaçao
-                if( this.autenticacao(in, out) ){
-                    // Worker comeca a processar a conexao
-                    System.out.println("[Worker] Login OK - Processando conexao");
-                    String request;
-                    String response;
-                    // Worker espera pedidos do cliente
-                    while ((request = in.readLine()) != null && !request.equals("LOGOUT")) {
-                        System.out.println("[Cliente] request> " + request);
-                        response = this.parse(request);
-                        System.out.println("[Cliente] response> " + response);
-                        out.println(response);
-                        out.flush();
-                        System.out.println(bd.getUser(email).toStringUser());
+        try ( BufferedReader in = new BufferedReader(new InputStreamReader(this.fromClient));
+                PrintWriter out = new PrintWriter(this.toClient)) {
+            // receber a autenticaçao
+            if( this.autenticacao(in, out) ){
+                // Worker comeca a processar a conexao
+                System.out.println("[Worker] Login OK - Processando conexao");
+                String request;
+                String response;
+                // Worker espera pedidos do cliente
+                while ((request = in.readLine()) != null && !request.equals("LOGOUT")) {
+                    System.out.println("[Cliente] request> " + request);
+                    response = this.parse(request);
+                    System.out.println("[Cliente] response> " + response);
+                    out.println(response);
+                    out.flush();
+                    if( response.split(" ")[0].equals("SUCCESS") ){
+                        
                     }
-                    System.out.println("[Worker] Terminando conexao");
-                    return;
+                    System.out.println(bd.getUser(email).toStringUser());
                 }
-                clienteSocket.close();
+                System.out.println("[Worker] Terminando conexao");
                 return;
             }
-            catch(IOException e){
-                System.out.println("[Worker] IO ardeu !!!");
-                System.out.println(e);
-            }
+            clienteSocket.close();
+            return;
         }
-        catch(Exception e){
-            System.out.println("[Worker] EXCEÇAO !!!");
+        catch(IOException e){
+            System.out.println("[Worker] IO ardeu !!!");
             System.out.println(e);
         }
         System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
