@@ -154,6 +154,43 @@ public class BaseDados {
         this.users.put(email, user);
     }
     
+    public synchronized void newBid(String tipo, double bid)
+    {
+        lockAllServers();
+        Server s = getFreeServersByType(tipo).get(1);
+        if(s.getLastBid() < bid)
+        {
+            s.setNewBid(bid);
+            s.setIsLeilao(true);
+            s.setIdReserva(nextIdReserva());
+        }
+        unlockAllServers();
+    }
+    
+    public synchronized void coverBid(int idReserva, double bid)
+    {
+        lockAllServers();
+        Server a = new Server();
+        for(ArrayList<Server> sv : this.servers.values())
+        {
+            for(Server s : sv)
+            {
+                if(s.getIdReserva() == idReserva)
+                {
+                    a = s;
+                }
+            }
+        }
+
+        if(a.getLastBid() < bid)
+        {
+            a.setNewBid(bid);
+            a.setIsLeilao(true);
+            a.setIdReserva(nextIdReserva());
+        }
+        unlockAllServers();
+    }
+        
     public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
         // LOCK ALL SERVERS 
         lockAllServers();
