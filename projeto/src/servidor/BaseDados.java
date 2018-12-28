@@ -4,6 +4,7 @@ import cliente.User;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -56,46 +57,92 @@ public class BaseDados {
         this.servers.put("potato.medium", potatomedium);
     }
     
-    // LOCKS
-//    public void lock() {
-//        this.lockBD.lock();
-//    }
-//    public void unlock() {
-//        this.lockBD.unlock();
-//    }
+    // LOCK AND UNLOCK METHODS /////////////////////////////////////////////////
+    public void lockAllServers()
+    {
+        for (ArrayList<Server> a : this.servers.values()) {
+            a.stream().forEach((s) -> {
+                s.lock();
+            });
+        }
+    }
     
+    public void unlockAllServers()
+    {
+        for (ArrayList<Server> a : this.servers.values()) {
+            a.stream().forEach((s) -> {
+                s.unlock();
+            });
+        }
+    }
+    
+    public void lockAllUsers()
+    {
+        this.users.values().stream().forEach((u) -> {
+            u.lock();
+        });
+    }
+    
+    public void unlockAllUsers()
+    {
+        this.users.values().stream().forEach((u) -> {
+            u.unlock();
+        });
+    }
+    /*   
+        public void lock() {
+          this.lockBD.lock();
+         }
+        public void unlock() {
+         this.lockBD.unlock();
+   */
+    ////////////////////////////////////////////////////////////////////////////
+
     // GETTERS
     public synchronized HashMap<String,User> getAllUsers(){
-        return this.users;
+        lockAllUsers();
+        HashMap<String,User> usrs = this.users;
+        unlockAllUsers();
+        
+        return usrs;
     }
     public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
-        // TODO add locks
-        return this.servers;
+        lockAllServers(); 
+        HashMap<String, ArrayList<Server>> servs = this.servers;
+        unlockAllServers();
+        return servs;
     }
     public synchronized User getUser(String email){
-        // TODO add locks
-        return this.users.get(email);
+        lockAllUsers();
+        User u = this.users.get(email);
+        unlockAllUsers();
+        return u;
     }
     public synchronized ArrayList<Server> getServersByType(String type){
-        // TODO add locks
-        return this.servers.get(type);
+        lockAllServers();
+        ArrayList<Server> lista = this.servers.get(type);
+        unlockAllServers();
+        return lista;
     }
     
     //SETTERS
     public synchronized void setUser(User user){
-        // TODO add locks
+        lockAllServers();
         this.users.put(user.getEmail(),user);
+        unlockAllServers();
     }
     public synchronized void setServersByType(Server server){
-        // TODO add locks
+        lockAllServers();
+        
         ArrayList<Server> list = this.servers.get(server.getTipo());
         list.add(server);
         this.servers.put(server.getTipo(),list);
+        
+        unlockAllServers();
     }
     
     
-    // unica funçao que vai tocar no nextIdReserva
-    // por isso synchronized chega
+    // unica funçao que vai tocar no nextIdReserva por isso synchronized chega
     public synchronized int nextIdReserva() {
         this.lastIdReserva++; // auto incrementaçao
         return lastIdReserva;
@@ -108,7 +155,9 @@ public class BaseDados {
     }
     
     public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
-        // TODO add locks
+        // LOCK ALL SERVERS 
+        lockAllServers();
+        
         HashMap<String,ArrayList<Server>> lista = new HashMap<>();
         for(String tipo : this.servers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
@@ -121,12 +170,18 @@ public class BaseDados {
                 lista.put(tipo, aux);
             }
         }
+        // UNLOCK ALL SERVERS
+        unlockAllServers();
+        
         return lista;
     }
     
     // TODO? fazer outra funcao que so devolve o mais barato pra cada tipo
     public synchronized HashMap<String,ArrayList<Server>> getBidableServers(){
-        // TODO add locks
+        
+        // LOCK ALL SERVERS 
+        lockAllServers();
+        
         HashMap<String,ArrayList<Server>> lista = new HashMap<>();
         for(String tipo : this.servers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
@@ -140,9 +195,14 @@ public class BaseDados {
                 lista.put(tipo, aux);
             }
         }
+        // UNLOCK ALL SERVERS
+        unlockAllServers();
+        
         return lista;
     }
     
+    // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
+    // Rever para a questão dos leilões
     public synchronized void freeServer(int idReserva){
         
         for(ArrayList<Server> s : this.servers.values())
@@ -156,10 +216,17 @@ public class BaseDados {
         }
     }
     
+    // KIKO DEI LOCK AQUI TAMBÉM PORQUE ELE ESTAVA A VER SE OS SERVIDORES ESTÃO A SER USADOS (BETTER)
     public synchronized List<Server> getFreeServersByType(String type)
     {
+        lockAllServers();
         ArrayList<Server> se = this.servers.get(type);
-        return se.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
+        List<Server> aux;
+        
+        aux = se.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
+        
+        unlockAllServers();
+        return aux;
     }
     
 //    public synchronized void resetAllServersOfType(String type)
@@ -169,9 +236,7 @@ public class BaseDados {
 //            s.setIdReserva(0);
 //        });
 //    }
-    
-    
-    
+        
     // Users
     public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException
     {
