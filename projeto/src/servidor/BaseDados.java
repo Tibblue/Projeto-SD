@@ -120,14 +120,21 @@ public class BaseDados {
     
     public synchronized void freeServer(int idReserva){
         
+        for(ArrayList<Server> s : this.servers.values())
+        {
+            s.stream().filter((a) -> (a.getIdReserva() == idReserva)).map((a) -> {
+                a.setIdReserva(0);
+                return a;
+            }).forEach((a) -> {
+                a.setIsLeilao(false);
+            });
+        }
     }
-    
-    
     
     public synchronized List<Server> getFreeServersByType(String type)
     {
-        ArrayList<Server> servers = this.servers.get(type);
-        return servers.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
+        ArrayList<Server> se = this.servers.get(type);
+        return se.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
     }
     
 //    public synchronized void resetAllServersOfType(String type)
