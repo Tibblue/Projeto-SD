@@ -15,6 +15,8 @@ public class ClienteConnection{
     private Socket socket;
     private Thread writer;
     private Thread listener;
+    private PrintWriter out;
+    private BufferedReader in;
     
     public ClienteConnection(int port){
         this.PORT = port;
@@ -22,20 +24,20 @@ public class ClienteConnection{
     
     public User connect(String email, String password){
         try {
-            socket = new Socket("127.0.0.1", 1234);
+            this.socket = new Socket("127.0.0.1", 1234);
             // autenticao
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
-            out.println("LOGIN " + email + " " + password);
-            out.flush();
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String login = in.readLine();
+            this.out = new PrintWriter(socket.getOutputStream());
+            this.out.println("LOGIN " + email + " " + password);
+            this.out.flush();
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String login = this.in.readLine();
             System.out.println(login);
             if( login.equals("SUCCESS") ){
                 // conexao recebe a info do User mandada pelo servidor
-                String userString = in.readLine();
-                // TODO converter a string numa instancia de User
+                String userString = this.in.readLine();
+                // converte a string numa instancia de User
                 User user = new User(userString);
-               System.out.println(user.toStringUser());
+                System.out.println(user.toStringUser());
                 
                 System.out.println("[ClienteCon] Login OK");
                 this.writer = new Thread(new ClienteWriter(socket));
@@ -73,6 +75,25 @@ public class ClienteConnection{
         } catch (IOException e) {
             System.out.println("[ClienteCon] CloseConnection RIP!!!");
             System.out.println(e);
+        }
+    }
+    
+    // recebe String com pedido para o Servidor
+    // retorna a resposta do Servidor ao pedido
+    public String sendRequest(String request){
+        try{
+            this.out = new PrintWriter(socket.getOutputStream());
+            this.out.println(request);
+            this.out.flush();
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String response = this.in.readLine();
+            System.out.println(response);
+            return response;
+        }
+        catch(IOException e){
+            System.out.println("[ClienteCon] Socket RIP !!!");
+            System.out.println(e);
+            return "FAIL";
         }
     }
     
