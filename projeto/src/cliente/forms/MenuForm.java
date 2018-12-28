@@ -343,16 +343,18 @@ public class MenuForm extends javax.swing.JFrame {
 //            if(s.getPrice()==minPreco) servidor = s;
         
         //Efetuar o pedido ao servidor
-        String response = this.connection.sendRequest("BUY " + user.getEmail() + tipo);
-        if( !response.equals("FAIL") ){
+        // TODO ACABAR !!!!!
+        String response = this.connection.sendRequest("BUY " + user.getEmail() + " " + tipo);
+        String status = response.split(" ")[0];
+        if( status.equals("FAIL") ){
+            //Declarar erro ou falha do pedido
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/warning.png"));
+            JOptionPane.showMessageDialog(null, "Servidor não adicionado à sua lista!", "Erro", JOptionPane.INFORMATION_MESSAGE, icon);
+        }
+        else{
             //Declarar como utilizado & adicionar à lista de servers do cliente!
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
             JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
-        }
-        else{
-            //Declarar erro ou falha do pedido
-            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
-            JOptionPane.showMessageDialog(null, "Servidor não adicionado à sua lista!", "FAIL", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         
         MenuForm menu = new MenuForm(this.login,this.user,this.connection,this.db);

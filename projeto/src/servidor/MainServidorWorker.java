@@ -1,7 +1,9 @@
 package servidor;
 
+import cliente.User;
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 /**
  *
  * @author KIKO
@@ -49,10 +51,13 @@ public class MainServidorWorker extends Thread {
                     out.flush();
                     // Worker comeca a processar a conexao normalmente
                     System.out.println("[Worker] Login OK - Processando conexao");
-                    String msg;
-                    while ((msg = in.readLine()) != null && !msg.equals("LOGOUT")) {
-                        System.out.println("[Cliente] " + msg);
-                        out.println("ECHO "+msg);
+                    String request;
+                    String response;
+                    while ((request = in.readLine()) != null && !request.equals("LOGOUT")) {
+                        System.out.println("[Cliente] request> " + request);
+                        response = this.parse(request);
+                        System.out.println("[Cliente] response> " + response);
+                        out.println(response);
                         out.flush();
                     }
                     System.out.println("[Worker] Terminando conexao");
@@ -75,4 +80,46 @@ public class MainServidorWorker extends Thread {
         System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
     }
     
+    private String parse(String request){
+        String response = "";
+        
+        String[] loginSplit = request.split(" ");
+        String requestType = loginSplit[0];
+        String email = loginSplit[1];
+        switch(requestType){
+            case "BUY":
+                String tipo = loginSplit[2];
+                List<Server> free = bd.getFreeServersByType(tipo);
+                if(free.size()>0){
+                    Server server = free.get(0);
+                    server.lock();
+                    if(server.getUsed()){
+                        // servidor foi  alocado entretanto...
+                        // retorna falha no pedido
+                        response = "FAIL SERVER_UNAVAILABLE";
+                    }
+                    else{
+                        int idReserva = bd.nextIdReserva();
+                        // atualizar o server
+                        server.reserva(idReserva);
+                        // adicionar o server ao user
+                        User user = bd.getUser(email);
+                        user.addServer(server);
+                        bd.setUser(user);
+                        // response
+                        response = "SUCCESS ID " + idReserva;
+                    }
+                    server.unlock();
+                }
+                else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
+                break;
+            case "BID":
+                break;
+            case "INFO":
+                break;
+            default: response = "FAIL UNKNOWN_REQUEST";
+                break;
+        }
+        return response;
+    }
 }
