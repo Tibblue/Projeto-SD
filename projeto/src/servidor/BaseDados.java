@@ -14,12 +14,14 @@ import java.util.stream.Collectors;
  */
 public class BaseDados {
 //    private final ReentrantLock lockBD;
+    private int lastIdReserva;
     private final HashMap<String,User> users;
     private final HashMap<String,ArrayList<Server>> servers;
 //    private final HashMap<String,ArrayList<Server>> reservas;
     
     public BaseDados(){
 //        this.lockBD = new ReentrantLock();
+        this.lastIdReserva = 0;
         this.users = new HashMap<>();
         this.servers = new HashMap<>();
         
@@ -92,6 +94,12 @@ public class BaseDados {
     }
     
     
+    // unica funçao que vai tocar no nextIdReserva
+    // por isso synchronized chega
+    public synchronized int nextIdReserva() {
+        this.lastIdReserva++; // auto incrementaçao
+        return lastIdReserva;
+    }
     
     public synchronized void updateUserServer(String email, Server server){
         User user = this.users.get(email);
