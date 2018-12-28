@@ -336,8 +336,8 @@ public class MenuForm extends javax.swing.JFrame {
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
         int row = demandServersTable.getSelectedRow();
         String tipo = demandServersTable.getModel().getValueAt(row, 0).toString();
-        double minPreco = new Double(demandServersTable.getModel().getValueAt(row, 2).toString());
         
+//        double minPreco = new Double(demandServersTable.getModel().getValueAt(row, 2).toString());
 //        Server servidor;
 //        for(Server s : db.getAllServers().get(tipo))
 //            if(s.getPrice()==minPreco) servidor = s;

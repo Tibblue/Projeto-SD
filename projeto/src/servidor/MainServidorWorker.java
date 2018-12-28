@@ -13,6 +13,7 @@ public class MainServidorWorker extends Thread {
     private final InputStream fromClient;
     private final OutputStream toClient;
     private final BaseDados bd;
+    private String email;
     
     public MainServidorWorker(Socket cliente, BaseDados bd) throws IOException {
         this.clienteSocket = cliente;
@@ -27,32 +28,12 @@ public class MainServidorWorker extends Thread {
             try ( BufferedReader in = new BufferedReader(new InputStreamReader(this.fromClient));
                     PrintWriter out = new PrintWriter(this.toClient)) {
                 // receber a autenticaçao
-                String login = in.readLine();
-                System.out.println("[Worker] Tentativa de LOGIN => " + login);
-                String[] loginSplit = login.split(" ");
-                String tipo = loginSplit[0];
-                String email = loginSplit[1];
-                String password = loginSplit[2];
-                if( !tipo.equals("LOGIN") ){
-                    System.out.println("[Worker] Not Login - Terminando conexao");
-                }
-                else if( !bd.getAllUsers().containsKey(email) ){
-                    System.out.println("[Worker] User nao existe - Terminando conexao");
-                }
-                else if( !bd.getAllUsers().get(email).getPassword().equals(password) ){
-                    System.out.println("[Worker] Password errada - Terminando conexao");
-                }
-                else{
-                    // mensagem de confirmação do sucesso de autenticacao
-                    out.println("SUCCESS");
-                    out.flush();
-                    // mensagem com a info do User
-                    out.println(bd.getUser(email).toStringUserToSend());
-                    out.flush();
-                    // Worker comeca a processar a conexao normalmente
+                if( this.autenticacao(in, out) ){
+                    // Worker comeca a processar a conexao
                     System.out.println("[Worker] Login OK - Processando conexao");
                     String request;
                     String response;
+                    // Worker espera pedidos do cliente
                     while ((request = in.readLine()) != null && !request.equals("LOGOUT")) {
                         System.out.println("[Cliente] request> " + request);
                         response = this.parse(request);
@@ -63,8 +44,6 @@ public class MainServidorWorker extends Thread {
                     System.out.println("[Worker] Terminando conexao");
                     return;
                 }
-                out.println("FAIL");
-                out.flush();
                 clienteSocket.close();
                 return;
             }
@@ -78,6 +57,47 @@ public class MainServidorWorker extends Thread {
             System.out.println(e);
         }
         System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
+    }
+    
+    private boolean autenticacao(BufferedReader in, PrintWriter out){
+        try{
+            // Recebe o pedido de LOGIN
+            String login = in.readLine();
+            System.out.println("[Worker] Tentativa de LOGIN => " + login);
+            String[] loginSplit = login.split(" ");
+            String tipo = loginSplit[0];
+            String email = loginSplit[1];
+            String password = loginSplit[2];
+            // Verifica se tudo está correto
+            if( !tipo.equals("LOGIN") ){
+                System.out.println("[Worker] Not Login - Terminando conexao");
+            }
+            else if( !bd.getAllUsers().containsKey(email) ){
+                System.out.println("[Worker] User nao existe - Terminando conexao");
+            }
+            else if( !bd.getAllUsers().get(email).getPassword().equals(password) ){
+                System.out.println("[Worker] Password errada - Terminando conexao");
+            }
+            else { //SUCESSO
+                // mensagem de confirmação do sucesso de autenticacao
+                out.println("SUCCESS");
+                out.flush();
+                // mensagem com a info do User
+                out.println(bd.getUser(email).toStringUserToSend());
+                out.flush();
+                // guarda o email do user
+                this.email = email;
+                return true;
+            }
+            out.println("FAIL");
+            out.flush();
+            return false;
+        }
+        catch(IOException e){
+            System.out.println("[Worker] IO ardeu !!!");
+            System.out.println(e);
+            return false;
+        }
     }
     
     private String parse(String request){
