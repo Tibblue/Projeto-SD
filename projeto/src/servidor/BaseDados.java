@@ -63,24 +63,41 @@ public class BaseDados {
 //    }
     
     // GETTERS
-    public synchronized User getUser(String email){
-        // TODO add locks
-        return this.users.get(email);
-    }
     public synchronized HashMap<String,User> getAllUsers(){
-        // TODO add locks
         return this.users;
-    }
-    
-    public synchronized ArrayList<Server> getServersByType(String type){
-        // TODO add locks
-        return this.servers.get(type);
     }
     public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
         // TODO add locks
         return this.servers;
     }
+    public synchronized User getUser(String email){
+        // TODO add locks
+        return this.users.get(email);
+    }
+    public synchronized ArrayList<Server> getServersByType(String type){
+        // TODO add locks
+        return this.servers.get(type);
+    }
     
+    //SETTERS
+    public synchronized void setUser(User user){
+        // TODO add locks
+        this.users.put(user.getEmail(),user);
+    }
+    public synchronized void setServersByType(Server server){
+        // TODO add locks
+        ArrayList<Server> list = this.servers.get(server.getTipo());
+        list.add(server);
+        this.servers.put(server.getTipo(),list);
+    }
+    
+    
+    
+    public synchronized void updateUserServer(String email, Server server){
+        User user = this.users.get(email);
+        user.addServer(server);
+        this.users.put(email, user);
+    }
     
     public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
         // TODO add locks
