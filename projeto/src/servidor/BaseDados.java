@@ -170,24 +170,23 @@ public class BaseDados {
     public synchronized void coverBid(int idReserva, double bid)
     {
         lockAllServers();
-        Server a = new Server();
+
         for(ArrayList<Server> sv : this.servers.values())
         {
             for(Server s : sv)
             {
                 if(s.getIdReserva() == idReserva)
                 {
-                    a = s;
+                    if(s.getLastBid() < bid)
+                    {
+                        s.setNewBid(bid);
+                        s.setIsLeilao(true);
+                        s.setIdReserva(nextIdReserva());
+                    }
                 }
             }
         }
-
-        if(a.getLastBid() < bid)
-        {
-            a.setNewBid(bid);
-            a.setIsLeilao(true);
-            a.setIdReserva(nextIdReserva());
-        }
+        
         unlockAllServers();
     }
         
