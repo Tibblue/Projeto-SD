@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import servidor.Server;
 
 /**
  *
@@ -25,7 +28,7 @@ public class ClienteConnection{
         this.user = null;
     }
     
-    public User connect(String email, String password){
+    public String connect(String email, String password){
         try {
             this.socket = new Socket("127.0.0.1", 1234);
             // autenticao
@@ -42,22 +45,12 @@ public class ClienteConnection{
 //                User user = new User(userString);
 //                System.out.println(user.toStringUser());
                 
-                // conexao recebe o User mandado pelo servidor (versao Object)
-                ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
-                try{
-                    this.user = (User)fromServer.readObject();
-                }
-                catch (ClassNotFoundException e){
-                    System.out.println("[ClienteCon] User class missing...");
-                    return null;
-                }
-                System.out.println(user.toStringUser());
                 System.out.println("[ClienteCon] Login OK");
 //                this.writer = new Thread(new ClienteWriter(socket));
 //                this.listener = new Thread(new ClienteListener(socket));
 //                this.writer.start();
 //                this.listener.start();
-                return user;
+                return "SUCCESS";
 //                try {
 //                    this.writer.join();
 //                    this.listener.join();
@@ -69,13 +62,13 @@ public class ClienteConnection{
             else{
                 System.out.println("[ClienteCon] Email/Password incorretos!!!");
                 this.socket.close();
-                return null;
+                return "FAIL";
             }
         }
         catch (IOException e) {
             System.out.println("[ClienteCon] Socket RIP !!!");
             System.out.println(e);
-            return null;
+            return "FAIL";
         }
     }
     
@@ -95,8 +88,6 @@ public class ClienteConnection{
     // retorna a resposta do Servidor ao pedido
     public String sendRequest(String request){
         try{
-//            ClienteWriter writer = new ClienteWriter(socket);
-            
             this.out = new PrintWriter(socket.getOutputStream());
             this.out.println(request);
             this.out.flush();
@@ -106,10 +97,31 @@ public class ClienteConnection{
             return response;
         }
         catch(IOException e){
-            System.out.println("[ClienteCon] Send request RIP !!!");
+            System.out.println("[ClienteCon] Send> Request RIP !!!");
             System.out.println(e);
             return "FAIL";
         }
+    }
+    
+    // Recebe Object User do Servidor
+    public User receiveUser(){
+        try{
+            // conexao recebe o User mandado pelo servidor (versao Object)
+            ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
+            try{
+                this.user = (User)fromServer.readObject();
+                System.out.println(user.toStringUser());
+            }
+            catch (ClassNotFoundException e){
+                System.out.println("[ClienteCon] User class missing...");
+            }
+//            fromServer.close();
+        }
+        catch (IOException e) {
+            System.out.println("[ClienteCon] Receive> User RIP !!!");
+            System.out.println(e);
+        }
+        return this.user;
     }
     
 }

@@ -85,11 +85,8 @@ public class MainServidorWorker extends Thread {
 //                // mensagem com a info do User
 //                out.println(bd.getUser(email).toStringUserToSend());
 //                out.flush();
-                // mensagem com a info do User (versao Object)
-                ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-                outToClient.writeObject(bd.getUser(email));
-//                outToClient.flush();
-//                outToClient.close();
+
+                this.sendUser(toClient);
                 return true;
             }
             out.println("FAIL");
@@ -146,17 +143,12 @@ public class MainServidorWorker extends Thread {
         return response;
     }
     
-    private void sendUser(InputStream fromClient, OutputStream toClient){
+    private void sendUser(OutputStream toClient){
         try{
             ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-//            ObjectInputStream inFromClient = new ObjectInputStream(fromClient);
-            
-            // Create User object
-            User user = bd.getUser(email);
             // Send the User object 
-            outToClient.writeObject(user);   
-            // Close stream
-            outToClient.close();
+            outToClient.writeObject(bd.getUser(email));   
+//            outToClient.close();
         }
         catch(IOException e){
             System.out.println("[Worker] ERRO no envio do USER !!!");
