@@ -5,6 +5,8 @@ import cliente.User;
 import servidor.BaseDados;
 import java.awt.Color;
 import java.io.IOException;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -172,8 +174,8 @@ public class LoginForm extends javax.swing.JFrame {
             this.setVisible(false);
         }
         else{
-            // TODO bito 
-            // caixa de aviso de erro?
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/forbidden.png"));
+            JOptionPane.showMessageDialog(null, "LOGIN FAIL", "Erro", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         this.passwordField.setText("");
     }//GEN-LAST:event_loginButtonActionPerformed

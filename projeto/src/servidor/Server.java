@@ -1,12 +1,13 @@
 package servidor;
 
+import java.io.Serializable;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
  * @author KIKO
  */
-public class Server {
+public class Server implements Serializable {
     private final ReentrantLock lockServer;
     private final String nome;
     private final String tipo;

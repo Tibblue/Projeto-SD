@@ -1,5 +1,6 @@
 package cliente;
 
+import java.io.Serializable;
 import servidor.Server;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
@@ -8,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author KIKO
  */
-public class User {
+public class User implements Serializable {
     private final ReentrantLock lockUser;
     private final String email;
     private final String password;
