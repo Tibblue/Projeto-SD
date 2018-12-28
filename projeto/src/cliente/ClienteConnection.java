@@ -40,10 +40,10 @@ public class ClienteConnection{
                 System.out.println(user.toStringUser());
                 
                 System.out.println("[ClienteCon] Login OK");
-                this.writer = new Thread(new ClienteWriter(socket));
-                this.listener = new Thread(new ClienteListener(socket));
-                this.writer.start();
-                this.listener.start();
+//                this.writer = new Thread(new ClienteWriter(socket));
+//                this.listener = new Thread(new ClienteListener(socket));
+//                this.writer.start();
+//                this.listener.start();
                 return user;
 //                try {
 //                    this.writer.join();
@@ -68,8 +68,8 @@ public class ClienteConnection{
     
     public void closeConnection(){
         try {
-            this.writer.stop();
-            this.listener.stop();
+//            this.writer.stop();
+//            this.listener.stop();
             this.socket.close();
             System.out.println("[ClienteCon] Ligação terminada com sucesso!!!");
         } catch (IOException e) {
@@ -82,6 +82,8 @@ public class ClienteConnection{
     // retorna a resposta do Servidor ao pedido
     public String sendRequest(String request){
         try{
+//            ClienteWriter writer = new ClienteWriter(socket);
+            
             this.out = new PrintWriter(socket.getOutputStream());
             this.out.println(request);
             this.out.flush();

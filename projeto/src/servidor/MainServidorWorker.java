@@ -40,6 +40,7 @@ public class MainServidorWorker extends Thread {
                         System.out.println("[Cliente] response> " + response);
                         out.println(response);
                         out.flush();
+                        System.out.println(bd.getUser(email).toStringUser());
                     }
                     System.out.println("[Worker] Terminando conexao");
                     return;
