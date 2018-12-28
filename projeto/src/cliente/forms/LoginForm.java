@@ -4,6 +4,7 @@ import cliente.ClienteConnection;
 import cliente.User;
 import servidor.BaseDados;
 import java.awt.Color;
+import java.io.IOException;
 
 /**
  *
@@ -162,16 +163,17 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_passwordFieldMouseClicked
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        // KIKO did this
         this.connection = new ClienteConnection(1234);
-        // TODO mudar return da connect de bool pra User
         User user = this.connection.connect(this.emailField.getText(),this.passwordField.getText());
         if( user!=null ){
-            // sucesso, podes continuar para o menu agora
-//            User userTemp = this.bd.getUser(this.emailField.getText()); // temporary
+            // sucesso, segue para o menu agora
             MenuForm menu = new MenuForm(this,user,this.connection,this.bd);
             menu.setVisible(true);
             this.setVisible(false);
+        }
+        else{
+            // TODO bito 
+            // caixa de aviso de erro?
         }
         this.passwordField.setText("");
     }//GEN-LAST:event_loginButtonActionPerformed

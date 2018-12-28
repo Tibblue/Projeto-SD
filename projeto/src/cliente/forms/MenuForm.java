@@ -334,17 +334,26 @@ public class MenuForm extends javax.swing.JFrame {
     }//GEN-LAST:event_bidButtonActionPerformed
 
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
-        int row = bidServersTable.getSelectedRow();
-        String tipo = bidServersTable.getModel().getValueAt(row, 0).toString();
-        double minPreco = new Double(bidServersTable.getModel().getValueAt(row, 2).toString());
-        Server servidor = new Server();
+        int row = demandServersTable.getSelectedRow();
+        String tipo = demandServersTable.getModel().getValueAt(row, 0).toString();
+        double minPreco = new Double(demandServersTable.getModel().getValueAt(row, 2).toString());
         
-        for(Server s : db.getAllServers().get(tipo))
-            if(s.getPrice()==minPreco) servidor = s;
+//        Server servidor;
+//        for(Server s : db.getAllServers().get(tipo))
+//            if(s.getPrice()==minPreco) servidor = s;
         
-        //Declarar como utilizado & adicionar à lista de servers do cliente!
-        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
-        JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
+        //Efetuar o pedido ao servidor
+        String response = this.connection.sendRequest("BUY " + user.getEmail() + tipo);
+        if( !response.equals("FAIL") ){
+            //Declarar como utilizado & adicionar à lista de servers do cliente!
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
+            JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
+        }
+        else{
+            //Declarar erro ou falha do pedido
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
+            JOptionPane.showMessageDialog(null, "Servidor não adicionado à sua lista!", "FAIL", JOptionPane.INFORMATION_MESSAGE, icon);
+        }
         
         MenuForm menu = new MenuForm(this.login,this.user,this.connection,this.db);
         menu.setVisible(true);
