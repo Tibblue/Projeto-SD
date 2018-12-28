@@ -3,6 +3,7 @@ package cliente;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -17,9 +18,11 @@ public class ClienteConnection{
     private Thread listener;
     private PrintWriter out;
     private BufferedReader in;
+    private User user;
     
     public ClienteConnection(int port){
         this.PORT = port;
+        this.user = null;
     }
     
     public User connect(String email, String password){
@@ -33,12 +36,22 @@ public class ClienteConnection{
             String login = this.in.readLine();
             System.out.println(login);
             if( login.equals("SUCCESS") ){
-                // conexao recebe a info do User mandada pelo servidor
-                String userString = this.in.readLine();
-                // converte a string numa instancia de User
-                User user = new User(userString);
-                System.out.println(user.toStringUser());
+//                // conexao recebe a info do User mandada pelo servidor
+//                String userString = this.in.readLine();
+//                // converte a string numa instancia de User
+//                User user = new User(userString);
+//                System.out.println(user.toStringUser());
                 
+                // conexao recebe o User mandado pelo servidor (versao Object)
+                ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
+                try{
+                    this.user = (User)fromServer.readObject();
+                }
+                catch (ClassNotFoundException e){
+                    System.out.println("[ClienteCon] User class missing...");
+                    return null;
+                }
+                System.out.println(user.toStringUser());
                 System.out.println("[ClienteCon] Login OK");
 //                this.writer = new Thread(new ClienteWriter(socket));
 //                this.listener = new Thread(new ClienteListener(socket));
@@ -93,7 +106,7 @@ public class ClienteConnection{
             return response;
         }
         catch(IOException e){
-            System.out.println("[ClienteCon] Socket RIP !!!");
+            System.out.println("[ClienteCon] Send request RIP !!!");
             System.out.println(e);
             return "FAIL";
         }

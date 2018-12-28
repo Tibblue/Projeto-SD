@@ -77,14 +77,19 @@ public class MainServidorWorker extends Thread {
                 System.out.println("[Worker] Password errada - Terminando conexao");
             }
             else { //SUCESSO
+                // guarda o email do user
+                this.email = email;
                 // mensagem de confirmação do sucesso de autenticacao
                 out.println("SUCCESS");
                 out.flush();
-                // mensagem com a info do User
-                out.println(bd.getUser(email).toStringUserToSend());
-                out.flush();
-                // guarda o email do user
-                this.email = email;
+//                // mensagem com a info do User
+//                out.println(bd.getUser(email).toStringUserToSend());
+//                out.flush();
+                // mensagem com a info do User (versao Object)
+                ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
+                outToClient.writeObject(bd.getUser(email));
+//                outToClient.flush();
+//                outToClient.close();
                 return true;
             }
             out.println("FAIL");
@@ -140,4 +145,27 @@ public class MainServidorWorker extends Thread {
         }
         return response;
     }
+    
+    private void sendUser(InputStream fromClient, OutputStream toClient){
+        try{
+            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
+//            ObjectInputStream inFromClient = new ObjectInputStream(fromClient);
+            
+            // Create User object
+            User user = bd.getUser(email);
+            // Send the User object 
+            outToClient.writeObject(user);   
+            // Close stream
+            outToClient.close();
+        }
+        catch(IOException e){
+            System.out.println("[Worker] ERRO no envio do USER !!!");
+            System.out.println(e);
+        }
+    }
+    
+    private void sendServers(){
+        
+    }
+    
 }
