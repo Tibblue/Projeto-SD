@@ -142,7 +142,7 @@ public class MainServidorWorker extends Thread {
                 else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
                 break;
             case "BID": // pedido de licitacao de um Server
-                
+                // TODO FASTTTT
                 break;
             case "REM": // pedido de libertação de um Server do User
                 int id = Integer.parseInt(loginSplit[2]);
@@ -162,6 +162,7 @@ public class MainServidorWorker extends Thread {
         return response;
     }
     
+    // Envia Object User para o Client
     private void sendUser(){
         try{
             ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
@@ -174,7 +175,7 @@ public class MainServidorWorker extends Thread {
             System.out.println(e);
         }
     }
-    
+    // Envia HashMap de Servers para o Client
     private void sendServers(){
         try{
             ObjectOutputStream outToClient = new ObjectOutputStream(toClient);

@@ -164,7 +164,7 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_passwordFieldMouseClicked
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        this.connection = new ClienteConnection(1234);
+        this.connection = new ClienteConnection();
         String status = this.connection.connect(this.emailField.getText(),this.passwordField.getText());
         if( status.equals("SUCCESS") ){
             User user = this.connection.receiveUser();

@@ -36,31 +36,6 @@ public class User implements Serializable {
         this.servidoresAlocados = u.getServidoresAlocados();
     }
     
-    /**
-     * Instancia User apartir de uma String com ta a informaçao do User
-     * @param user
-     */
-    public User(String user){
-        String[] userSplit = user.split(" ");
-        String mail = userSplit[1];
-        String pass = userSplit[2];
-        ArrayList<Server> servers = new ArrayList<>();
-        for(int i=3; i<userSplit.length; i++){
-            String tipo = userSplit[i];
-            String nome = userSplit[i+1];
-            double price = Double.parseDouble(userSplit[i+2]);
-            int reserva = Integer.parseInt(userSplit[i+3]);
-            double lastBid = Double.parseDouble(userSplit[i+4]);
-            boolean isLeilao = Boolean.parseBoolean(userSplit[i+5]);
-            Server server = new Server(nome,tipo,price,reserva,lastBid,isLeilao);
-            servers.add(server);
-        }
-        this.lockUser = new ReentrantLock();
-        this.email = mail;
-        this.password = pass;
-        this.servidoresAlocados = servers;
-    }
-    
     // LOCKS
     public void lock() {
         this.lockUser.lock();
