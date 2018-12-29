@@ -15,17 +15,13 @@ import servidor.Server;
  * @author KIKO
  */
 public class ClienteConnection{
-    private final int PORT;
     private Socket socket;
-//    private Thread writer;
-//    private Thread listener;
     private PrintWriter out;
     private BufferedReader in;
     private User user;
     private HashMap<String,ArrayList<Server>> bdServers;
     
-    public ClienteConnection(int port){
-        this.PORT = port;
+    public ClienteConnection(){
         this.user = null;
     }
     
@@ -41,18 +37,7 @@ public class ClienteConnection{
             System.out.println(login);
             if( login.equals("SUCCESS") ){
                 System.out.println("[ClienteCon] Login OK");
-//                this.writer = new Thread(new ClienteWriter(socket));
-//                this.listener = new Thread(new ClienteListener(socket));
-//                this.writer.start();
-//                this.listener.start();
                 return "SUCCESS";
-//                try {
-//                    this.writer.join();
-//                    this.listener.join();
-//                } catch (InterruptedException e) {
-//                    System.out.println("[ClienteCon] Execução interrompida!!!");
-//                    System.out.println(e);
-//                }
             }
             else{
                 System.out.println("[ClienteCon] Email/Password incorretos!!!");
@@ -69,8 +54,6 @@ public class ClienteConnection{
     
     public void closeConnection(){
         try {
-//            this.writer.stop();
-//            this.listener.stop();
             this.socket.close();
             System.out.println("[ClienteCon] Ligação terminada com sucesso!!!");
         } catch (IOException e) {
@@ -79,8 +62,11 @@ public class ClienteConnection{
         }
     }
     
-    // recebe String com pedido para o Servidor
-    // retorna a resposta do Servidor ao pedido
+    /**
+     * Envia um pedido ao Servidor e recebe o SUCESSO/FAIL do pedido
+     * @param request String with the request for the server
+     * @return String with the result of the request
+     */
     public String sendRequest(String request){
         try{
             this.out = new PrintWriter(socket.getOutputStream());
@@ -118,7 +104,6 @@ public class ClienteConnection{
         }
         return this.user;
     }
-    
     // Recebe HashMap de Servers do Servidor
     public HashMap<String,ArrayList<Server>> receiveServers(){
         try{
