@@ -8,6 +8,7 @@ import servidor.Server;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,9 +21,10 @@ public class MenuForm extends javax.swing.JFrame {
     private final ClienteConnection connection;
     private User user;
     private HashMap<String,ArrayList<Server>> bdServers;
-    DefaultTableModel modelDemand;
-    DefaultTableModel modelBid;
-    DefaultTableModel modelMy;
+    
+    private DefaultTableModel modelDemand;
+    private DefaultTableModel modelBid;
+    private DefaultTableModel modelMy;
 
     /**
      * Creates new form MenuForm
@@ -89,6 +91,8 @@ public class MenuForm extends javax.swing.JFrame {
             i++;
         }
         modelMy = new DefaultTableModel(data,colunas);
+        
+        myServersTable = new JTable(modelMy);
     }
 
     private void adjustColumnSizes(){
@@ -126,7 +130,7 @@ public class MenuForm extends javax.swing.JFrame {
         myServersPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         myServersTable = new javax.swing.JTable();
-        bidButton1 = new javax.swing.JButton();
+        removeServerButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
 
@@ -217,13 +221,8 @@ public class MenuForm extends javax.swing.JFrame {
         myServersTable.setModel(this.modelMy);
         jScrollPane3.setViewportView(myServersTable);
 
-        bidButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        bidButton1.setText("REMOVE SERVER");
-        bidButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bidButton1ActionPerformed(evt);
-            }
-        });
+        removeServerButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        removeServerButton.setText("REMOVE SERVER");
 
         javax.swing.GroupLayout myServersPanelLayout = new javax.swing.GroupLayout(myServersPanel);
         myServersPanel.setLayout(myServersPanelLayout);
@@ -235,7 +234,7 @@ public class MenuForm extends javax.swing.JFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, myServersPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(removeServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         myServersPanelLayout.setVerticalGroup(
@@ -244,7 +243,7 @@ public class MenuForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(removeServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -338,14 +337,6 @@ public class MenuForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Servidor não adicionado à sua lista!", "Erro", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         else{
-            // refresh Tables?
-            this.modelDemand.fireTableDataChanged();
-            this.modelBid.fireTableDataChanged();
-            this.modelMy.fireTableDataChanged();
-//            this.fillDemandTable();
-//            this.fillBidTable();
-//            this.fillMyServersTable();
-
             //Declarar como utilizado & adicionar à lista de servers do cliente!
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
             JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
@@ -366,12 +357,24 @@ public class MenuForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_logoutButtonActionPerformed
 
-    private void bidButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bidButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_bidButton1ActionPerformed
-
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
+        // request refresh User and Servers list
+        this.connection.sendRequest("GET_USER " + this.user.getEmail());
+        this.user = this.connection.receiveUser();
+        this.connection.sendRequest("GET_SERVERS " + this.user.getEmail());
+        this.bdServers = this.connection.receiveServers();
+        // refresh Tables
+//        this.modelDemand.setRowCount(0);
+//        this.modelBid.setRowCount(0);
+//        this.modelMy.setRowCount(0);
+        this.fillDemandTable();
+        this.fillBidTable();
+        this.fillMyServersTable();
+        this.demandServersTable.repaint();
+        this.bidServersTable.repaint();
+        this.myServersTable.repaint();
+        
+
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     /**
@@ -393,7 +396,6 @@ public class MenuForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bidButton;
-    private javax.swing.JButton bidButton1;
     private javax.swing.JPanel bidPanel;
     private javax.swing.JTable bidServersTable;
     private javax.swing.JSpinner bidSpinner;
@@ -408,5 +410,6 @@ public class MenuForm extends javax.swing.JFrame {
     private javax.swing.JPanel myServersPanel;
     private javax.swing.JTable myServersTable;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JButton removeServerButton;
     // End of variables declaration//GEN-END:variables
 }

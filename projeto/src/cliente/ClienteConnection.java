@@ -17,8 +17,8 @@ import servidor.Server;
 public class ClienteConnection{
     private final int PORT;
     private Socket socket;
-    private Thread writer;
-    private Thread listener;
+//    private Thread writer;
+//    private Thread listener;
     private PrintWriter out;
     private BufferedReader in;
     private User user;

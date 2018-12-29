@@ -132,8 +132,14 @@ public class MainServidorWorker extends Thread {
                 else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
                 break;
             case "BID":
+                
+                
                 break;
-            case "INFO":
+            case "GET_USER": 
+                this.sendUser();
+                break;
+            case "GET_SERVERS":
+                this.sendServers();
                 break;
             default: response = "FAIL UNKNOWN_REQUEST";
                 break;

@@ -89,13 +89,7 @@ public class BaseDados {
             u.unlock();
         });
     }
-    /*   
-        public void lock() {
-          this.lockBD.lock();
-         }
-        public void unlock() {
-         this.lockBD.unlock();
-   */
+    
     ////////////////////////////////////////////////////////////////////////////
 
     // GETTERS
@@ -132,11 +126,9 @@ public class BaseDados {
     }
     public synchronized void setServersByType(Server server){
         lockAllServers();
-        
         ArrayList<Server> list = this.servers.get(server.getTipo());
         list.add(server);
         this.servers.put(server.getTipo(),list);
-        
         unlockAllServers();
     }
     
