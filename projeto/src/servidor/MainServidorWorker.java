@@ -145,7 +145,8 @@ public class MainServidorWorker extends Thread {
                 
                 break;
             case "REM": // pedido de libertação de um Server do User
-                this.bd
+                int id = Integer.parseInt(loginSplit[2]);
+                this.bd.freeServer(email,id);
                 break;
             case "GET_USER": // pedido do User Object
                 this.sendUser();

@@ -217,15 +217,20 @@ public class BaseDados {
     
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
-    public synchronized void freeServer(int idReserva){
-        
-        for(ArrayList<Server> s : this.servers.values())
-        {
+    public synchronized void freeServer(String email, int idReserva){
+        // remover do User
+        for(Server s : this.users.get(email).getServidoresAlocados()){
+            if( idReserva==s.getIdReserva() ){
+                s.setIdReserva(0);
+                s.setIsLeilao(false);
+            }
+        }
+        // atualizar na lista de Servers
+        for(ArrayList<Server> s : this.servers.values()){
             s.stream().filter((a) -> (a.getIdReserva() == idReserva)).map((a) -> {
                 a.setIdReserva(0);
-                return a;
-            }).forEach((a) -> {
                 a.setIsLeilao(false);
+                return a;
             });
         }
     }
