@@ -223,6 +223,11 @@ public class MenuForm extends javax.swing.JFrame {
 
         removeServerButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         removeServerButton.setText("REMOVE SERVER");
+        removeServerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeServerButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout myServersPanelLayout = new javax.swing.GroupLayout(myServersPanel);
         myServersPanel.setLayout(myServersPanelLayout);
@@ -376,6 +381,25 @@ public class MenuForm extends javax.swing.JFrame {
         
 
     }//GEN-LAST:event_refreshButtonActionPerformed
+
+    private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeServerButtonActionPerformed
+        int row = myServersTable.getSelectedRow();
+        String idReserva = myServersTable.getModel().getValueAt(row, 0).toString();
+        
+        //Efetuar o pedido ao servidor
+        String response = this.connection.sendRequest("REM " + user.getEmail() + " " + idReserva);
+        String status = response.split(" ")[0];
+        if( status.equals("SUCCESS") ){
+            //Declarar como utilizado & adicionar à lista de servers do cliente!
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
+            JOptionPane.showMessageDialog(null, "Servidor removido da sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
+        }
+        else{
+            //Declarar erro ou falha do pedido
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/warning.png"));
+            JOptionPane.showMessageDialog(null, "Servidor não removido da sua lista!", "Erro", JOptionPane.INFORMATION_MESSAGE, icon);
+        }
+    }//GEN-LAST:event_removeServerButtonActionPerformed
 
     /**
      * @param args the command line arguments

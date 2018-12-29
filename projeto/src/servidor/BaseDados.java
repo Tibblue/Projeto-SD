@@ -219,12 +219,12 @@ public class BaseDados {
     // Rever para a questão dos leilões
     public synchronized void freeServer(String email, int idReserva){
         // remover do User
-        for(Server s : this.users.get(email).getServidoresAlocados()){
-            if( idReserva==s.getIdReserva() ){
-                s.setIdReserva(0);
-                s.setIsLeilao(false);
-            }
-        }
+        // atm esta a estourar com nullpointerException
+//        for(Server s : this.users.get(email).getServidoresAlocados()){
+//            if( idReserva==s.getIdReserva() ){
+//                this.users.get(email).removeServer(s);
+//            }
+//        }
         // atualizar na lista de Servers
         for(ArrayList<Server> s : this.servers.values()){
             s.stream().filter((a) -> (a.getIdReserva() == idReserva)).map((a) -> {
