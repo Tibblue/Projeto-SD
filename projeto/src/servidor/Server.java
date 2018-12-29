@@ -67,8 +67,7 @@ public class Server implements Serializable {
     }
     
     // GETS
-    public ReentrantLock getLock()
-    {
+    public ReentrantLock getLock(){
         return this.lockServer;
     }
     
@@ -108,9 +107,8 @@ public class Server implements Serializable {
         boolean ret = false;
         lock();
         id = this.idReserva;
-        if(id!=0) ret = true;
-        
         unlock();
+        if(id!=0) ret = true;
         return ret;
         
     }
@@ -127,14 +125,10 @@ public class Server implements Serializable {
         this.idReserva = idReserva;
         unlock();
     }
-    public boolean setNewBid(double valor){
-        if(valor>this.lastBid){
-            this.lockServer.lock();
-            this.lastBid=valor;
-            this.lockServer.unlock();
-            return true;
-        }
-        return false;
+    public synchronized void setNewBid(double valor){
+        lock();
+        this.lastBid=valor;
+        unlock();
     }
     
     
@@ -159,8 +153,7 @@ public class Server implements Serializable {
         unlock();
     }
     
-    public Server clone()
-    {
+    public Server clone(){
         return new Server(this);
     }
 

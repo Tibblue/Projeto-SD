@@ -70,11 +70,6 @@ public class User implements Serializable {
     }
     
     // GETTERS
-    public ReentrantLock getLock()
-    {
-        return this.lockUser;
-    }
-    
     public String getEmail() {
         return this.email;
     }
@@ -84,22 +79,20 @@ public class User implements Serializable {
     public double getDebt() {
         double debt1;
         lock();
-        try {
-            debt1 = this.debt;
-        } finally {
-            unlock();
-        }
+        debt1 = this.debt;
+        unlock();
         return debt1;
     }
     public ArrayList<Server> getServidoresAlocados() {
+        ArrayList<Server> servidoresA;
         lock();
-        ArrayList<Server> servidoresA = new ArrayList<>();
-        try {    
-            servidoresA = this.servidoresAlocados;
-        } finally {
-            unlock();
-        }
+        servidoresA = this.servidoresAlocados;
+        unlock();
         return servidoresA;
+    }
+    
+    public ReentrantLock getLock(){
+        return this.lockUser;
     }
 
     // SETTERS
@@ -112,24 +105,13 @@ public class User implements Serializable {
     
     public void addServer(Server server){
         lock();
-        try {
-            this.servidoresAlocados.add(server);
-        } finally {
-            unlock();
-        }
+        this.servidoresAlocados.add(server);
+        unlock();
     }
     public void removeServer(Server server){
         lock();
-        System.out.println("DEBUG: Reached removeServer, CLASS: User.java, LINE: 124");
-        System.out.println("DEBUG: servAlocados initial size: " + this.servidoresAlocados.size());
-        try {
-            System.out.println("DEBUG: Before remove, CLASS: User.java, LINE: 126");
-            this.servidoresAlocados.remove(server);
-            System.out.println("DEBUG: After remove, CLASS: User.java, LINE: 128");
-            System.out.println("DEBUG: servAlocados final size: " + this.servidoresAlocados.size());
-        } finally {
-            unlock();
-        }
+        this.servidoresAlocados.remove(server);
+        unlock();
     }
     
     public double getTotalPrice(){
@@ -146,8 +128,7 @@ public class User implements Serializable {
         return user.toString();
     }
     
-    public User clone()
-    {
+    public User clone(){
         return new User(this);
     }
     

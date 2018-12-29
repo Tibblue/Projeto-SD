@@ -218,42 +218,39 @@ public class BaseDados {
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
     public synchronized void freeServer(String email, int idReserva){
-
         // atm esta a estourar com nullpointerException
         lockAllUsers();
-      
-        if(this.users.containsKey(email))
-        {
+        Server aux=null;
+        if(this.users.containsKey(email)){
             ArrayList<Server> servidores = this.users.get(email).getServidoresAlocados();
-            for(Server s : servidores)
-            {
-                if(s.getIdReserva() == idReserva)
-                {
-                    this.users.get(email).removeServer(s);
+            for(Server s : servidores){
+                if(s.getIdReserva() == idReserva){
+                    System.out.println("Reserva Removida");
+//                    this.users.get(email).removeServer(s);
+                    aux=s;
                     System.out.println("Reserva Removida");
                 }
                 else
-                {
                     System.out.println("No reservation found with ID: " + idReserva);
-                } 
             }
+            if(aux!=null)
+                this.users.get(email).removeServer(aux);
         }
         else
-        {
             System.out.println("User doesnt exist");
-        }
+        
         unlockAllUsers();
         
         // atualizar na lista de Servers
         this.lockAllServers();
-        for(ArrayList<Server> s : this.servers.values()){
-            s.stream().filter((a) -> (a.getIdReserva() == idReserva)).map((a) -> {
-                a.setIdReserva(0);
-                a.setIsLeilao(false);
-                return a;
-            });
+        for(String key : this.servers.keySet()){
+            for(Server server : this.servers.get(key)){
+                if(server.getIdReserva()==idReserva){
+                    server.setIdReserva(0);
+                    server.setIsLeilao(false);
+                }
+            }
         }
-       // this.unlockAllUsers();
         this.unlockAllServers();
     }
     
