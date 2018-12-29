@@ -46,6 +46,17 @@ public class Server implements Serializable {
         this.lastBid = lastBid;
         this.isLeilao = isLeilao;
     }
+    
+    public Server(Server s)
+    {
+        this.lockServer = s.getLock();
+        this.nome = s.getNome();
+        this.tipo = s.getTipo();
+        this.price = s.getPrice();
+        this.idReserva = s.getIdReserva();
+        this.lastBid = s.getLastBid();
+        this.isLeilao = s.getIsLeilao();
+    }
 
     // LOCKS
     public void lock() {
@@ -56,6 +67,11 @@ public class Server implements Serializable {
     }
     
     // GETS
+    public ReentrantLock getLock()
+    {
+        return this.lockServer;
+    }
+    
     public String getNome() {
         return this.nome;
     }
@@ -67,47 +83,49 @@ public class Server implements Serializable {
     }
     public double getLastBid(){
         double lastBid1;
-        this.lockServer.lock();
+        lock();
         lastBid1 = this.lastBid;
-        this.lockServer.unlock();
+        unlock();
         return lastBid1;
     }
     public boolean getIsLeilao() {
         boolean leilao;
-        this.lockServer.lock();
+        lock();
         leilao = this.isLeilao;
-        this.lockServer.unlock();
+        unlock();
         return leilao;
     }
     public int getIdReserva() {
         int reserva;
-        this.lockServer.lock();
+        lock();
         reserva = this.idReserva;
-        this.lockServer.unlock();
+        unlock();
         return reserva;
     }
     // pelo id de id sabemos se estamos a usar o server ou nao
     public boolean getUsed() {
         int id;
-        this.lockServer.lock();
+        boolean ret = false;
+        lock();
         id = this.idReserva;
-        this.lockServer.unlock();
+        if(id!=0) ret = true;
         
-        if(id==0) return false;
-        else return true;
+        unlock();
+        return ret;
+        
     }
     // TODO GETUSER by email
     
     // SETS
     public synchronized void setIsLeilao(boolean isLeilao) {
-        this.lockServer.lock();
+        lock();
         this.isLeilao = isLeilao;
-        this.lockServer.unlock();
+        unlock();
     }
     public synchronized void setIdReserva(int idReserva) {
-        this.lockServer.lock();
+        lock();
         this.idReserva = idReserva;
-        this.lockServer.unlock();
+        unlock();
     }
     public boolean setNewBid(double valor){
         if(valor>this.lastBid){
@@ -121,28 +139,31 @@ public class Server implements Serializable {
     
     
     public synchronized void reserva(int id){
-        // o id da id é calculado pelo BancoServers
-        // aqui apenas se faz set dele
+        lock();
         this.setIdReserva(id);
+        unlock();
     }
 
     public synchronized void reservaLeilao(int id){
         // o id da id é calculado pelo BancoServers
         // aqui apenas se faz set dele
+        lock();
         this.setIdReserva(id);
         this.setIsLeilao(true);
+        unlock();
     }
     
     public synchronized void freeServer(){
+        lock();
         this.idReserva = 0;
+        unlock();
     }
     
-    /**
-     * Retorna a lista de Servidores
-     * Mesmo propósito da toString default, 
-     * mas mais pretty
-     * @return String
-     */
+    public Server clone()
+    {
+        return new Server(this);
+    }
+
     public String toStringServer(){
         StringBuilder server = new StringBuilder();
         server.append("=>Tipo: ").append(this.tipo).append("\n");

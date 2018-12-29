@@ -28,6 +28,14 @@ public class User implements Serializable {
         this.servidoresAlocados = new ArrayList<>();
     }
     
+    public User(User u)
+    {
+        this.lockUser = u.getLock();
+        this.email = u.getEmail();
+        this.password = u.getPassword();
+        this.servidoresAlocados = u.getServidoresAlocados();
+    }
+    
     /**
      * Instancia User apartir de uma String com ta a informaçao do User
      * @param user
@@ -62,6 +70,11 @@ public class User implements Serializable {
     }
     
     // GETTERS
+    public ReentrantLock getLock()
+    {
+        return this.lockUser;
+    }
+    
     public String getEmail() {
         return this.email;
     }
@@ -70,31 +83,53 @@ public class User implements Serializable {
     }
     public double getDebt() {
         double debt1;
-        this.lockUser.lock();
-        debt1 = this.debt;
-        this.lockUser.unlock();
+        lock();
+        try {
+            debt1 = this.debt;
+        } finally {
+            unlock();
+        }
         return debt1;
     }
     public ArrayList<Server> getServidoresAlocados() {
-        // TODO add locks
-        return this.servidoresAlocados;
+        lock();
+        ArrayList<Server> servidoresA = new ArrayList<>();
+        try {    
+            servidoresA = this.servidoresAlocados;
+        } finally {
+            unlock();
+        }
+        return servidoresA;
     }
 
     // SETTERS
     public void setDebt(double debt) {
-        this.lockUser.lock();
+        lock();
         this.debt = debt;
-        this.lockUser.unlock();
+        unlock();
     }
     
     
     public void addServer(Server server){
-        // TODO add locks
-        this.servidoresAlocados.add(server);
+        lock();
+        try {
+            this.servidoresAlocados.add(server);
+        } finally {
+            unlock();
+        }
     }
     public void removeServer(Server server){
-        // TODO add locks
-        this.servidoresAlocados.remove(server);
+        lock();
+        System.out.println("DEBUG: Reached removeServer, CLASS: User.java, LINE: 124");
+        System.out.println("DEBUG: servAlocados initial size: " + this.servidoresAlocados.size());
+        try {
+            System.out.println("DEBUG: Before remove, CLASS: User.java, LINE: 126");
+            this.servidoresAlocados.remove(server);
+            System.out.println("DEBUG: After remove, CLASS: User.java, LINE: 128");
+            System.out.println("DEBUG: servAlocados final size: " + this.servidoresAlocados.size());
+        } finally {
+            unlock();
+        }
     }
     
     public double getTotalPrice(){
@@ -102,12 +137,6 @@ public class User implements Serializable {
                                        .sum();
     }
 
-    /**
-     * Retorna a lista de Users
-     * Mesmo propósito da toString default, 
-     * mas mais pretty
-     * @return String
-     */
     public String toStringUser(){
         StringBuilder user = new StringBuilder();
         user.append(">Email: ").append(this.email).append("\n");
@@ -115,6 +144,11 @@ public class User implements Serializable {
         for(Server server : this.servidoresAlocados)
             user.append(server.toStringServer());
         return user.toString();
+    }
+    
+    public User clone()
+    {
+        return new User(this);
     }
     
 }

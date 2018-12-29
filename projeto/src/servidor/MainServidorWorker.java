@@ -15,11 +15,11 @@ public class MainServidorWorker extends Thread {
     private final BaseDados bd;
     private String email;
     
-    public MainServidorWorker(Socket cliente, BaseDados bd) throws IOException {
+    public MainServidorWorker(Socket cliente, BaseDados db) throws IOException {
         this.clienteSocket = cliente;
         this.fromClient = cliente.getInputStream();
         this.toClient = cliente.getOutputStream();
-        this.bd = bd;
+        this.bd = db;
     }
     
     @Override
@@ -66,21 +66,21 @@ public class MainServidorWorker extends Thread {
             System.out.println("[Worker] Tentativa de LOGIN => " + login);
             String[] loginSplit = login.split(" ");
             String tipo = loginSplit[0];
-            String email = loginSplit[1];
+            String emailU = loginSplit[1];
             String password = loginSplit[2];
             // Verifica se tudo está correto
             if( !tipo.equals("LOGIN") ){
                 System.out.println("[Worker] Not Login - Terminando conexao");
             }
-            else if( !bd.getAllUsers().containsKey(email) ){
+            else if( !bd.getAllUsers().containsKey(emailU) ){
                 System.out.println("[Worker] User nao existe - Terminando conexao");
             }
-            else if( !bd.getAllUsers().get(email).getPassword().equals(password) ){
+            else if( !bd.getAllUsers().get(emailU).getPassword().equals(password) ){
                 System.out.println("[Worker] Password errada - Terminando conexao");
             }
             else { //SUCESSO
                 // guarda o email do user
-                this.email = email;
+                this.email = emailU;
                 // mensagem de confirmação do sucesso de autenticacao
                 out.println("SUCCESS");
                 out.flush();
@@ -110,7 +110,7 @@ public class MainServidorWorker extends Thread {
      */
     private String parse(String request){
         String response = "";
-        
+        System.out.println("DEBUG: request ar parse " + request + "Class: MainServidorWorker, LINE: 113");
         String[] loginSplit = request.split(" ");
         String requestType = loginSplit[0];
         String email = loginSplit[1];
@@ -132,7 +132,7 @@ public class MainServidorWorker extends Thread {
                         server.reserva(idReserva);
                         // adicionar o server ao user
                         User user = bd.getUser(email);
-                        user.addServer(server);
+                        user.addServer(server.clone());
                         bd.setUser(user);
                         // response
                         response = "SUCCESS ID " + idReserva;

@@ -121,7 +121,7 @@ public class BaseDados {
     public synchronized void setServersByType(Server server){
         lockAllServers();
         ArrayList<Server> list = this.servers.get(server.getTipo());
-        list.add(server);
+        list.add(server.clone());
         this.servers.put(server.getTipo(),list);
         unlockAllServers();
     }
@@ -135,7 +135,7 @@ public class BaseDados {
     
     public synchronized void updateUserServer(String email, Server server){
         User user = this.users.get(email);
-        user.addServer(server);
+        user.addServer(server.clone());
         this.users.put(email, user);
     }
     
@@ -178,7 +178,7 @@ public class BaseDados {
             ArrayList<Server> aux = new ArrayList<>();
             for(Server server : this.servers.get(tipo)){
                 if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
-                    aux.add(server);
+                    aux.add(server.clone());
                 }
             }
             if(!aux.isEmpty()){
@@ -202,7 +202,7 @@ public class BaseDados {
             for(Server server : this.servers.get(tipo)){
                 // TODO double check este if qd nao tiver com sono
                 if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
-                    aux.add(server);
+                    aux.add(server.clone());
                 }
             }
             if(!aux.isEmpty()){
@@ -218,14 +218,34 @@ public class BaseDados {
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
     public synchronized void freeServer(String email, int idReserva){
-        // remover do User
+
         // atm esta a estourar com nullpointerException
-//        for(Server s : this.users.get(email).getServidoresAlocados()){
-//            if( idReserva==s.getIdReserva() ){
-//                this.users.get(email).removeServer(s);
-//            }
-//        }
+        lockAllUsers();
+      
+        if(this.users.containsKey(email))
+        {
+            ArrayList<Server> servidores = this.users.get(email).getServidoresAlocados();
+            for(Server s : servidores)
+            {
+                if(s.getIdReserva() == idReserva)
+                {
+                    this.users.get(email).removeServer(s);
+                    System.out.println("Reserva Removida");
+                }
+                else
+                {
+                    System.out.println("No reservation found with ID: " + idReserva);
+                } 
+            }
+        }
+        else
+        {
+            System.out.println("User doesnt exist");
+        }
+        unlockAllUsers();
+        
         // atualizar na lista de Servers
+        this.lockAllServers();
         for(ArrayList<Server> s : this.servers.values()){
             s.stream().filter((a) -> (a.getIdReserva() == idReserva)).map((a) -> {
                 a.setIdReserva(0);
@@ -233,6 +253,8 @@ public class BaseDados {
                 return a;
             });
         }
+       // this.unlockAllUsers();
+        this.unlockAllServers();
     }
     
     // KIKO DEI LOCK AQUI TAMBÉM PORQUE ELE ESTAVA A VER SE OS SERVIDORES ESTÃO A SER USADOS (BETTER)
