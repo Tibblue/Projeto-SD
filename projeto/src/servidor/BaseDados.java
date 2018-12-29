@@ -14,14 +14,12 @@ import java.util.stream.Collectors;
  * @author KIKO
  */
 public class BaseDados {
-//    private final ReentrantLock lockBD;
     private int lastIdReserva;
     private final HashMap<String,User> users;
     private final HashMap<String,ArrayList<Server>> servers;
 //    private final HashMap<String,ArrayList<Server>> reservas;
     
     public BaseDados(){
-//        this.lockBD = new ReentrantLock();
         this.lastIdReserva = 0;
         this.users = new HashMap<>();
         this.servers = new HashMap<>();
@@ -66,7 +64,6 @@ public class BaseDados {
             });
         }
     }
-    
     public void unlockAllServers()
     {
         for (ArrayList<Server> a : this.servers.values()) {
@@ -75,14 +72,12 @@ public class BaseDados {
             });
         }
     }
-    
     public void lockAllUsers()
     {
         this.users.values().stream().forEach((u) -> {
             u.lock();
         });
     }
-    
     public void unlockAllUsers()
     {
         this.users.values().stream().forEach((u) -> {
@@ -91,7 +86,6 @@ public class BaseDados {
     }
     
     ////////////////////////////////////////////////////////////////////////////
-
     // GETTERS
     public synchronized HashMap<String,User> getAllUsers(){
         lockAllUsers();
@@ -118,7 +112,7 @@ public class BaseDados {
         return lista;
     }
     
-    //SETTERS
+    // SETTERS
     public synchronized void setUser(User user){
         lockAllServers();
         this.users.put(user.getEmail(),user);
@@ -150,8 +144,7 @@ public class BaseDados {
     {
         lockAllServers();
         Server s = getFreeServersByType(tipo).get(1);
-        if(s.getLastBid() < bid)
-        {
+        if(s.getLastBid() < bid){
             s.setNewBid(bid);
             s.setIsLeilao(true);
             s.setIdReserva(nextIdReserva());
@@ -162,15 +155,10 @@ public class BaseDados {
     public synchronized void coverBid(int idReserva, double bid)
     {
         lockAllServers();
-
-        for(ArrayList<Server> sv : this.servers.values())
-        {
-            for(Server s : sv)
-            {
-                if(s.getIdReserva() == idReserva)
-                {
-                    if(s.getLastBid() < bid)
-                    {
+        for(ArrayList<Server> sv : this.servers.values()){
+            for(Server s : sv){
+                if(s.getIdReserva() == idReserva){
+                    if(s.getLastBid() < bid){
                         s.setNewBid(bid);
                         s.setIsLeilao(true);
                         s.setIdReserva(nextIdReserva());
@@ -178,7 +166,6 @@ public class BaseDados {
                 }
             }
         }
-        
         unlockAllServers();
     }
         
@@ -206,7 +193,6 @@ public class BaseDados {
     
     // TODO? fazer outra funcao que so devolve o mais barato pra cada tipo
     public synchronized HashMap<String,ArrayList<Server>> getBidableServers(){
-        
         // LOCK ALL SERVERS 
         lockAllServers();
         
@@ -268,10 +254,8 @@ public class BaseDados {
     
     
     // Users
-    public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException
-    {
-       try
-       {
+    public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException{
+       try{
            File file = new File(nomeFicheiro);
            FileOutputStream fos = new FileOutputStream(file);
            ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -281,16 +265,13 @@ public class BaseDados {
            oos.close();
            fos.close();
        }
-       catch(Exception e)
-       {
+       catch(Exception e){
        }        
     }
     
-    public static HashMap<String,String> loadUsers(String nomeFicheiro) throws FileNotFoundException
-    {   
+    public static HashMap<String,String> loadUsers(String nomeFicheiro) throws FileNotFoundException{
        HashMap<String,String> users = new HashMap<>();
-       try
-       {
+       try{
            File toRead = new File(nomeFicheiro);
             try (FileInputStream fis = new FileInputStream(toRead); 
                     ObjectInputStream ois = new ObjectInputStream(fis)) {
@@ -299,17 +280,14 @@ public class BaseDados {
                 
             }
        }
-       catch(IOException | ClassNotFoundException e)
-       {
+       catch(IOException | ClassNotFoundException e){
        } 
        return users;
     }
     
     // Servers
-    public static void saveServers(String nomeFicheiro, HashMap<String,String> servers) throws FileNotFoundException
-    {
-       try
-       {
+    public static void saveServers(String nomeFicheiro, HashMap<String,String> servers) throws FileNotFoundException{
+       try{
            File file = new File(nomeFicheiro);
            FileOutputStream fos = new FileOutputStream(file);
            ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -319,26 +297,20 @@ public class BaseDados {
            oos.close();
            fos.close();
        }
-       catch(Exception e)
-       {
+       catch(Exception e){
        }        
     }
     
-    public static HashMap<String,ArrayList<Server>> loadServers(String nomeFicheiro) throws FileNotFoundException
-    {   
+    public static HashMap<String,ArrayList<Server>> loadServers(String nomeFicheiro) throws FileNotFoundException{
        HashMap<String,ArrayList<Server>> servers = new HashMap<>();
-       try
-       {
+       try{
            File toRead = new File(nomeFicheiro);
             try (FileInputStream fis = new FileInputStream(toRead); 
-                    ObjectInputStream ois = new ObjectInputStream(fis)) {
-                
+                 ObjectInputStream ois = new ObjectInputStream(fis)) {
                 servers = (HashMap<String,ArrayList<Server>>) ois.readObject();
-                
             }
        }
-       catch(IOException | ClassNotFoundException e)
-       {
+       catch(IOException | ClassNotFoundException e){
        } 
        return servers;
     }

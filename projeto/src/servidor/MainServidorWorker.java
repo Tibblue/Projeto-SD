@@ -57,6 +57,8 @@ public class MainServidorWorker extends Thread {
         System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
     }
     
+    // faz autenticaçao de um User
+    // todo podemos alterar de bool para String e retorna o erro ao cliente
     private boolean autenticacao(BufferedReader in, PrintWriter out){
         try{
             // Recebe o pedido de LOGIN
@@ -98,6 +100,14 @@ public class MainServidorWorker extends Thread {
         }
     }
     
+    /**
+     * Parses a request sent by the Client
+     * Return "SUCCESS [info]" in case of Success
+     * Return "FAIL [info]" in case of FAIL
+     * Info is adicional information provided by the Server to the Client
+     * @param request String with a request from the Client
+     * @return String with SUCCESS/FAIL of the request
+     */
     private String parse(String request){
         String response = "";
         
@@ -105,7 +115,7 @@ public class MainServidorWorker extends Thread {
         String requestType = loginSplit[0];
         String email = loginSplit[1];
         switch(requestType){
-            case "BUY":
+            case "BUY": // pedido de compra de um Server
                 String tipo = loginSplit[2];
                 List<Server> free = bd.getFreeServersByType(tipo);
                 if(free.size()>0){
@@ -131,14 +141,16 @@ public class MainServidorWorker extends Thread {
                 }
                 else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
                 break;
-            case "BID":
-                
+            case "BID": // pedido de licitacao de um Server
                 
                 break;
-            case "GET_USER": 
+            case "REM": // pedido de libertação de um Server do User
+                this.bd
+                break;
+            case "GET_USER": // pedido do User Object
                 this.sendUser();
                 break;
-            case "GET_SERVERS":
+            case "GET_SERVERS": // pedido da Lista de Servers
                 this.sendServers();
                 break;
             default: response = "FAIL UNKNOWN_REQUEST";
