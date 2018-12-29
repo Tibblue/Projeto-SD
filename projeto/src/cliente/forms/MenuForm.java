@@ -4,7 +4,6 @@ import cliente.ClienteConnection;
 import cliente.User;
 import java.util.ArrayList;
 import java.util.HashMap;
-import servidor.BaseDados;
 import servidor.Server;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -21,7 +20,6 @@ public class MenuForm extends javax.swing.JFrame {
     private final ClienteConnection connection;
     private User user;
     private HashMap<String,ArrayList<Server>> bdServers;
-    private final BaseDados db; // temporary
     DefaultTableModel modelDemand;
     DefaultTableModel modelBid;
     DefaultTableModel modelMy;
@@ -29,14 +27,15 @@ public class MenuForm extends javax.swing.JFrame {
     /**
      * Creates new form MenuForm
      * @param login Login Form reference
-     * @param user User that loged in
      * @param connection Connection to the server
+     * @param user User that's logged in
+     * @param bdServers Servers List
      */
-    public MenuForm(JFrame login, User user, HashMap<String,ArrayList<Server>> bdServers, ClienteConnection connection, BaseDados db) {
+    public MenuForm(JFrame login, User user, HashMap<String,ArrayList<Server>> bdServers, ClienteConnection connection) {
         this.login = login;
-        this.user = user;
         this.connection = connection;
-        this.db = db; // temporary
+        this.user = user;
+        this.bdServers = bdServers;
         fillDemandTable();
         fillBidTable();
         fillMyServersTable();
@@ -50,15 +49,15 @@ public class MenuForm extends javax.swing.JFrame {
     
     public void fillDemandTable(){
         String[] colunas = {"Tipo","Número","Preço/hora"};
-        Object[][] data = new Object[this.db.getAllServers().size()][3];
+        Object[][] data = new Object[this.bdServers.size()][3];
         int i=0;
-        for (String tipo : this.db.getAllServers().keySet()){
+        for (String tipo : this.bdServers.keySet()){
             double minPreco=100000000;
-            for(Server s : this.db.getAllServers().get(tipo)){
+            for(Server s : this.bdServers.get(tipo)){
                 if(s.getPrice()<minPreco && !s.getUsed()) minPreco=s.getPrice();
             }
             data[i][0] = tipo;
-            data[i][1] = this.db.getAllServers().get(tipo).size();
+            data[i][1] = this.bdServers.get(tipo).size();
             data[i][2] = minPreco;
             i++;
         }
@@ -66,15 +65,15 @@ public class MenuForm extends javax.swing.JFrame {
     }
     public void fillBidTable(){
         String[] colunas = {"Tipo","Número","Preço/hora"};
-        Object[][] data = new Object[this.db.getAllServers().size()][3];
+        Object[][] data = new Object[this.bdServers.size()][3];
         int i=0;
-        for (String tipo : this.db.getAllServers().keySet()){
+        for (String tipo : this.bdServers.keySet()){
             double minBid=100000000;
-            for(Server s : this.db.getAllServers().get(tipo)){
+            for(Server s : this.bdServers.get(tipo)){
                 if(s.getLastBid()<minBid && !s.getUsed()) minBid=s.getLastBid();
             }
             data[i][0] = tipo;
-            data[i][1] = this.db.getAllServers().get(tipo).size();
+            data[i][1] = this.bdServers.get(tipo).size();
             data[i][2] = minBid;
             i++;
         }
@@ -315,7 +314,7 @@ public class MenuForm extends javax.swing.JFrame {
         double minBid = new Double(bidServersTable.getModel().getValueAt(row, 2).toString());
         Server servidor = new Server();
         
-        for(Server s : db.getAllServers().get(tipo))
+        for(Server s : this.bdServers.get(tipo))
             if(s.getLastBid()==minBid) servidor = s;
 
 
@@ -330,10 +329,10 @@ public class MenuForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Valor licitado não é superior à licitação atual", "Aviso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         
-        MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection,this.db);
-        menu.setVisible(true);
-        this.setVisible(false);
-        // this.dispose();
+//        MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection);
+//        menu.setVisible(true);
+//        this.setVisible(false);
+//        this.dispose();
     }//GEN-LAST:event_bidButtonActionPerformed
 
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
@@ -350,15 +349,23 @@ public class MenuForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Servidor não adicionado à sua lista!", "Erro", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         else{
+            // refresh Tables?
+            this.modelDemand.fireTableDataChanged();
+            this.modelBid.fireTableDataChanged();
+            this.modelMy.fireTableDataChanged();
+//            this.fillDemandTable();
+//            this.fillBidTable();
+//            this.fillMyServersTable();
+
             //Declarar como utilizado & adicionar à lista de servers do cliente!
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
             JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         
-        MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection,this.db);
-        menu.setVisible(true);
-        this.setVisible(false);
-        this.dispose();
+//        MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection);
+//        menu.setVisible(true);
+//        this.setVisible(false);
+//        this.dispose();
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed

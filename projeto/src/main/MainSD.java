@@ -1,14 +1,10 @@
 package main;
-import cliente.User;
 import java.io.IOException;
 import servidor.MainServidor;
 
-import java.net.UnknownHostException;
 import java.util.Scanner;
 import servidor.BaseDados;
 import cliente.forms.LoginForm;
-import cliente.User;
-import servidor.forms.ServidorForm;
 
 // Main capaz de iniciar um User ou Servidor
 public class MainSD {
@@ -36,7 +32,7 @@ public class MainSD {
             switch(in){
                 case 1:
                     // LoginForm receber o data é temporario para debug
-                    LoginForm login = new LoginForm(bd);
+                    LoginForm login = new LoginForm();
                     login.setVisible(true);
                     break;
                 case 2:
