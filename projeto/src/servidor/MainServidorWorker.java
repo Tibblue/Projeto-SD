@@ -82,8 +82,9 @@ public class MainServidorWorker extends Thread {
                 // mensagem de confirmação do sucesso de autenticacao
                 out.println("SUCCESS");
                 out.flush();
-                
-                this.sendUser(toClient);
+                // envia o User e Servers para o Cliente
+                this.sendUser();
+                this.sendServers();
                 return true;
             }
             out.println("FAIL");
@@ -140,7 +141,7 @@ public class MainServidorWorker extends Thread {
         return response;
     }
     
-    private void sendUser(OutputStream toClient){
+    private void sendUser(){
         try{
             ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
             // Send the User object 
@@ -154,7 +155,16 @@ public class MainServidorWorker extends Thread {
     }
     
     private void sendServers(){
-        
+        try{
+            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
+            // Send the HashMap Servers object 
+            outToClient.writeObject(bd.getAllServers());   
+//            outToClient.close();
+        }
+        catch(IOException e){
+            System.out.println("[Worker] ERRO no envio dos SERVERS !!!");
+            System.out.println(e);
+        }
     }
     
 }

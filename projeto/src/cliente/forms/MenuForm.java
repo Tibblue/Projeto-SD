@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
 public class MenuForm extends javax.swing.JFrame {
     private final JFrame login;
     private final ClienteConnection connection;
-    private final User user;
+    private User user;
     private HashMap<String,ArrayList<Server>> bdServers;
     private final BaseDados db; // temporary
     DefaultTableModel modelDemand;
@@ -32,7 +32,7 @@ public class MenuForm extends javax.swing.JFrame {
      * @param user User that loged in
      * @param connection Connection to the server
      */
-    public MenuForm(JFrame login, User user, ClienteConnection connection, BaseDados db) {
+    public MenuForm(JFrame login, User user, HashMap<String,ArrayList<Server>> bdServers, ClienteConnection connection, BaseDados db) {
         this.login = login;
         this.user = user;
         this.connection = connection;
@@ -330,7 +330,7 @@ public class MenuForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Valor licitado não é superior à licitação atual", "Aviso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         
-        MenuForm menu = new MenuForm(this.login,this.user,this.connection,this.db);
+        MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection,this.db);
         menu.setVisible(true);
         this.setVisible(false);
         // this.dispose();
@@ -355,7 +355,7 @@ public class MenuForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Servidor adicionado à sua lista!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         
-        MenuForm menu = new MenuForm(this.login,this.user,this.connection,this.db);
+        MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection,this.db);
         menu.setVisible(true);
         this.setVisible(false);
         this.dispose();

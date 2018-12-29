@@ -22,6 +22,7 @@ public class ClienteConnection{
     private PrintWriter out;
     private BufferedReader in;
     private User user;
+    private HashMap<String,ArrayList<Server>> bdServers;
     
     public ClienteConnection(int port){
         this.PORT = port;
@@ -116,6 +117,29 @@ public class ClienteConnection{
             System.out.println(e);
         }
         return this.user;
+    }
+    
+    // Recebe HashMap de Servers do Servidor
+    public HashMap<String,ArrayList<Server>> receiveServers(){
+        try{
+            // conexao recebe os Servers mandados pelo servidor (versao Object)
+            ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
+            try{
+                this.bdServers = (HashMap<String,ArrayList<Server>>)fromServer.readObject();
+                for(String key : this.bdServers.keySet()) 
+                    for(Server server : this.bdServers.get(key))
+                    System.out.print(server.toStringServer());
+            }
+            catch (ClassNotFoundException e){
+                System.out.println("[ClienteCon] HashMap(...) class missing...");
+            }
+//            fromServer.close();
+        }
+        catch (IOException e) {
+            System.out.println("[ClienteCon] Receive> Servers RIP !!!");
+            System.out.println(e);
+        }
+        return this.bdServers;
     }
     
 }

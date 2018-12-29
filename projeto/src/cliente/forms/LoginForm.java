@@ -5,8 +5,11 @@ import cliente.User;
 import servidor.BaseDados;
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import servidor.Server;
 
 /**
  *
@@ -169,8 +172,9 @@ public class LoginForm extends javax.swing.JFrame {
         String status = this.connection.connect(this.emailField.getText(),this.passwordField.getText());
         if( status.equals("SUCCESS") ){
             User user = this.connection.receiveUser();
+            HashMap<String,ArrayList<Server>> bdServers = this.connection.receiveServers();
             // sucesso, segue para o menu agora
-            MenuForm menu = new MenuForm(this,user,this.connection,this.bd);
+            MenuForm menu = new MenuForm(this,user,bdServers,this.connection,this.bd);
             menu.setVisible(true);
             this.setVisible(false);
         }
