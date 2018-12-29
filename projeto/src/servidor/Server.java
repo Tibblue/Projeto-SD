@@ -1,6 +1,7 @@
 package servidor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -16,6 +17,7 @@ public class Server implements Serializable {
     private double lastBid;
     private boolean isLeilao;
     private String owner; // ?email do user que esta a usar?
+    private LocalDateTime horaDeInicio;
     
     public Server() {
         this.lockServer = new ReentrantLock();
@@ -26,7 +28,6 @@ public class Server implements Serializable {
         this.lastBid = 0.0;
         this.isLeilao = false;
     }
-    
     public Server(String nome, String tipo, double price){
         this.lockServer = new ReentrantLock();
         this.nome = nome;
@@ -36,19 +37,7 @@ public class Server implements Serializable {
         this.lastBid = 0.0;
         this.isLeilao = false;
     }
-
-    public Server(String nome, String tipo, double price, int idReserva, double lastBid, boolean isLeilao){
-        this.lockServer = new ReentrantLock();
-        this.nome = nome;
-        this.tipo = tipo;
-        this.price = price;
-        this.idReserva = idReserva;
-        this.lastBid = lastBid;
-        this.isLeilao = isLeilao;
-    }
-    
-    public Server(Server s)
-    {
+    public Server(Server s){
         this.lockServer = s.getLock();
         this.nome = s.getNome();
         this.tipo = s.getTipo();
@@ -112,6 +101,9 @@ public class Server implements Serializable {
         return ret;
         
     }
+    public LocalDateTime getHoraInicio() {
+        return this.horaDeInicio;
+    }
     // TODO GETUSER by email
     
     // SETS
@@ -129,6 +121,9 @@ public class Server implements Serializable {
         lock();
         this.lastBid=valor;
         unlock();
+    }
+    public void setHoraInicio(LocalDateTime horaInicio){
+        this.horaDeInicio=horaInicio;
     }
     
     
