@@ -117,19 +117,18 @@ public class MenuForm extends javax.swing.JFrame {
         demandPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         demandServersTable = new javax.swing.JTable();
-        logoutButton1 = new javax.swing.JButton();
         buyButton = new javax.swing.JButton();
         bidPanel = new javax.swing.JPanel();
         bidSpinner = new javax.swing.JSpinner();
         jScrollPane2 = new javax.swing.JScrollPane();
         bidServersTable = new javax.swing.JTable();
-        logoutButton2 = new javax.swing.JButton();
         bidButton = new javax.swing.JButton();
         myServersPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         myServersTable = new javax.swing.JTable();
-        logoutButton3 = new javax.swing.JButton();
         bidButton1 = new javax.swing.JButton();
+        logoutButton = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -138,14 +137,6 @@ public class MenuForm extends javax.swing.JFrame {
 
         demandServersTable.setModel(this.modelDemand);
         jScrollPane1.setViewportView(demandServersTable);
-
-        logoutButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        logoutButton1.setText("LOGOUT");
-        logoutButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutButton1ActionPerformed(evt);
-            }
-        });
 
         buyButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         buyButton.setText("USE SERVER");
@@ -160,23 +151,21 @@ public class MenuForm extends javax.swing.JFrame {
         demandPanelLayout.setHorizontalGroup(
             demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(demandPanelLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(demandPanelLayout.createSequentialGroup()
-                        .addComponent(logoutButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(285, 285, 285)
+                .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(16, Short.MAX_VALUE))
+            .addGroup(demandPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         demandPanelLayout.setVerticalGroup(
             demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, demandPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(demandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(17, 17, 17))
         );
 
@@ -187,14 +176,6 @@ public class MenuForm extends javax.swing.JFrame {
 
         bidServersTable.setModel(this.modelBid);
         jScrollPane2.setViewportView(bidServersTable);
-
-        logoutButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        logoutButton2.setText("LOGOUT");
-        logoutButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutButton1ActionPerformed(evt);
-            }
-        });
 
         bidButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         bidButton.setText("BID SERVER");
@@ -209,46 +190,32 @@ public class MenuForm extends javax.swing.JFrame {
         bidPanelLayout.setHorizontalGroup(
             bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bidPanelLayout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
-                .addComponent(logoutButton2)
-                .addGap(71, 71, 71)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bidSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bidButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
-            .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bidPanelLayout.createSequentialGroup()
-                    .addContainerGap(15, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(16, 16, 16)))
+            .addGroup(bidPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                .addContainerGap())
         );
         bidPanelLayout.setVerticalGroup(
             bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bidPanelLayout.createSequentialGroup()
-                .addGap(408, 408, 408)
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(logoutButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bidButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bidSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17))
-            .addGroup(bidPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(bidPanelLayout.createSequentialGroup()
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(61, Short.MAX_VALUE)))
         );
 
         jTabbedPane1.addTab("Bid server", bidPanel);
 
         myServersTable.setModel(this.modelMy);
         jScrollPane3.setViewportView(myServersTable);
-
-        logoutButton3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        logoutButton3.setText("LOGOUT");
-        logoutButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutButton1ActionPerformed(evt);
-            }
-        });
 
         bidButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         bidButton1.setText("REMOVE SERVER");
@@ -263,29 +230,41 @@ public class MenuForm extends javax.swing.JFrame {
         myServersPanelLayout.setHorizontalGroup(
             myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(myServersPanelLayout.createSequentialGroup()
-                .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(myServersPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, myServersPanelLayout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(logoutButton3)
-                        .addGap(167, 167, 167)
+                .addContainerGap()
+                .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, myServersPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap())
         );
         myServersPanelLayout.setVerticalGroup(
             myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(myServersPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(logoutButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bidButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("My servers", myServersPanel);
+
+        logoutButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        logoutButton.setText("LOGOUT");
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButtonActionPerformed(evt);
+            }
+        });
+
+        refreshButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        refreshButton.setText("REFRESH");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -293,15 +272,25 @@ public class MenuForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTabbedPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(logoutButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(refreshButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -368,18 +357,22 @@ public class MenuForm extends javax.swing.JFrame {
 //        this.dispose();
     }//GEN-LAST:event_buyButtonActionPerformed
 
-    private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
+    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // fecha o menu
         this.connection.closeConnection();
         // abre o login
         this.login.setVisible(true);
         this.setVisible(false);
         this.dispose();
-    }//GEN-LAST:event_logoutButton1ActionPerformed
+    }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void bidButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bidButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_bidButton1ActionPerformed
+
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_refreshButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -411,10 +404,9 @@ public class MenuForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JButton logoutButton1;
-    private javax.swing.JButton logoutButton2;
-    private javax.swing.JButton logoutButton3;
+    private javax.swing.JButton logoutButton;
     private javax.swing.JPanel myServersPanel;
     private javax.swing.JTable myServersTable;
+    private javax.swing.JButton refreshButton;
     // End of variables declaration//GEN-END:variables
 }
