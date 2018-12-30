@@ -59,7 +59,7 @@ public class MainServidorWorker extends Thread {
         try{
             // Recebe o pedido de LOGIN
             String login = in.readLine();
-            System.out.println("[Worker] Tentativa de LOGIN => " + login);
+            System.out.println("[Worker] Autenticacao> " + login);
             String[] loginSplit = login.split(" ");
             String tipo = loginSplit[0];
             String emailU = loginSplit[1];

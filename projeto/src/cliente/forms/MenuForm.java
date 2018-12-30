@@ -328,8 +328,7 @@ public class MenuForm extends javax.swing.JFrame {
         int row = demandServersTable.getSelectedRow();
         String tipo = demandServersTable.getModel().getValueAt(row, 0).toString();
         
-        //Efetuar o pedido ao servidor
-        // TODO ACABAR !!!!!
+        // Efetuar o pedido ao servidor
         String response = this.connection.sendRequest("BUY " + user.getEmail() + " " + tipo);
         String status = response.split(" ")[0];
         if( status.equals("FAIL") ){
@@ -366,11 +365,11 @@ public class MenuForm extends javax.swing.JFrame {
         this.user = this.connection.receiveUser();
         this.connection.sendRequest("GET_SERVERS " + this.user.getEmail());
         this.bdServers = this.connection.receiveServers();
-        // refreshes window
+        // refresh window
         MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection);
+        menu.setVisible(true);
         this.setVisible(false);
         this.dispose();
-        menu.setVisible(true);
         
         // devia funcionar
 //        this.fillDemandTable();
