@@ -1,10 +1,6 @@
 package cliente;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +12,8 @@ import servidor.Server;
  */
 public class ClienteConnection{
     private Socket socket;
-    private PrintWriter out;
     private BufferedReader in;
+    private PrintWriter out;
     private User user;
     private HashMap<String,ArrayList<Server>> bdServers;
     
@@ -122,10 +118,14 @@ public class ClienteConnection{
             catch (ClassNotFoundException e){
                 System.out.println("[ClienteCon] User or HashMap(...) class missing...");
             }
+            catch (IOException e) {
+                System.out.println("[ClienteCon] Receive> User & Servers RIP !!!");
+                System.out.println(e);
+            }
 //            fromServer.close();
         }
         catch (IOException e) {
-            System.out.println("[ClienteCon] Receive> User & Servers RIP !!!");
+            System.out.println("[ClienteCon] Receive> ObjectInputStream RIP !!!");
             System.out.println(e);
         }
     }

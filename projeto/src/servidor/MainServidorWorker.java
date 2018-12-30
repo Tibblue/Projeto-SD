@@ -48,10 +48,9 @@ public class MainServidorWorker extends Thread {
             return;
         }
         catch(IOException e){
-            System.out.println("[Worker] IO ardeu !!!");
+            System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
             System.out.println(e);
         }
-        System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
     }
     
     // faz autenticaçao de um User
