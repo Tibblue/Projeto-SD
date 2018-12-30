@@ -53,14 +53,18 @@ public class MenuForm extends javax.swing.JFrame {
         Object[][] data = new Object[this.bdServers.size()][3];
         int i=0;
         for (String tipo : this.bdServers.keySet()){
-            double minPreco=100000000;
+            ArrayList<Server> aux = new ArrayList<>();
             for(Server s : this.bdServers.get(tipo)){
-                if(s.getPrice()<minPreco && !s.getUsed()) minPreco=s.getPrice();
+                if(!s.getUsed()){
+                    aux.add(s);
+                }
             }
-            data[i][0] = tipo;
-            data[i][1] = this.bdServers.get(tipo).size();
-            data[i][2] = minPreco;
-            i++;
+            if( aux.size()>0 ){
+                data[i][0] = tipo;
+                data[i][1] = aux.size();
+                data[i][2] = aux.get(0).getPrice();
+                i++;
+            }
         }
         modelDemand = new DefaultTableModel(data,colunas);
     }
@@ -70,13 +74,31 @@ public class MenuForm extends javax.swing.JFrame {
         int i=0;
         for (String tipo : this.bdServers.keySet()){
             double minBid=100000000;
+            ArrayList<Server> aux = new ArrayList<>();
+            Server auxS = null;
             for(Server s : this.bdServers.get(tipo)){
-                if(s.getLastBid()<minBid && !s.getUsed()) minBid=s.getLastBid();
+                if(!s.getUsed()){
+                    auxS = s;
+                    aux.add(s);
+                }
+                else if(s.getIsLeilao() && s.getLastBid()<minBid){
+                    minBid=s.getLastBid();
+                    aux.add(s);
+                }
             }
-            data[i][0] = tipo;
-            data[i][1] = this.bdServers.get(tipo).size();
-            data[i][2] = minBid;
-            i++;
+            if( auxS!=null || aux.size()>0 ){
+                if(auxS!=null){
+                    data[i][0] = tipo;
+                    data[i][1] = aux.size();
+                    data[i][2] = 0.01;
+                }
+                else{
+                    data[i][0] = tipo;
+                    data[i][1] = aux.size();
+                    data[i][2] = minBid;
+                }
+                i++;
+            }
         }
         modelBid = new DefaultTableModel(data,colunas);
     }
@@ -343,7 +365,7 @@ public class MenuForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Servidor não adicionado à sua lista!", "Erro", JOptionPane.INFORMATION_MESSAGE, icon);
         }
 
-//        this.refresh();
+        this.refresh();
     }//GEN-LAST:event_buyButtonActionPerformed
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
