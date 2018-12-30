@@ -218,28 +218,21 @@ public class BaseDados {
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
     public synchronized void freeServer(String email, int idReserva){
-        // atm esta a estourar com nullpointerException
         lockAllUsers();
-        Server aux=null;
-        if(this.users.containsKey(email)){
-            ArrayList<Server> servidores = this.users.get(email).getServidoresAlocados();
-            for(Server s : servidores){
-                if(s.getIdReserva() == idReserva){
-                    System.out.println("Reserva Removida");
-//                    this.users.get(email).removeServer(s);
-                    aux=s;
-                    System.out.println("Reserva Removida");
-                }
-                else
-                    System.out.println("No reservation found with ID: " + idReserva);
-            }
-            if(aux!=null)
-                this.users.get(email).removeServer(aux);
-        }
-        else
-            System.out.println("User doesnt exist");
-        
+        User user = this.users.get(email);
         unlockAllUsers();
+        
+        Server aux=null;
+        user.lock();
+        for(Server s : user.getServidoresAlocados()){
+            if(s.getIdReserva() == idReserva)
+                aux=s;
+        }
+        if(aux!=null)
+            this.users.get(email).removeServer(aux);
+        else
+            System.out.println("No reservation found with ID: " + idReserva);
+        user.unlock();
         
         // atualizar na lista de Servers
         this.lockAllServers();
@@ -266,16 +259,7 @@ public class BaseDados {
         unlockAllServers();
         return aux;
     }
-    
-//    public synchronized void resetAllServersOfType(String type)
-//    {
-//        List<Server> servers = this.servidores.get(type);
-//        servers.stream().forEach((s) -> {
-//            s.setIdReserva(0);
-//        });
-//    }
         
-    
     
     // Users
     public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException{
@@ -292,7 +276,6 @@ public class BaseDados {
        catch(Exception e){
        }        
     }
-    
     public static HashMap<String,String> loadUsers(String nomeFicheiro) throws FileNotFoundException{
        HashMap<String,String> users = new HashMap<>();
        try{
@@ -324,7 +307,6 @@ public class BaseDados {
        catch(Exception e){
        }        
     }
-    
     public static HashMap<String,ArrayList<Server>> loadServers(String nomeFicheiro) throws FileNotFoundException{
        HashMap<String,ArrayList<Server>> servers = new HashMap<>();
        try{
