@@ -366,23 +366,19 @@ public class MenuForm extends javax.swing.JFrame {
         this.user = this.connection.receiveUser();
         this.connection.sendRequest("GET_SERVERS " + this.user.getEmail());
         this.bdServers = this.connection.receiveServers();
-        /*
-        refresh Tables
-        this.modelDemand.setRowCount(0);
-        this.modelBid.setRowCount(0);
-        this.modelMy.setRowCount(0);
-        
-        this.fillDemandTable();
-        this.fillBidTable();
-        this.fillMyServersTable();
-        this.demandServersTable.repaint();
-        this.bidServersTable.repaint();
-        this.myServersTable.repaint();*/
-        
+        // refreshes window
         MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection);
-    this.setVisible(false);
-    this.dispose();
-    menu.setVisible(true);
+        this.setVisible(false);
+        this.dispose();
+        menu.setVisible(true);
+        
+        // devia funcionar
+//        this.fillDemandTable();
+//        this.fillBidTable();
+//        this.fillMyServersTable();
+//        this.demandServersTable.repaint();
+//        this.bidServersTable.repaint();
+//        this.myServersTable.repaint();
     }
     
     private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeServerButtonActionPerformed

@@ -25,7 +25,6 @@ public class MainServidor extends Thread{
     private final int PORT = 1234;
     private final ServerSocket serverSocket;
     private Socket clienteSocket;
-    
     private final BaseDados bd;
      
     public MainServidor() throws IOException {

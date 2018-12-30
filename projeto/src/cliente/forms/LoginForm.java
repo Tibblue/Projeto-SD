@@ -161,7 +161,6 @@ public class LoginForm extends javax.swing.JFrame {
             this.passwordField.setForeground(Color.black);
             passwordTouch = true;
         }
-        
     }//GEN-LAST:event_passwordFieldMouseClicked
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
