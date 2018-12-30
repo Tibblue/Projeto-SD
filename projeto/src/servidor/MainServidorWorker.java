@@ -11,24 +11,27 @@ import java.util.List;
  */
 public class MainServidorWorker extends Thread {
     private final Socket clienteSocket;
-    private final InputStream fromClient;
-    private final OutputStream toClient;
+//    private final ObjectOutputStream toClient;
+    private final BufferedReader in;
+    private final PrintWriter out;
     private final BaseDados bd;
     private String email;
     
     public MainServidorWorker(Socket cliente, BaseDados db) throws IOException {
         this.clienteSocket = cliente;
-        this.fromClient = cliente.getInputStream();
-        this.toClient = cliente.getOutputStream();
+//        this.toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
+        this.in = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
+        this.out = new PrintWriter(clienteSocket.getOutputStream());
         this.bd = db;
     }
     
     @Override
     public void run(){
-        try ( BufferedReader in = new BufferedReader(new InputStreamReader(this.fromClient));
-                PrintWriter out = new PrintWriter(this.toClient)) {
+//        try ( BufferedReader in = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
+//                PrintWriter out = new PrintWriter(clienteSocket.getOutputStream())) {
+        try{
             // receber a autenticaçao
-            if( this.autenticacao(in, out) ){
+            if( this.autenticacao() ){
                 // Worker comeca a processar a conexao
                 System.out.println("[Worker] Login OK - Processando conexao");
                 String request;
@@ -45,7 +48,6 @@ public class MainServidorWorker extends Thread {
                 return;
             }
             clienteSocket.close();
-            return;
         }
         catch(IOException e){
             System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
@@ -55,7 +57,7 @@ public class MainServidorWorker extends Thread {
     
     // faz autenticaçao de um User
     // todo podemos alterar de bool para String e retorna o erro ao cliente
-    private boolean autenticacao(BufferedReader in, PrintWriter out){
+    private boolean autenticacao(){
         try{
             // Recebe o pedido de LOGIN
             String login = in.readLine();
@@ -176,9 +178,9 @@ public class MainServidorWorker extends Thread {
             list.add(bd.getUser(email));
             list.add(bd.getAllServers());
             
-            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-            outToClient.writeObject(list);
-            outToClient.flush();
+            ObjectOutputStream toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
+            toClient.writeObject(list);
+            toClient.flush();
 
 //            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
 //            // Send the User and HashMap Servers object 

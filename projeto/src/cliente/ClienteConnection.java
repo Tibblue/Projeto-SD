@@ -12,6 +12,7 @@ import servidor.Server;
  */
 public class ClienteConnection{
     private Socket socket;
+//    private ObjectInputStream fromServer;
     private BufferedReader in;
     private PrintWriter out;
     private User user;
@@ -34,6 +35,10 @@ public class ClienteConnection{
     public String connect(String email, String password){
         try {
             this.socket = new Socket("127.0.0.1", 1234);
+            // prepare all the streams
+//            this.fromServer = new ObjectInputStream(socket.getInputStream());
+            this.out = new PrintWriter(socket.getOutputStream());
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // autenticao
             this.out = new PrintWriter(socket.getOutputStream());
             this.out.println("LOGIN " + email + " " + password);
@@ -76,10 +81,10 @@ public class ClienteConnection{
     public String sendRequest(String request){
         try{
             System.out.println("[ClienteCon] Request> "+request);
-            this.out = new PrintWriter(socket.getOutputStream());
+                this.out = new PrintWriter(socket.getOutputStream());
             this.out.println(request);
             this.out.flush();
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String response = this.in.readLine();
             System.out.println("[ClienteCon] Response> "+response);
             return response;
