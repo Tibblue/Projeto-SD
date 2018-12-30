@@ -39,10 +39,6 @@ public class MainServidorWorker extends Thread {
                     System.out.println("[Cliente] response> " + response);
                     out.println(response);
                     out.flush();
-                    if( response.split(" ")[0].equals("SUCCESS") ){
-                        
-                    }
-                    System.out.println(bd.getUser(email).toStringUser());
                 }
                 System.out.println("[Worker] Terminando conexao");
                 return;
@@ -110,10 +106,9 @@ public class MainServidorWorker extends Thread {
      */
     private String parse(String request){
         String response = "";
-        System.out.println("DEBUG: request ar parse " + request + "Class: MainServidorWorker, LINE: 113");
         String[] loginSplit = request.split(" ");
         String requestType = loginSplit[0];
-        String email = loginSplit[1];
+        String emailU = loginSplit[1];
         switch(requestType){
             case "BUY": // pedido de compra de um Server
                 String tipo = loginSplit[2];
@@ -131,7 +126,7 @@ public class MainServidorWorker extends Thread {
                         // atualizar o server
                         server.reserva(idReserva);
                         // adicionar o server ao user
-                        User user = bd.getUser(email);
+                        User user = bd.getUser(emailU);
                         user.addServer(server.clone());
                         bd.setUser(user);
                         // response
@@ -146,15 +141,19 @@ public class MainServidorWorker extends Thread {
                 break;
             case "REM": // pedido de libertação de um Server do User
                 int id = Integer.parseInt(loginSplit[2]);
-                this.bd.freeServer(email,id);
-                // response
+                this.bd.freeServer(emailU,id);
                 response = "SUCCESS REM " + id;
+                System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "GET_USER": // pedido do User Object
                 this.sendUser();
+                response = "SUCCESS SENDING_USER";
+                System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "GET_SERVERS": // pedido da Lista de Servers
                 this.sendServers();
+                response = "SUCCESS SENDING_SERVERS";
+                System.out.println(bd.toStringServidores());
                 break;
             default: response = "FAIL UNKNOWN_REQUEST";
                 break;
