@@ -27,6 +27,7 @@ public class LoginForm extends javax.swing.JFrame {
         this.jLabel1.requestFocus();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        this.setTitle("Cloud Server Manager");
     }
 
     /**
