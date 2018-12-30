@@ -3,6 +3,7 @@ package servidor;
 import cliente.User;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 /**
  *
@@ -81,8 +82,9 @@ public class MainServidorWorker extends Thread {
                 out.println("SUCCESS");
                 out.flush();
                 // envia o User e Servers para o Cliente
-                this.sendUser();
-                this.sendServers();
+//                this.sendUser();
+//                this.sendServers();
+                this.sendUserAndServers();
                 return true;
             }
             out.println("FAIL");
@@ -146,47 +148,79 @@ public class MainServidorWorker extends Thread {
                 response = "SUCCESS REM " + id;
                 System.out.println(bd.getUser(emailU).toStringUser());
                 break;
-            case "GET_USER": // pedido do User Object
-                this.sendUser();
-                response = "SUCCESS SENDING_USER";
+            case "GET_USER_SERVERS": // pedido do User Object e da Lista de Servers
+                this.sendUserAndServers();
+                response = "SUCCESS SENDING_USER_SERVERS";
                 System.out.println(bd.getUser(emailU).toStringUser());
-                break;
-            case "GET_SERVERS": // pedido da Lista de Servers
-                this.sendServers();
-                response = "SUCCESS SENDING_SERVERS";
                 System.out.println(bd.toStringServidores());
                 break;
+//            case "GET_USER": // pedido do User Object
+//                this.sendUser();
+//                response = "SUCCESS SENDING_USER";
+//                System.out.println(bd.getUser(emailU).toStringUser());
+//                break;
+//            case "GET_SERVERS": // pedido da Lista de Servers
+//                this.sendServers();
+//                response = "SUCCESS SENDING_SERVERS";
+//                System.out.println(bd.toStringServidores());
+//                break;
             default: response = "FAIL UNKNOWN_REQUEST";
                 break;
         }
         return response;
     }
     
-    // Envia Object User para o Client
-    private void sendUser(){
+    // Envia Object User e HashMap de Servers para o Client
+    private void sendUserAndServers(){
         try{
+            ArrayList<Object> list = new ArrayList<>();
+            list.add(bd.getUser(email));
+            list.add(bd.getAllServers());
+            
             ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-            // Send the User object 
-            outToClient.writeObject(bd.getUser(email));   
+            outToClient.writeObject(list);
+            outToClient.flush();
+
+//            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
+//            // Send the User and HashMap Servers object 
+//            outToClient.writeObject(bd.getUser(email));
+//            outToClient.flush();
+//            // Send the object  
+//            outToClient.writeObject(bd.getAllServers());
+//            outToClient.flush();
 //            outToClient.close();
         }
         catch(IOException e){
-            System.out.println("[Worker] ERRO no envio do USER !!!");
+            System.out.println("[Worker] ERRO no envio do USER & SERVERS !!!");
             System.out.println(e);
         }
     }
-    // Envia HashMap de Servers para o Client
-    private void sendServers(){
-        try{
-            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-            // Send the HashMap Servers object 
-            outToClient.writeObject(bd.getAllServers());   
-//            outToClient.close();
-        }
-        catch(IOException e){
-            System.out.println("[Worker] ERRO no envio dos SERVERS !!!");
-            System.out.println(e);
-        }
-    }
-    
+
+//    // Envia Object User para o Client
+//    private void sendUser(){
+//        try{
+//            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
+//            // Send the User object 
+//            outToClient.writeObject(bd.getUser(email));   
+////            outToClient.close();
+//        }
+//        catch(IOException e){
+//            System.out.println("[Worker] ERRO no envio do USER !!!");
+//            System.out.println(e);
+//        }
+//    }
+//    // Envia HashMap de Servers para o Client
+//    private void sendServers(){
+//        try{
+//            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
+//            // Send the HashMap Servers object 
+//            outToClient.writeObject(bd.getAllServers());   
+////            outToClient.close();
+//        }
+//        catch(IOException e){
+//            System.out.println("[Worker] ERRO no envio dos SERVERS !!!");
+//            System.out.println(e);
+//        }
+//    }
+//    
 }

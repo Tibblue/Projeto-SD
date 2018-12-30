@@ -361,10 +361,15 @@ public class MenuForm extends javax.swing.JFrame {
 
     private void refresh(){
         // request refresh User and Servers list
-        this.connection.sendRequest("GET_USER " + this.user.getEmail());
-        this.user = this.connection.receiveUser();
-        this.connection.sendRequest("GET_SERVERS " + this.user.getEmail());
-        this.bdServers = this.connection.receiveServers();
+        this.connection.sendRequest("GET_USER_SERVERS " + this.user.getEmail());
+        this.connection.receiveUserAndServers();
+        this.user = this.connection.getUser();
+        this.bdServers = this.connection.getServers();
+        
+//        this.connection.sendRequest("GET_USER " + this.user.getEmail());
+//        this.user = this.connection.receiveUser();
+//        this.connection.sendRequest("GET_SERVERS " + this.user.getEmail());
+//        this.bdServers = this.connection.receiveServers();
         // refresh window
         MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection);
         menu.setVisible(true);
