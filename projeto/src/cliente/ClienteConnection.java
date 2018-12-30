@@ -69,8 +69,9 @@ public class ClienteConnection{
      */
     public String sendRequest(String request){
         try{
+            System.out.println("[ClienteCon] Request> "+request);
             this.out = new PrintWriter(socket.getOutputStream());
-            this.out.println("[ClienteCon] Request> "+request);
+            this.out.println(request);
             this.out.flush();
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String response = this.in.readLine();
@@ -91,7 +92,7 @@ public class ClienteConnection{
             ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
             try{
                 this.user = (User)fromServer.readObject();
-                System.out.println("[ClienteCon] Receive> \n"+user.toStringUser());
+                System.out.println("[ClienteCon] ReceiveUser> \n"+user.toStringUser());
             }
             catch (ClassNotFoundException e){
                 System.out.println("[ClienteCon] User class missing...");
@@ -111,9 +112,10 @@ public class ClienteConnection{
             ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
             try{
                 this.bdServers = (HashMap<String,ArrayList<Server>>)fromServer.readObject();
+                System.out.print("[ClienteCon] ReceiveServers> \n");
                 for(String key : this.bdServers.keySet()) 
                     for(Server server : this.bdServers.get(key))
-                    System.out.print("[ClienteCon] Receive> \n"+server.toStringServer());
+                    System.out.print(server.toStringServer());
             }
             catch (ClassNotFoundException e){
                 System.out.println("[ClienteCon] HashMap(...) class missing...");
