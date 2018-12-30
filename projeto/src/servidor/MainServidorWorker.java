@@ -135,6 +135,7 @@ public class MainServidorWorker extends Thread {
                     server.unlock();
                 }
                 else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
+                System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "BID": // pedido de licitacao de um Server
                 // TODO FASTTTT

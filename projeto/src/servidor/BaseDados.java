@@ -56,35 +56,30 @@ public class BaseDados {
     }
     
     // LOCK AND UNLOCK METHODS /////////////////////////////////////////////////
-    public void lockAllServers()
-    {
+    public void lockAllServers(){
         for (ArrayList<Server> a : this.servers.values()) {
             a.stream().forEach((s) -> {
                 s.lock();
             });
         }
     }
-    public void unlockAllServers()
-    {
+    public void unlockAllServers(){
         for (ArrayList<Server> a : this.servers.values()) {
             a.stream().forEach((s) -> {
                 s.unlock();
             });
         }
     }
-    public void lockAllUsers()
-    {
+    public void lockAllUsers(){
         this.users.values().stream().forEach((u) -> {
             u.lock();
         });
     }
-    public void unlockAllUsers()
-    {
+    public void unlockAllUsers(){
         this.users.values().stream().forEach((u) -> {
             u.unlock();
         });
     }
-    
     ////////////////////////////////////////////////////////////////////////////
     // GETTERS
     public synchronized HashMap<String,User> getAllUsers(){
@@ -125,6 +120,7 @@ public class BaseDados {
         this.servers.put(server.getTipo(),list);
         unlockAllServers();
     }
+    ////////////////////////////////////////////////////////////////////////////
     
     
     // unica funçao que vai tocar no nextIdReserva por isso synchronized chega
