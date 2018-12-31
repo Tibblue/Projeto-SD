@@ -119,7 +119,7 @@ public class MainServidorWorker extends Thread {
                 if(free.size()>0){
                     Server server = free.get(0);
                     server.lock();
-                    if(server.getUsed()){
+                    if(server.getUsed()){ // KIKO supostamente não podíamos cagar se ele estava a ser usado em leilão ou não?
                         // servidor foi  alocado entretanto...
                         // retorna falha no pedido
                         response = "FAIL SERVER_UNAVAILABLE";
