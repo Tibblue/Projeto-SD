@@ -142,6 +142,33 @@ public class MainServidorWorker extends Thread {
                 break;
             case "BID": // pedido de licitacao de um Server
                 // TODO FASTTTT
+                String tipoS = loginSplit[2];
+                double bid = 0;
+                List<Server> freeServers = bd.getFreeServersByType(tipoS);
+                if(freeServers.size()>0){
+                    Server server = freeServers.get(0);
+                    server.lock();
+                    if(server.getUsed() && server.getLastBid() < bid) 
+// antes estava server.getUsed() mas se ele vai buscar os que estão livres e damos lock quando o fazemos why this??
+                    {
+                        response = "FAIL SERVER_UNAVAILABLE";
+                    }
+                    else{
+                        int idReserva = bd.nextIdReserva();
+                        // atualizar o server
+                        server.reserva(idReserva);
+                        server.setIsLeilao(true);
+                        // adicionar o server ao user
+                        User user = bd.getUser(emailU);
+                        user.addServer(server.clone());
+                        bd.setUser(user);
+                        // response
+                        response = "SUCCESS ID " + idReserva;
+                    }
+                    server.unlock();
+                }
+                else response = "FAIL OUT_OF_SERVERS_of_type " + tipoS;
+                System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "REM": // pedido de libertação de um Server do User
                 int id = Integer.parseInt(loginSplit[2]);

@@ -330,11 +330,16 @@ public class MenuForm extends javax.swing.JFrame {
         Server servidor = new Server();
         
         for(Server s : this.bdServers.get(tipo))
-            if(s.getLastBid()==minBid) servidor = s;
-
-
-        //Falta adicionar também à lista de servers do cliente!
-        if(true){
+        {
+            if(s.getLastBid() == minBid) 
+            {
+                servidor = s;
+            }
+        }
+     
+        String response = this.connection.sendRequest("BID " + user.getEmail() + " " + tipo + " " + servidor.getLastBid());
+        String status = response.split(" ")[0];
+        if(status.equals("SUCCESS")){
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
             JOptionPane.showMessageDialog(null, "Licitação efetuada!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
             
