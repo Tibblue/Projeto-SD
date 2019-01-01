@@ -18,12 +18,12 @@ public class BaseDados {
     private final HashMap<String,User> users;
     private final HashMap<String,ArrayList<Server>> servers;
 //    private final HashMap<String,ArrayList<Server>> reservas;
-    
+
     public BaseDados(){
         this.lastIdReserva = 0;
         this.users = new HashMap<>();
         this.servers = new HashMap<>();
-        
+
         // USERS
         // criar user
         User debug = new User("kiko", "Password");
@@ -37,7 +37,7 @@ public class BaseDados {
         this.users.put(vitor.getEmail(), vitor);
         this.users.put(camaz.getEmail(), camaz);
         this.users.put(raul.getEmail(), raul);
-        
+
         // SERVERS
         // criar servidor
         Server batatas1 = new Server("batatas1","potato.small",1.00);
@@ -54,7 +54,7 @@ public class BaseDados {
         this.servers.put("potato.small", potatosmall);
         this.servers.put("potato.medium", potatomedium);
     }
-    
+
     // LOCK AND UNLOCK METHODS /////////////////////////////////////////////////
     public void lockAllServers(){
         for (ArrayList<Server> a : this.servers.values()) {
@@ -89,7 +89,7 @@ public class BaseDados {
         return usrs;
     }
     public synchronized HashMap<String,ArrayList<Server>> getAllServers(){
-        lockAllServers(); 
+        lockAllServers();
         HashMap<String, ArrayList<Server>> servs = this.servers;
         unlockAllServers();
         return servs;
@@ -106,7 +106,7 @@ public class BaseDados {
         unlockAllServers();
         return lista;
     }
-    
+
     // SETTERS
     public synchronized void setUser(User user){
         lockAllServers();
@@ -121,21 +121,21 @@ public class BaseDados {
         unlockAllServers();
     }
     ////////////////////////////////////////////////////////////////////////////
-    
-    
+
+
     // unica funçao que vai tocar no nextIdReserva por isso synchronized chega
     public synchronized int nextIdReserva() {
         this.lastIdReserva++; // auto incrementaçao
         return lastIdReserva;
     }
-    
+
     public synchronized void updateUserServer(String email, Server server){
         User user = this.users.get(email);
         user.addServer(server.clone());
         this.users.put(email, user);
     }
-    
-    
+
+
     public synchronized void newBid(String tipo, double bid)
     {
         lockAllServers();
@@ -147,7 +147,7 @@ public class BaseDados {
         }
         unlockAllServers();
     }
-    
+
     public synchronized void coverBid(int idReserva, double bid)
     {
         lockAllServers();
@@ -164,11 +164,11 @@ public class BaseDados {
         }
         unlockAllServers();
     }
-        
+
     public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
-        // LOCK ALL SERVERS 
+        // LOCK ALL SERVERS
         lockAllServers();
-        
+
         HashMap<String,ArrayList<Server>> lista = new HashMap<>();
         for(String tipo : this.servers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
@@ -183,15 +183,15 @@ public class BaseDados {
         }
         // UNLOCK ALL SERVERS
         unlockAllServers();
-        
+
         return lista;
     }
-    
+
     // TODO? fazer outra funcao que so devolve o mais barato pra cada tipo
     public synchronized HashMap<String,ArrayList<Server>> getBidableServers(){
-        // LOCK ALL SERVERS 
+        // LOCK ALL SERVERS
         lockAllServers();
-        
+
         HashMap<String,ArrayList<Server>> lista = new HashMap<>();
         for(String tipo : this.servers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
@@ -207,17 +207,17 @@ public class BaseDados {
         }
         // UNLOCK ALL SERVERS
         unlockAllServers();
-        
+
         return lista;
     }
-    
+
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
     public synchronized void freeServer(String email, int idReserva){
         lockAllUsers();
         User user = this.users.get(email);
         unlockAllUsers();
-        
+
         Server aux=null;
         user.lock();
         for(Server s : user.getServidoresAlocados()){
@@ -229,7 +229,7 @@ public class BaseDados {
         else
             System.out.println("No reservation found with ID: " + idReserva);
         user.unlock();
-        
+
         // atualizar na lista de Servers
         this.lockAllServers();
         for(String key : this.servers.keySet()){
@@ -242,81 +242,81 @@ public class BaseDados {
         }
         this.unlockAllServers();
     }
-    
+
     // KIKO DEI LOCK AQUI TAMBÉM PORQUE ELE ESTAVA A VER SE OS SERVIDORES ESTÃO A SER USADOS (BETTER)
     public synchronized List<Server> getFreeServersByType(String type)
     {
         lockAllServers();
         ArrayList<Server> se = this.servers.get(type);
         List<Server> aux;
-        
+
         aux = se.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
-        
+
         unlockAllServers();
         return aux;
     }
-        
-    
+
+
     // Users
     public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException{
        try{
            File file = new File(nomeFicheiro);
            FileOutputStream fos = new FileOutputStream(file);
            ObjectOutputStream oos = new ObjectOutputStream(fos);
-           
+
            oos.writeObject(users);
            oos.flush();
            oos.close();
            fos.close();
        }
        catch(Exception e){
-       }        
+       }
     }
     public static HashMap<String,String> loadUsers(String nomeFicheiro) throws FileNotFoundException{
        HashMap<String,String> users = new HashMap<>();
        try{
            File toRead = new File(nomeFicheiro);
-            try (FileInputStream fis = new FileInputStream(toRead); 
+            try (FileInputStream fis = new FileInputStream(toRead);
                     ObjectInputStream ois = new ObjectInputStream(fis)) {
-                
+
                 users = (HashMap<String,String>) ois.readObject();
-                
+
             }
        }
        catch(IOException | ClassNotFoundException e){
-       } 
+       }
        return users;
     }
-    
+
     // Servers
     public static void saveServers(String nomeFicheiro, HashMap<String,String> servers) throws FileNotFoundException{
        try{
            File file = new File(nomeFicheiro);
            FileOutputStream fos = new FileOutputStream(file);
            ObjectOutputStream oos = new ObjectOutputStream(fos);
-           
+
            oos.writeObject(servers);
            oos.flush();
            oos.close();
            fos.close();
        }
        catch(Exception e){
-       }        
+       }
     }
     public static HashMap<String,ArrayList<Server>> loadServers(String nomeFicheiro) throws FileNotFoundException{
        HashMap<String,ArrayList<Server>> servers = new HashMap<>();
        try{
            File toRead = new File(nomeFicheiro);
-            try (FileInputStream fis = new FileInputStream(toRead); 
+            try (FileInputStream fis = new FileInputStream(toRead);
                  ObjectInputStream ois = new ObjectInputStream(fis)) {
                 servers = (HashMap<String,ArrayList<Server>>) ois.readObject();
             }
        }
        catch(IOException | ClassNotFoundException e){
-       } 
+       }
        return servers;
     }
-    
+
     /**
      * Retorna a lista de Users
      * @return String
@@ -329,7 +329,7 @@ public class BaseDados {
         users.append("#----------  -----  ----------#");
         return users.toString();
     }
-    
+
     /**
      * Retorna a lista de Servidores
      * @return String
@@ -344,5 +344,5 @@ public class BaseDados {
         servers.append("#---------- ------- ----------#");
         return servers.toString();
     }
-    
+
 }

@@ -14,8 +14,8 @@ public class User implements Serializable {
     private final String email;
     private final String password;
     private double debt;
-    private final ArrayList<Server> servidoresAlocados; 
-    
+    private final ArrayList<Server> servidoresAlocados;
+
     /**
      * Instancia User com email e password, mas sem Servidores alocados
      * @param email
@@ -27,24 +27,24 @@ public class User implements Serializable {
         this.password = password;
         this.servidoresAlocados = new ArrayList<>();
     }
-    
-    public User(User u)
-    {
+
+    public User(User u){
         this.lockUser = u.getLock();
         this.email = u.getEmail();
         this.password = u.getPassword();
         this.servidoresAlocados = u.getServidoresAlocados();
     }
-    
-    // LOCKS
+
+    // LOCK AND UNLOCK METHODS //
     public void lock() {
         this.lockUser.lock();
     }
     public void unlock() {
         this.lockUser.unlock();
     }
-    
-    // GETTERS
+    /////////////////////////////
+
+    // GETTERS //////////////////
     public String getEmail() {
         return this.email;
     }
@@ -65,19 +65,19 @@ public class User implements Serializable {
         unlock();
         return servidoresA;
     }
-    
+
     public ReentrantLock getLock(){
         return this.lockUser;
     }
-
-    // SETTERS
+    // SETTERS //////////////////
     public void setDebt(double debt) {
         lock();
         this.debt = debt;
         unlock();
     }
-    
-    
+    /////////////////////////////
+
+    // Server managment
     public void addServer(Server server){
         lock();
         this.servidoresAlocados.add(server);
@@ -88,7 +88,7 @@ public class User implements Serializable {
         this.servidoresAlocados.remove(server);
         unlock();
     }
-    
+
     public double getTotalPrice(){
         return this.servidoresAlocados.stream().mapToDouble(a -> a.getPrice())
                                        .sum();
@@ -102,9 +102,9 @@ public class User implements Serializable {
             user.append(server.toStringServer());
         return user.toString();
     }
-    
+
     public User clone(){
         return new User(this);
     }
-    
+
 }

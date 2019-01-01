@@ -10,19 +10,19 @@ import cliente.forms.LoginForm;
 public class MainSD {
     public static void main(String[] args) {
         BaseDados bd = new BaseDados();
-        
+
         /* PARA QUANDO TIVERMOS PERSISTENCIA
         // persistencia da BD
         try{
             data = data.load();
-        } 
+        }
         catch (IOException i){
             betess = betess.povoar();
             betess.save(betess);
         }
         //betess = betess.load(); Acho que não é preciso fazer este
         */
-        
+
         Scanner input = new Scanner(System.in);
         System.out.println("1 - Cliente");
         System.out.println("2 - Servidor");
@@ -31,7 +31,6 @@ public class MainSD {
         try{
             switch(in){
                 case 1:
-                    // LoginForm receber o data é temporario para debug
                     LoginForm login = new LoginForm();
                     login.setVisible(true);
                     break;

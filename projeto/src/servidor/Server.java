@@ -18,7 +18,7 @@ public class Server implements Serializable {
     private boolean isLeilao;
     private String owner; // ?email do user que esta a usar?
     private LocalDateTime horaDeInicio;
-    
+
     public Server() {
         this.lockServer = new ReentrantLock();
         this.nome = "";
@@ -47,19 +47,20 @@ public class Server implements Serializable {
         this.isLeilao = s.getIsLeilao();
     }
 
-    // LOCKS
+    // LOCK AND UNLOCK METHODS //
     public void lock() {
         this.lockServer.lock();
     }
     public void unlock() {
         this.lockServer.unlock();
     }
-    
-    // GETS
+    /////////////////////////////
+
+    // GETTERS //////////////////
     public ReentrantLock getLock(){
         return this.lockServer;
     }
-    
+
     public String getNome() {
         return this.nome;
     }
@@ -90,7 +91,6 @@ public class Server implements Serializable {
         unlock();
         return reserva;
     }
-    // pelo id de id sabemos se estamos a usar o server ou nao
     public boolean getUsed() {
         int id;
         boolean ret = false;
@@ -99,14 +99,14 @@ public class Server implements Serializable {
         unlock();
         if(id!=0) ret = true;
         return ret;
-        
+
     }
     public LocalDateTime getHoraInicio() {
         return this.horaDeInicio;
     }
     // TODO GETUSER by email
-    
-    // SETS
+
+    // SETTERS //////////////////
     public synchronized void setIsLeilao(boolean isLeilao) {
         lock();
         this.isLeilao = isLeilao;
@@ -125,29 +125,29 @@ public class Server implements Serializable {
     public void setHoraInicio(LocalDateTime horaInicio){
         this.horaDeInicio=horaInicio;
     }
-    
-    
+    /////////////////////////////
+
+    // Reserva Leilão (BID)
     public synchronized void reserva(int id){
         lock();
         this.setIdReserva(id);
         unlock();
     }
-
     public synchronized void reservaLeilao(int id){
-        // o id da id é calculado pelo BancoServers
-        // aqui apenas se faz set dele
         lock();
         this.setIdReserva(id);
         this.setIsLeilao(true);
         unlock();
     }
-    
+
+    // Libertar Server Demand (BUY)
     public synchronized void freeServer(){
         lock();
         this.idReserva = 0;
         unlock();
     }
-    
+
+
     public Server clone(){
         return new Server(this);
     }
@@ -162,5 +162,5 @@ public class Server implements Serializable {
         server.append("  Leilão? ").append(this.isLeilao).append("\n");
         return server.toString();
     }
-    
+
 }

@@ -26,17 +26,17 @@ public class MainServidor extends Thread{
     private final ServerSocket serverSocket;
     private Socket clienteSocket;
     private final BaseDados bd;
-     
+
     public MainServidor() throws IOException {
         this.serverSocket = new ServerSocket(this.PORT);
         this.bd = new BaseDados();
     }
-    
+
     public MainServidor(BaseDados bd) throws IOException {
         this.serverSocket = new ServerSocket(this.PORT);
         this.bd = bd;
     }
-    
+
     @Override
     public void run() {
         System.out.println("[Servidor] Iniciando o Servidor");
@@ -44,8 +44,8 @@ public class MainServidor extends Thread{
             // debuging prints da lista de Users e Servers
             System.out.println(this.bd.toStringUsers());
             System.out.println(this.bd.toStringServidores());
-            
-            System.out.println("[Servidor] Servidor à escuta na porta " + 
+
+            System.out.println("[Servidor] Servidor à escuta na porta " +
                                 this.serverSocket.getLocalSocketAddress());
             try{
                 // fica a escuta de pedidos para aceitar
@@ -64,15 +64,15 @@ public class MainServidor extends Thread{
                 System.out.println("[Servidor] Erro a criar Thread para o cliente");
                 System.out.println(e);
             }
-            
+
         }
     }
-    
+
     // Interrompe o MainServidor
     public void stopServidor(){
         this.running.set(false);
         this.interrupt();
         System.out.println("[Servidor] Servidor terminado !!!");
     }
-    
+
 }

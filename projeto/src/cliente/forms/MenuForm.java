@@ -21,7 +21,7 @@ public class MenuForm extends javax.swing.JFrame {
     private final ClienteConnection connection;
     private User user;
     private HashMap<String,ArrayList<Server>> bdServers;
-    
+
     private DefaultTableModel modelDemand;
     private DefaultTableModel modelBid;
     private DefaultTableModel modelMy;
@@ -47,7 +47,7 @@ public class MenuForm extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
     }
-    
+
     public void fillDemandTable(){
         String[] colunas = {"Tipo","Número","Preço/hora"};
         Object[][] data = new Object[this.bdServers.size()][3];
@@ -112,7 +112,7 @@ public class MenuForm extends javax.swing.JFrame {
             i++;
         }
         modelMy = new DefaultTableModel(data,colunas);
-        
+
         myServersTable = new JTable(modelMy);
     }
 
@@ -120,15 +120,15 @@ public class MenuForm extends javax.swing.JFrame {
         demandServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
         demandServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         demandServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        
+
         bidServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
         bidServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         bidServersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-                
+
         myServersTable.getColumnModel().getColumn(0).setPreferredWidth(200);
         myServersTable.getColumnModel().getColumn(1).setPreferredWidth(150);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -326,7 +326,7 @@ public class MenuForm extends javax.swing.JFrame {
         double bid = new Double(bidSpinner.getValue().toString());
         int row = bidServersTable.getSelectedRow();
         String tipo = bidServersTable.getModel().getValueAt(row, 0).toString();
-        
+
         // o servidor fica encarrege de verificar se a nova licitaçao é maior que a anterior
         String response = this.connection.sendRequest("BID " + user.getEmail() + " " + tipo + " " + bid);
         String status = response.split(" ")[0];
@@ -337,14 +337,14 @@ public class MenuForm extends javax.swing.JFrame {
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/forbidden.png"));
             JOptionPane.showMessageDialog(null, "Valor licitado não é superior à licitação atual", "Aviso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
-        
+
         this.refresh();
     }//GEN-LAST:event_bidButtonActionPerformed
 
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed
         int row = demandServersTable.getSelectedRow();
         String tipo = demandServersTable.getModel().getValueAt(row, 0).toString();
-        
+
         // Efetuar o pedido ao servidor
         String response = this.connection.sendRequest("BUY " + user.getEmail() + " " + tipo);
             System.out.println("DEBUG "+response);
@@ -382,30 +382,18 @@ public class MenuForm extends javax.swing.JFrame {
         this.connection.receiveUserAndServers();
         this.user = this.connection.getUser();
         this.bdServers = this.connection.getServers();
-        
-//        this.connection.sendRequest("GET_USER " + this.user.getEmail());
-//        this.user = this.connection.receiveUser();
-//        this.connection.sendRequest("GET_SERVERS " + this.user.getEmail());
-//        this.bdServers = this.connection.receiveServers();
+
         // refresh window
         MenuForm menu = new MenuForm(this.login,this.user,this.bdServers,this.connection);
         menu.setVisible(true);
         this.setVisible(false);
         this.dispose();
-        
-        // devia funcionar
-//        this.fillDemandTable();
-//        this.fillBidTable();
-//        this.fillMyServersTable();
-//        this.demandServersTable.repaint();
-//        this.bidServersTable.repaint();
-//        this.myServersTable.repaint();
     }
-    
+
     private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeServerButtonActionPerformed
         int row = myServersTable.getSelectedRow();
         String idReserva = myServersTable.getModel().getValueAt(row, 0).toString();
-        
+
         //Efetuar o pedido ao servidor
         String response = this.connection.sendRequest("REM " + user.getEmail() + " " + idReserva);
         String status = response.split(" ")[0];
@@ -419,7 +407,7 @@ public class MenuForm extends javax.swing.JFrame {
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/warning.png"));
             JOptionPane.showMessageDialog(null, "Servidor não removido da sua lista!", "Erro", JOptionPane.INFORMATION_MESSAGE, icon);
         }
-        
+
         this.refresh();
     }//GEN-LAST:event_removeServerButtonActionPerformed
 

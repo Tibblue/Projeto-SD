@@ -16,14 +16,14 @@ public class MainServidorWorker extends Thread {
     private ObjectOutputStream toClient;
     private final BaseDados bd;
     private String email;
-    
+
     public MainServidorWorker(Socket cliente, BaseDados db) throws IOException {
         this.clienteSocket = cliente;
         this.in = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
         this.out = new PrintWriter(clienteSocket.getOutputStream());
         this.bd = db;
     }
-    
+
     @Override
     public void run(){
         try{
@@ -51,7 +51,7 @@ public class MainServidorWorker extends Thread {
             System.out.println(e);
         }
     }
-    
+
     // faz autenticaçao de um User
     // todo podemos alterar de bool para String e retorna o erro ao cliente
     private boolean autenticacao(){
@@ -95,7 +95,7 @@ public class MainServidorWorker extends Thread {
             return false;
         }
     }
-    
+
     /**
      * Parses a request sent by the Client
      * Return "SUCCESS [info]" in case of Success
@@ -147,7 +147,7 @@ public class MainServidorWorker extends Thread {
                 if(freeServers.size()>0){
                     // selecionar o mais barato TODO
                     Server server = freeServers.get(0);
-                    
+
                     server.lock();
                     if(server.getUsed() && server.getLastBid() < bid){
                         response = "FAIL SERVER_UNAVAILABLE";
@@ -188,29 +188,19 @@ public class MainServidorWorker extends Thread {
                 System.out.println(bd.getUser(emailU).toStringUser());
                 System.out.println(bd.toStringServidores());
                 break;
-//            case "GET_USER": // pedido do User Object
-//                this.sendUser();
-//                response = "SUCCESS SENDING_USER";
-//                System.out.println(bd.getUser(emailU).toStringUser());
-//                break;
-//            case "GET_SERVERS": // pedido da Lista de Servers
-//                this.sendServers();
-//                response = "SUCCESS SENDING_SERVERS";
-//                System.out.println(bd.toStringServidores());
-//                break;
             default: response = "FAIL UNKNOWN_REQUEST";
                 break;
         }
         return response;
     }
-    
+
     // Envia Object User e HashMap de Servers para o Client
     private void sendUserAndServers(){
         try{
             ArrayList<Object> list = new ArrayList<>();
             list.add(bd.getUser(email));
             list.add(bd.getAllServers());
-            
+
             toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
             toClient.writeObject(list);
             toClient.flush();
@@ -221,31 +211,4 @@ public class MainServidorWorker extends Thread {
         }
     }
 
-//    // Envia Object User para o Client
-//    private void sendUser(){
-//        try{
-//            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-//            // Send the User object 
-//            outToClient.writeObject(bd.getUser(email));   
-////            outToClient.close();
-//        }
-//        catch(IOException e){
-//            System.out.println("[Worker] ERRO no envio do USER !!!");
-//            System.out.println(e);
-//        }
-//    }
-//    // Envia HashMap de Servers para o Client
-//    private void sendServers(){
-//        try{
-//            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-//            // Send the HashMap Servers object 
-//            outToClient.writeObject(bd.getAllServers());   
-////            outToClient.close();
-//        }
-//        catch(IOException e){
-//            System.out.println("[Worker] ERRO no envio dos SERVERS !!!");
-//            System.out.println(e);
-//        }
-//    }
-//    
 }

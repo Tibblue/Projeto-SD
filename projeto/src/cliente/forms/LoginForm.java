@@ -17,7 +17,7 @@ public class LoginForm extends javax.swing.JFrame {
     private ClienteConnection connection;
     private boolean usernameTouch = false;
     private boolean passwordTouch = false;
-    
+
     /**
      * Creates new form loginForm
      */
