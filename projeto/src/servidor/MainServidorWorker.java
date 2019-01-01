@@ -214,14 +214,6 @@ public class MainServidorWorker extends Thread {
             toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
             toClient.writeObject(list);
             toClient.flush();
-
-//            toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
-//            // Send the User object 
-//            toClient.writeObject(bd.getUser(email));
-//            toClient.flush();
-//            // Send the HashMap Servers object  
-//            toClient.writeObject(bd.getAllServers());
-//            toClient.flush();
         }
         catch(IOException e){
             System.out.println("[Worker] ERRO no envio do USER & SERVERS !!!");
