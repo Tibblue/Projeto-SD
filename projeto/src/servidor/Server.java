@@ -117,7 +117,7 @@ public class Server implements Serializable {
         this.idReserva = idReserva;
         unlock();
     }
-    public synchronized void setNewBid(double valor){
+    public synchronized void setLastBid(double valor){
         lock();
         this.lastBid=valor;
         unlock();

@@ -119,7 +119,7 @@ public class MainServidorWorker extends Thread {
                 if(free.size()>0){
                     Server server = free.get(0);
                     server.lock();
-                    if(server.getUsed()){ // KIKO supostamente não podíamos cagar se ele estava a ser usado em leilão ou não?
+                    if(server.getUsed()){
                         // servidor foi  alocado entretanto...
                         // retorna falha no pedido
                         response = "FAIL SERVER_UNAVAILABLE";
@@ -141,22 +141,21 @@ public class MainServidorWorker extends Thread {
                 System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "BID": // pedido de licitacao de um Server
-                // TODO FASTTTT
+                // TODO double check this
                 String tipoS = loginSplit[2];
-                double bid = 0;
+                double bid = new Double(loginSplit[3]);
                 List<Server> freeServers = bd.getFreeServersByType(tipoS);
                 if(freeServers.size()>0){
                     Server server = freeServers.get(0);
                     server.lock();
-                    if(server.getUsed() && server.getLastBid() < bid) 
-// antes estava server.getUsed() mas se ele vai buscar os que estão livres e damos lock quando o fazemos why this??
-                    {
+                    if(server.getUsed() && server.getLastBid() < bid){
                         response = "FAIL SERVER_UNAVAILABLE";
                     }
                     else{
                         int idReserva = bd.nextIdReserva();
                         // atualizar o server
                         server.reserva(idReserva);
+                        server.setLastBid(bid);
                         server.setIsLeilao(true);
                         // adicionar o server ao user
                         User user = bd.getUser(emailU);

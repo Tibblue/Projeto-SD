@@ -326,29 +326,19 @@ public class MenuForm extends javax.swing.JFrame {
         double bid = new Double(bidSpinner.getValue().toString());
         int row = bidServersTable.getSelectedRow();
         String tipo = bidServersTable.getModel().getValueAt(row, 0).toString();
-        double minBid = new Double(bidServersTable.getModel().getValueAt(row, 2).toString());
-        Server servidor = new Server();
         
-        for(Server s : this.bdServers.get(tipo))
-        {
-            if(s.getLastBid() == minBid) 
-            {
-                servidor = s;
-            }
-        }
-     
-        String response = this.connection.sendRequest("BID " + user.getEmail() + " " + tipo + " " + servidor.getLastBid());
+        // o servidor fica encarrege de verificar se a nova licitaçao é maior que a anterior
+        String response = this.connection.sendRequest("BID " + user.getEmail() + " " + tipo + " " + bid);
         String status = response.split(" ")[0];
         if(status.equals("SUCCESS")){
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/check.png"));
             JOptionPane.showMessageDialog(null, "Licitação efetuada!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, icon);
-            
         } else{
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("resources/forbidden.png"));
             JOptionPane.showMessageDialog(null, "Valor licitado não é superior à licitação atual", "Aviso", JOptionPane.INFORMATION_MESSAGE, icon);
         }
         
-    this.refresh();
+        this.refresh();
     }//GEN-LAST:event_bidButtonActionPerformed
 
     private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyButtonActionPerformed

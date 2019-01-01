@@ -141,7 +141,7 @@ public class BaseDados {
         lockAllServers();
         Server s = getFreeServersByType(tipo).get(1);
         if(s.getLastBid() < bid){
-            s.setNewBid(bid);
+            s.setLastBid(bid);
             s.setIsLeilao(true);
             s.setIdReserva(nextIdReserva());
         }
@@ -155,7 +155,7 @@ public class BaseDados {
             for(Server s : sv){
                 if(s.getIdReserva() == idReserva){
                     if(s.getLastBid() < bid){
-                        s.setNewBid(bid);
+                        s.setLastBid(bid);
                         s.setIsLeilao(true);
                         s.setIdReserva(nextIdReserva());
                     }
