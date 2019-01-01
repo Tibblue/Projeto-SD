@@ -11,15 +11,14 @@ import java.util.List;
  */
 public class MainServidorWorker extends Thread {
     private final Socket clienteSocket;
-//    private final ObjectOutputStream toClient;
     private final BufferedReader in;
     private final PrintWriter out;
+    private ObjectOutputStream toClient;
     private final BaseDados bd;
     private String email;
     
     public MainServidorWorker(Socket cliente, BaseDados db) throws IOException {
         this.clienteSocket = cliente;
-//        this.toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
         this.in = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
         this.out = new PrintWriter(clienteSocket.getOutputStream());
         this.bd = db;
@@ -44,7 +43,6 @@ public class MainServidorWorker extends Thread {
 //                    out.flush();
                 }
                 System.out.println("[Worker] Terminando conexao");
-                return;
             }
             clienteSocket.close();
         }
@@ -213,11 +211,11 @@ public class MainServidorWorker extends Thread {
             list.add(bd.getUser(email));
             list.add(bd.getAllServers());
             
-            ObjectOutputStream toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
+            toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
             toClient.writeObject(list);
             toClient.flush();
 
-//            ObjectOutputStream toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
+//            toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
 //            // Send the User object 
 //            toClient.writeObject(bd.getUser(email));
 //            toClient.flush();

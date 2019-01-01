@@ -12,9 +12,9 @@ import servidor.Server;
  */
 public class ClienteConnection{
     private Socket socket;
-//    private ObjectInputStream fromServer;
     private BufferedReader in;
     private PrintWriter out;
+    private ObjectInputStream fromServer;
     private User user;
     private HashMap<String,ArrayList<Server>> bdServers;
     
@@ -36,7 +36,6 @@ public class ClienteConnection{
         try {
             this.socket = new Socket("127.0.0.1", 1234);
             // prepare all the streams
-//            this.fromServer = new ObjectInputStream(socket.getInputStream());
             this.out = new PrintWriter(socket.getOutputStream());
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // autenticao
@@ -99,7 +98,7 @@ public class ClienteConnection{
     // Recebe Object User e HashMap de Servers do Servidor
     public void receiveUserAndServers(){
         try{
-            ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
+            fromServer = new ObjectInputStream(socket.getInputStream());
             try{
                 ArrayList<Object> list = (ArrayList<Object>)fromServer.readObject();
                 this.user = (User)list.get(0);
