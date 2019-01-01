@@ -27,8 +27,6 @@ public class MainServidorWorker extends Thread {
     
     @Override
     public void run(){
-//        try ( BufferedReader in = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
-//                PrintWriter out = new PrintWriter(clienteSocket.getOutputStream())) {
         try{
             // receber a autenticaçao
             if( this.autenticacao() ){
@@ -38,8 +36,9 @@ public class MainServidorWorker extends Thread {
                 String response;
                 // Worker espera pedidos do cliente
                 while ((request = in.readLine()) != null && !request.equals("LOGOUT")) {
-                    System.out.println("[Cliente] request> " + request);
+                    // TODO melhorar parse
                     response = this.parse(request);
+                    System.out.println("[Cliente] request> " + request);
                     System.out.println("[Cliente] response> " + response);
 //                    out.println(response);
 //                    out.flush();
@@ -218,13 +217,13 @@ public class MainServidorWorker extends Thread {
             toClient.writeObject(list);
             toClient.flush();
 
-//            ObjectOutputStream outToClient = new ObjectOutputStream(toClient);
-//            // Send the User and HashMap Servers object 
-//            outToClient.writeObject(bd.getUser(email));
-//            outToClient.flush();
-//            // Send the object  
-//            outToClient.writeObject(bd.getAllServers());
-//            outToClient.flush();
+//            ObjectOutputStream toClient = new ObjectOutputStream(clienteSocket.getOutputStream());
+//            // Send the User object 
+//            toClient.writeObject(bd.getUser(email));
+//            toClient.flush();
+//            // Send the HashMap Servers object  
+//            toClient.writeObject(bd.getAllServers());
+//            toClient.flush();
         }
         catch(IOException e){
             System.out.println("[Worker] ERRO no envio do USER & SERVERS !!!");

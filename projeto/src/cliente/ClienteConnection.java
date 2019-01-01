@@ -101,6 +101,15 @@ public class ClienteConnection{
         try{
             ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
             try{
+                ArrayList<Object> list = (ArrayList<Object>)fromServer.readObject();
+                this.user = (User)list.get(0);
+                this.bdServers = (HashMap<String,ArrayList<Server>>)list.get(1);
+                System.out.println("[ClienteCon] ReceiveUser> \n"+user.toStringUser());
+                System.out.print("[ClienteCon] ReceiveServers> \n");
+                for(String key : this.bdServers.keySet()) 
+                    for(Server server : this.bdServers.get(key))
+                        System.out.print(server.toStringServer());
+                
 //                // recebe o User mandado pelo servidor (versao Object)
 //                this.user = (User)fromServer.readObject();
 //                System.out.println("[ClienteCon] ReceiveUser> \n"+user.toStringUser());
@@ -110,15 +119,6 @@ public class ClienteConnection{
 //                for(String key : this.bdServers.keySet()) 
 //                    for(Server server : this.bdServers.get(key))
 //                        System.out.print(server.toStringServer());
-                
-                ArrayList<Object> list = (ArrayList<Object>)fromServer.readObject();
-                this.user = (User)list.get(0);
-                this.bdServers = (HashMap<String,ArrayList<Server>>)list.get(1);
-                System.out.println("[ClienteCon] ReceiveUser> \n"+user.toStringUser());
-                System.out.print("[ClienteCon] ReceiveServers> \n");
-                for(String key : this.bdServers.keySet()) 
-                    for(Server server : this.bdServers.get(key))
-                        System.out.print(server.toStringServer());
             }
             catch (ClassNotFoundException e){
                 System.out.println("[ClienteCon] User or HashMap(...) class missing...");
