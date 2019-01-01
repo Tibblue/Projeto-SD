@@ -81,10 +81,10 @@ public class ClienteConnection{
     public String sendRequest(String request){
         try{
             System.out.println("[ClienteCon] Request> "+request);
-                this.out = new PrintWriter(socket.getOutputStream());
+            this.out = new PrintWriter(socket.getOutputStream());
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out.println(request);
             this.out.flush();
-                this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String response = this.in.readLine();
             System.out.println("[ClienteCon] Response> "+response);
             return response;
@@ -127,7 +127,6 @@ public class ClienteConnection{
                 System.out.println("[ClienteCon] Receive> User & Servers RIP !!!");
                 System.out.println(e);
             }
-//            fromServer.close();
         }
         catch (IOException e) {
             System.out.println("[ClienteCon] Receive> ObjectInputStream RIP !!!");

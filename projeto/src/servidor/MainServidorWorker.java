@@ -41,8 +41,8 @@ public class MainServidorWorker extends Thread {
                     System.out.println("[Cliente] request> " + request);
                     response = this.parse(request);
                     System.out.println("[Cliente] response> " + response);
-                    out.println(response);
-                    out.flush();
+//                    out.println(response);
+//                    out.flush();
                 }
                 System.out.println("[Worker] Terminando conexao");
                 return;
@@ -138,6 +138,8 @@ public class MainServidorWorker extends Thread {
                     server.unlock();
                 }
                 else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
+                    out.println(response);
+                    out.flush();
                 System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "BID": // pedido de licitacao de um Server
@@ -146,7 +148,9 @@ public class MainServidorWorker extends Thread {
                 double bid = new Double(loginSplit[3]);
                 List<Server> freeServers = bd.getFreeServersByType(tipoS);
                 if(freeServers.size()>0){
+                    // selecionar o mais barato TODO
                     Server server = freeServers.get(0);
+                    
                     server.lock();
                     if(server.getUsed() && server.getLastBid() < bid){
                         response = "FAIL SERVER_UNAVAILABLE";
@@ -167,17 +171,23 @@ public class MainServidorWorker extends Thread {
                     server.unlock();
                 }
                 else response = "FAIL OUT_OF_SERVERS_of_type " + tipoS;
+                    out.println(response);
+                    out.flush();
                 System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "REM": // pedido de libertação de um Server do User
                 int id = Integer.parseInt(loginSplit[2]);
                 this.bd.freeServer(emailU,id);
                 response = "SUCCESS REM " + id;
+                    out.println(response);
+                    out.flush();
                 System.out.println(bd.getUser(emailU).toStringUser());
                 break;
             case "GET_USER_SERVERS": // pedido do User Object e da Lista de Servers
-                this.sendUserAndServers();
                 response = "SUCCESS SENDING_USER_SERVERS";
+                    out.println(response);
+                    out.flush();
+                this.sendUserAndServers();
                 System.out.println(bd.getUser(emailU).toStringUser());
                 System.out.println(bd.toStringServidores());
                 break;
@@ -215,7 +225,6 @@ public class MainServidorWorker extends Thread {
 //            // Send the object  
 //            outToClient.writeObject(bd.getAllServers());
 //            outToClient.flush();
-//            outToClient.close();
         }
         catch(IOException e){
             System.out.println("[Worker] ERRO no envio do USER & SERVERS !!!");
