@@ -2,11 +2,11 @@ package servidor;
 
 import cliente.User;
 import java.io.*;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -40,9 +40,9 @@ public class BaseDados {
 
         // SERVERS
         // criar servidor
-        Server batatas1 = new Server("batatas1","potato.small",1.00);
-        Server batatas2 = new Server("batatas2","potato.small",1.00);
-        Server batatas3 = new Server("batatas3","potato.medium",2.00);
+        Server batatas1 = new Server("batatas1","potato.small",3600.00);
+        Server batatas2 = new Server("batatas2","potato.small",3600.00);
+        Server batatas3 = new Server("batatas3","potato.medium",60.00);
         // criar ArrayList para cada tipo de server
         ArrayList<Server> potatosmall = new ArrayList<>();
         ArrayList<Server> potatomedium = new ArrayList<>();
@@ -171,35 +171,19 @@ public class BaseDados {
         this.setUser(user);
     }
 
-
-    public synchronized void newBid(String tipo, double bid)
-    {
-        lockAllServers();
-        Server s = getFreeServersByType(tipo).get(1);
-        if(s.getLastBid() < bid){
-            s.setLastBid(bid);
-            s.setIsLeilao(true);
-            s.setIdReserva(nextIdReserva());
-        }
-        unlockAllServers();
-    }
-    
-    
-    public synchronized int demand(String email, Server server){
+    // Requests
+    public int demand(String email, Server server){
         int idReserva = this.nextIdReserva();
         server.reserva(idReserva);
         this.userAddServer(email, server);
         return idReserva;
     }
-    public synchronized int bid(String email, Server server, double bid){
+    public int bid(String email, Server server, double bid){
         int idReserva = this.nextIdReserva();
         server.reservaLeilao(idReserva,bid);
         this.userAddServer(email, server);
         return idReserva;
     }
-    
-    // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
-    // Rever para a questão dos leilões
     public void freeServer(String email, int idReserva){
         Server serverAux=null;
         String tipoAux=null;
@@ -218,32 +202,32 @@ public class BaseDados {
         user.removeServer(serverAux);
         user.unlock();
 
-        // atualizar na lista de Servers
         this.lockAllServers();
         for(Server server : this.servers.get(tipoAux)){
             if(server.getIdReserva()==idReserva){
-                if( !server.getIsLeilao() )
-                    server.freeReserva();
-                else
-                    server.freeReservaLeilao();
-//                    // codigo para saber o tempo usado pelo user num server 
-//                    Period.between(finalDate, initialDate).getDays();
+                serverAux=server;
             }
         }
+        if( !serverAux.getIsLeilao() )
+            serverAux.freeReserva();
+        else
+            serverAux.freeReservaLeilao();
         this.unlockAllServers();
     }
 
-    // KIKO DEI LOCK AQUI TAMBÉM PORQUE ELE ESTAVA A VER SE OS SERVIDORES ESTÃO A SER USADOS (BETTER)
-    public synchronized List<Server> getFreeServersByType(String type)
-    {
+    public List<Server> getDemandableServersByType(String type){
         lockAllServers();
-        ArrayList<Server> se = this.servers.get(type);
-        List<Server> aux;
-
-        aux = se.stream().filter(s -> s.getUsed() == false).collect(Collectors.toList());
-
+        ArrayList<Server> serversD = this.servers.get(type);
         unlockAllServers();
-        return aux;
+        return serversD.stream().filter(s -> ( !s.getUsed() ))
+                            .collect(Collectors.toList());
+    }
+    public List<Server> getBidableServersByType(String type){
+        lockAllServers();
+        ArrayList<Server> serversB = this.servers.get(type);
+        unlockAllServers();
+        return serversB.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
+                            .collect(Collectors.toList());
     }
 
 

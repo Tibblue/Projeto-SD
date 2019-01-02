@@ -63,7 +63,7 @@ public class User implements Serializable {
     // SETTERS //////////////////
     public void setDebt(double debt) {
         lock();
-        this.debt = debt;
+        this.debt = round(debt,2);
         unlock();
     }
     /////////////////////////////

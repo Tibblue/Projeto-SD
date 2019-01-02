@@ -104,7 +104,7 @@ public class MainServidorWorker extends Thread {
         String response;
         String[] requestSplit = request.split(" ");
         String requestType = requestSplit[0];
-        if( email.equals(requestSplit[1]) )
+        if( !email.equals(requestSplit[1]) )
             System.out.println("[Worker] WARNING: email errado");
         switch(requestType){
             case "BUY": // pedido de compra de um Server
