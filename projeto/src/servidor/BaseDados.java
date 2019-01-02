@@ -112,13 +112,6 @@ public class BaseDados {
         this.users.put(user.getEmail(),user);
         unlockAllServers();
     }
-    public synchronized void setServersByType(Server server){
-        lockAllServers();
-        ArrayList<Server> list = this.servers.get(server.getTipo());
-        list.add(server.clone());
-        this.servers.put(server.getTipo(),list);
-        unlockAllServers();
-    }
     ////////////////////////////////////////////////////////////////////////////
     // GETTERS para o menu
     public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
@@ -130,7 +123,7 @@ public class BaseDados {
             ArrayList<Server> aux = new ArrayList<>();
             for(Server server : this.servers.get(tipo)){
                 if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
-                    aux.add(server.clone());
+                    aux.add(server);
                 }
             }
             if(!aux.isEmpty()){
@@ -152,7 +145,7 @@ public class BaseDados {
             for(Server server : this.servers.get(tipo)){
                 // TODO double check este if qd nao tiver com sono
                 if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
-                    aux.add(server.clone());
+                    aux.add(server);
                 }
             }
             if(!aux.isEmpty()){
@@ -190,24 +183,6 @@ public class BaseDados {
         }
         unlockAllServers();
     }
-
-    public synchronized void coverBid(int idReserva, double bid)
-    {
-        lockAllServers();
-        for(ArrayList<Server> sv : this.servers.values()){
-            for(Server s : sv){
-                if(s.getIdReserva() == idReserva){
-                    if(s.getLastBid() < bid){
-                        s.setLastBid(bid);
-                        s.setIsLeilao(true);
-                        s.setIdReserva(nextIdReserva());
-                    }
-                }
-            }
-        }
-        unlockAllServers();
-    }
-
     
     
     public synchronized int demand(String email, Server server){
@@ -216,34 +191,43 @@ public class BaseDados {
         this.userAddServer(email, server);
         return idReserva;
     }
+    public synchronized int bid(String email, Server server, double bid){
+        int idReserva = this.nextIdReserva();
+        server.reservaLeilao(idReserva,bid);
+        this.userAddServer(email, server);
+        return idReserva;
+    }
     
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
     public synchronized void freeServer(String email, int idReserva){
+        Server serverAux=null;
+        String tipoAux=null;
+        
         lockAllUsers();
         User user = this.users.get(email);
         unlockAllUsers();
-
-        Server aux=null;
+        
         user.lock();
         for(Server s : user.getServidoresAlocados()){
-            if(s.getIdReserva() == idReserva)
-                aux=s;
+            if(s.getIdReserva() == idReserva){
+                serverAux=s;
+                tipoAux=s.getTipo();
+            }
         }
-        if(aux!=null)
-            this.users.get(email).removeServer(aux);
-        else
-            System.out.println("No reservation found with ID: " + idReserva);
+        user.removeServer(serverAux);
         user.unlock();
 
         // atualizar na lista de Servers
         this.lockAllServers();
-        for(String key : this.servers.keySet()){
-            for(Server server : this.servers.get(key)){
-                if(server.getIdReserva()==idReserva){
-                    server.setIdReserva(0);
-                    server.setIsLeilao(false);
-                }
+        for(Server server : this.servers.get(tipoAux)){
+            if(server.getIdReserva()==idReserva){
+                if( !server.getIsLeilao() )
+                    server.freeReserva();
+                else
+                    server.freeReservaLeilao();
+//                    // codigo para saber o tempo usado pelo user num server 
+//                    Period.between(finalDate, initialDate).getDays();
             }
         }
         this.unlockAllServers();

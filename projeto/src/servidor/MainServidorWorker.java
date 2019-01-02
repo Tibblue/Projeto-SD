@@ -116,34 +116,7 @@ public class MainServidorWorker extends Thread {
                 // TODO double check this
                 String tipoS = requestSplit[2];
                 double bid = new Double(requestSplit[3]);
-                List<Server> freeServers = bd.getFreeServersByType(tipoS);
-                if(freeServers.size()>0){
-                    // selecionar o mais barato TODO
-                    Server server = freeServers.get(0);
-
-                    server.lock();
-                    if(server.getUsed() && server.getLastBid() < bid){
-                        response = "FAIL SERVER_UNAVAILABLE";
-                    }
-                    else{
-                        int idReserva = bd.nextIdReserva();
-                        // atualizar o server
-                        server.reserva(idReserva);
-                        server.setLastBid(bid);
-                        server.setIsLeilao(true);
-                        // adicionar o server ao user
-                        User user = bd.getUser(email);
-                        user.addServer(server.clone());
-                        bd.setUser(user);
-                        // response
-                        response = "SUCCESS ID " + idReserva;
-                    }
-                    server.unlock();
-                }
-                else response = "FAIL OUT_OF_SERVERS_of_type " + tipoS;
-                    out.println(response);
-                    out.flush();
-                System.out.println(bd.getUser(email).toStringUser());
+                this.bid(tipoS,bid);
                 break;
             case "REM": // pedido de libertação de um Server do User
                 int id = Integer.parseInt(requestSplit[2]);
@@ -180,8 +153,29 @@ public class MainServidorWorker extends Thread {
         out.flush();
         System.out.println(bd.getUser(email).toStringUser());
     }
-    private void bid(){
+    private void bid(String tipo, double bid){
+        String response;
         
+        List<Server> freeServers = bd.getFreeServersByType(tipo);
+        if(freeServers.size()>0){
+            // selecionar o mais barato TODO
+            Server server = freeServers.get(0);
+
+            server.lock();
+            if(server.getUsed() && server.getLastBid() < bid){
+                // potencialmente o servidor foi alocado entretanto...
+                response = "FAIL SERVER_UNAVAILABLE";
+            }
+            else{
+                int idReserva = bd.bid(email, server, bid);
+                response = "SUCCESS ID " + idReserva;
+            }
+            server.unlock();
+        }
+        else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
+            out.println(response);
+            out.flush();
+        System.out.println(bd.getUser(email).toStringUser());
     }
     private void free(String email, int id){
         this.bd.freeServer(email,id);

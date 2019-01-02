@@ -29,6 +29,7 @@ public class Server implements Serializable {
         this.idReserva = 999999;
         this.lastBid = 0.0;
         this.isLeilao = false;
+        this.horaDeInicio = LocalDateTime.now();
     }
     public Server(String nome, String tipo, double price){
         this.lockServer = new ReentrantLock();
@@ -38,6 +39,7 @@ public class Server implements Serializable {
         this.idReserva = 0;
         this.lastBid = 0.0;
         this.isLeilao = false;
+        this.horaDeInicio = LocalDateTime.now();
     }
     public Server(Server s){
         this.lockServer = s.getLock();
@@ -47,6 +49,7 @@ public class Server implements Serializable {
         this.idReserva = s.getIdReserva();
         this.lastBid = s.getLastBid();
         this.isLeilao = s.getIsLeilao();
+        this.horaDeInicio = LocalDateTime.now();
     }
 
     // LOCK AND UNLOCK METHODS //
@@ -129,27 +132,39 @@ public class Server implements Serializable {
         this.horaDeInicio=horaInicio;
     }
     /////////////////////////////
-
+    
+    // SERVER managment /////////
     // Reserva Demand (BUY)
-    public synchronized void reserva(int id){
+    public void reserva(int id){
         lock();
-        this.setIdReserva(id);
+        this.idReserva = id;
+        this.horaDeInicio = LocalDateTime.now();
         unlock();
     }
     // Reserva Leilão (BID)
-    public synchronized void reservaLeilao(int id){
+    public void reservaLeilao(int id, double bid){
         lock();
-        this.setIdReserva(id);
-        this.setIsLeilao(true);
+        this.idReserva = id;
+        this.lastBid = round(bid,2);
+        this.isLeilao = true;
+        this.horaDeInicio = LocalDateTime.now();
         unlock();
     }
-
-    // Libertar Server Demand (BUY)
-    public synchronized void freeServer(){
+    // Libertar Reserva Demand (REM BUY)
+    public void freeReserva(){
         lock();
         this.idReserva = 0;
         unlock();
     }
+    // Libertar Reserva Leilão (REM BID)
+    public void freeReservaLeilao(){
+        lock();
+        this.idReserva = 0;
+        this.lastBid = 0.0;
+        this.isLeilao = false;
+        unlock();
+    }
+    /////////////////////////////
 
 
     private static double round(double value, int places) {
@@ -166,8 +181,11 @@ public class Server implements Serializable {
         server.append("  Nome: ").append(this.nome).append("\n");
         server.append("  Preço: ").append(this.price).append("\n");
         server.append("  Reserva: ").append(this.idReserva).append("\n");
-        server.append("  Last Bid: ").append(this.lastBid).append("\n");
-        server.append("  Leilão? ").append(this.isLeilao).append("\n");
+        if(this.idReserva>0){
+            server.append("  Last Bid: ").append(this.lastBid).append("\n");
+            server.append("  Leilão? ").append(this.isLeilao).append("\n");
+            server.append("  Hora Inicio: ").append(this.horaDeInicio).append("\n");
+        }
         return server.toString();
     }
 
