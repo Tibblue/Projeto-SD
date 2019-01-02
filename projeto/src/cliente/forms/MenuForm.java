@@ -55,7 +55,7 @@ public class MenuForm extends javax.swing.JFrame {
         for (String tipo : this.bdServers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
             for(Server s : this.bdServers.get(tipo)){
-                if(!s.getUsed()){
+                if( !s.getUsed() || (s.getUsed() && s.getIsLeilao() ) ){
                     aux.add(s);
                 }
             }
@@ -347,7 +347,7 @@ public class MenuForm extends javax.swing.JFrame {
 
         // Efetuar o pedido ao servidor
         String response = this.connection.sendRequest("BUY " + user.getEmail() + " " + tipo);
-            System.out.println("DEBUG "+response);
+//            System.out.println("DEBUG "+response);
         String status = response.split(" ")[0];
         if( status.equals("SUCCESS") ){
             //Declarar como utilizado & adicionar à lista de servers do cliente!
