@@ -35,12 +35,9 @@ public class MainServidorWorker extends Thread {
                 String response;
                 // Worker espera pedidos do cliente
                 while ((request = in.readLine()) != null && !request.equals("LOGOUT")) {
-                    // TODO melhorar parse
-                    response = this.parse(request);
                     System.out.println("[Cliente] request> " + request);
+                    response = this.parse(request);
                     System.out.println("[Cliente] response> " + response);
-//                    out.println(response);
-//                    out.flush();
                 }
                 System.out.println("[Worker] LOGOUT - Terminando conexao");
             }
@@ -104,36 +101,41 @@ public class MainServidorWorker extends Thread {
      * @return String with SUCCESS/FAIL of the request
      */
     private String parse(String request){
-        String response = "";
+        String response;
         String[] requestSplit = request.split(" ");
         String requestType = requestSplit[0];
+        if( email.equals(requestSplit[1]) )
+            System.out.println("[Worker] WARNING: email errado");
         switch(requestType){
             case "BUY": // pedido de compra de um Server
                 String tipo = requestSplit[2];
-                this.demand(tipo);
+                response = this.demand(tipo);
                 break;
             case "BID": // pedido de licitacao de um Server
                 // TODO double check this
                 String tipoS = requestSplit[2];
                 double bid = new Double(requestSplit[3]);
-                this.bid(tipoS,bid);
+                response = this.bid(tipoS,bid);
                 break;
             case "REM": // pedido de libertação de um Server do User
                 int id = Integer.parseInt(requestSplit[2]);
-                this.free(email, id);
+                response = this.free(email, id);
                 break;
             case "GET_USER_SERVERS": // pedido do User Object e da Lista de Servers
-                this.get();
+                response = this.get();
                 break;
-            default: response = "FAIL UNKNOWN_REQUEST";
+            default: 
+                response = "FAIL UNKNOWN_REQUEST";
+                out.println(response);
+                out.flush();
                 break;
         }
         return response;
     }
     // Parse helpers ////////////
-    private void demand(String tipo){
+    private String demand(String tipo){
         String response;
-        List<Server> free = bd.getFreeServersByType(tipo);
+        List<Server> free = bd.getDemandableServersByType(tipo);
         if(free.size()>0){
             Server server = free.get(0);
             server.lock();
@@ -152,17 +154,19 @@ public class MainServidorWorker extends Thread {
         out.println(response);
         out.flush();
         System.out.println(bd.getUser(email).toStringUser());
+        return response;
     }
-    private void bid(String tipo, double bid){
+    private String bid(String tipo, double bid){
         String response;
         
-        List<Server> freeServers = bd.getFreeServersByType(tipo);
+        List<Server> freeServers = bd.getDemandableServersByType(tipo);
+        Server server;
         if(freeServers.size()>0){
             // selecionar o mais barato TODO
-            Server server = freeServers.get(0);
+            server = freeServers.get(0);
 
             server.lock();
-            if(server.getUsed() && server.getLastBid() < bid){
+            if( (server.getUsed() && !server.getIsLeilao()) || server.getLastBid() > bid){
                 // potencialmente o servidor foi alocado entretanto...
                 response = "FAIL SERVER_UNAVAILABLE";
             }
@@ -176,19 +180,24 @@ public class MainServidorWorker extends Thread {
             out.println(response);
             out.flush();
         System.out.println(bd.getUser(email).toStringUser());
+        return response;
     }
-    private void free(String email, int id){
+    private String free(String email, int id){
         this.bd.freeServer(email,id);
-        out.println("SUCCESS REM " + id);
+        String response = "SUCCESS REM " + id;
+        out.println(response);
         out.flush();
         System.out.println(bd.getUser(email).toStringUser());
+        return response;
     }
-    private void get(){
-        out.println("SUCCESS SENDING_USER_SERVERS");
+    private String get(){
+        String response = "SUCCESS SENDING_USER_SERVERS";
+        out.println(response);
         out.flush();
         this.sendUserAndServers();
         System.out.println(bd.getUser(email).toStringUser());
         System.out.println(bd.toStringServidores());
+        return response;
     }
     /////////////////////////////
     

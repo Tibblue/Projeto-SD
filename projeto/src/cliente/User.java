@@ -105,6 +105,7 @@ public class User implements Serializable {
         StringBuilder user = new StringBuilder();
         user.append(">Email: ").append(this.email).append("\n");
         user.append(" Password: ").append(this.password).append("\n");
+        user.append(" Debt: ").append(this.debt).append("\n");
         for(Server server : this.servidoresAlocados)
             user.append(server.toStringServer());
         return user.toString();
