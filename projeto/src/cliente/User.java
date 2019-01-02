@@ -60,18 +60,6 @@ public class User implements Serializable {
         unlock();
         return servidoresA;
     }
-
-    public double getPayPerHour(){
-        double pay = 0;
-        ArrayList<Server> servidoresA = this.getServidoresAlocados();
-        for( Server s : servidoresA ){
-            if( s.getIsLeilao() )
-                pay += s.getLastBid();
-            else
-                pay += s.getPrice();
-        }
-        return this.round(pay, 2);
-    }
     // SETTERS //////////////////
     public void setDebt(double debt) {
         lock();
@@ -92,6 +80,18 @@ public class User implements Serializable {
         unlock();
     }
 
+    // Info
+    public double getPayPerHour(){
+        double pay = 0;
+        ArrayList<Server> servidoresA = this.getServidoresAlocados();
+        for( Server s : servidoresA ){
+            if( s.getIsLeilao() )
+                pay += s.getLastBid();
+            else
+                pay += s.getPrice();
+        }
+        return User.round(pay, 2);
+    }
     
     
     private static double round(double value, int places) {

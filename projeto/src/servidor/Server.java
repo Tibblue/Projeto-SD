@@ -130,12 +130,13 @@ public class Server implements Serializable {
     }
     /////////////////////////////
 
-    // Reserva Leilão (BID)
+    // Reserva Demand (BUY)
     public synchronized void reserva(int id){
         lock();
         this.setIdReserva(id);
         unlock();
     }
+    // Reserva Leilão (BID)
     public synchronized void reservaLeilao(int id){
         lock();
         this.setIdReserva(id);

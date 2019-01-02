@@ -106,7 +106,6 @@ public class BaseDados {
         unlockAllServers();
         return lista;
     }
-
     // SETTERS
     public synchronized void setUser(User user){
         lockAllServers();
@@ -121,7 +120,51 @@ public class BaseDados {
         unlockAllServers();
     }
     ////////////////////////////////////////////////////////////////////////////
+    // GETTERS para o menu
+    public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
+        // LOCK ALL SERVERS
+        lockAllServers();
 
+        HashMap<String,ArrayList<Server>> lista = new HashMap<>();
+        for(String tipo : this.servers.keySet()){
+            ArrayList<Server> aux = new ArrayList<>();
+            for(Server server : this.servers.get(tipo)){
+                if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
+                    aux.add(server.clone());
+                }
+            }
+            if(!aux.isEmpty()){
+                lista.put(tipo, aux);
+            }
+        }
+        // UNLOCK ALL SERVERS
+        unlockAllServers();
+
+        return lista;
+    }
+    public synchronized HashMap<String,ArrayList<Server>> getBidableServers(){
+        // LOCK ALL SERVERS
+        lockAllServers();
+
+        HashMap<String,ArrayList<Server>> lista = new HashMap<>();
+        for(String tipo : this.servers.keySet()){
+            ArrayList<Server> aux = new ArrayList<>();
+            for(Server server : this.servers.get(tipo)){
+                // TODO double check este if qd nao tiver com sono
+                if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
+                    aux.add(server.clone());
+                }
+            }
+            if(!aux.isEmpty()){
+                lista.put(tipo, aux);
+            }
+        }
+        // UNLOCK ALL SERVERS
+        unlockAllServers();
+
+        return lista;
+    }
+    ////////////////////////////////////////////////////////////////////////////
 
     // unica funçao que vai tocar no nextIdReserva por isso synchronized chega
     public synchronized int nextIdReserva() {
@@ -129,10 +172,10 @@ public class BaseDados {
         return lastIdReserva;
     }
 
-    public synchronized void updateUserServer(String email, Server server){
-        User user = this.users.get(email);
-        user.addServer(server.clone());
-        this.users.put(email, user);
+    public synchronized void userAddServer(String email, Server server){
+        User user = this.getUser(email);
+        user.addServer(server);
+        this.setUser(user);
     }
 
 
@@ -165,52 +208,15 @@ public class BaseDados {
         unlockAllServers();
     }
 
-    public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
-        // LOCK ALL SERVERS
-        lockAllServers();
-
-        HashMap<String,ArrayList<Server>> lista = new HashMap<>();
-        for(String tipo : this.servers.keySet()){
-            ArrayList<Server> aux = new ArrayList<>();
-            for(Server server : this.servers.get(tipo)){
-                if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
-                    aux.add(server.clone());
-                }
-            }
-            if(!aux.isEmpty()){
-                lista.put(tipo, aux);
-            }
-        }
-        // UNLOCK ALL SERVERS
-        unlockAllServers();
-
-        return lista;
+    
+    
+    public synchronized int demand(String email, Server server){
+        int idReserva = this.nextIdReserva();
+        server.reserva(idReserva);
+        this.userAddServer(email, server);
+        return idReserva;
     }
-
-    // TODO? fazer outra funcao que so devolve o mais barato pra cada tipo
-    public synchronized HashMap<String,ArrayList<Server>> getBidableServers(){
-        // LOCK ALL SERVERS
-        lockAllServers();
-
-        HashMap<String,ArrayList<Server>> lista = new HashMap<>();
-        for(String tipo : this.servers.keySet()){
-            ArrayList<Server> aux = new ArrayList<>();
-            for(Server server : this.servers.get(tipo)){
-                // TODO double check este if qd nao tiver com sono
-                if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
-                    aux.add(server.clone());
-                }
-            }
-            if(!aux.isEmpty()){
-                lista.put(tipo, aux);
-            }
-        }
-        // UNLOCK ALL SERVERS
-        unlockAllServers();
-
-        return lista;
-    }
-
+    
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
     public synchronized void freeServer(String email, int idReserva){

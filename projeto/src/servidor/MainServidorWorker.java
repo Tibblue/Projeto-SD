@@ -105,43 +105,17 @@ public class MainServidorWorker extends Thread {
      */
     private String parse(String request){
         String response = "";
-        String[] loginSplit = request.split(" ");
-        String requestType = loginSplit[0];
-        String emailU = loginSplit[1];
+        String[] requestSplit = request.split(" ");
+        String requestType = requestSplit[0];
         switch(requestType){
             case "BUY": // pedido de compra de um Server
-                String tipo = loginSplit[2];
-                List<Server> free = bd.getFreeServersByType(tipo);
-                if(free.size()>0){
-                    Server server = free.get(0);
-                    server.lock();
-                    if(server.getUsed()){
-                        // servidor foi  alocado entretanto...
-                        // retorna falha no pedido
-                        response = "FAIL SERVER_UNAVAILABLE";
-                    }
-                    else{
-                        int idReserva = bd.nextIdReserva();
-                        // atualizar o server
-                        server.reserva(idReserva);
-                        // adicionar o server ao user
-                        User user = bd.getUser(emailU);
-                        user.addServer(server.clone());
-                        bd.setUser(user);
-                        // response
-                        response = "SUCCESS ID " + idReserva;
-                    }
-                    server.unlock();
-                }
-                else response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
-                    out.println(response);
-                    out.flush();
-                System.out.println(bd.getUser(emailU).toStringUser());
+                String tipo = requestSplit[2];
+                this.demand(tipo);
                 break;
             case "BID": // pedido de licitacao de um Server
                 // TODO double check this
-                String tipoS = loginSplit[2];
-                double bid = new Double(loginSplit[3]);
+                String tipoS = requestSplit[2];
+                double bid = new Double(requestSplit[3]);
                 List<Server> freeServers = bd.getFreeServersByType(tipoS);
                 if(freeServers.size()>0){
                     // selecionar o mais barato TODO
@@ -158,7 +132,7 @@ public class MainServidorWorker extends Thread {
                         server.setLastBid(bid);
                         server.setIsLeilao(true);
                         // adicionar o server ao user
-                        User user = bd.getUser(emailU);
+                        User user = bd.getUser(email);
                         user.addServer(server.clone());
                         bd.setUser(user);
                         // response
@@ -169,30 +143,61 @@ public class MainServidorWorker extends Thread {
                 else response = "FAIL OUT_OF_SERVERS_of_type " + tipoS;
                     out.println(response);
                     out.flush();
-                System.out.println(bd.getUser(emailU).toStringUser());
+                System.out.println(bd.getUser(email).toStringUser());
                 break;
             case "REM": // pedido de libertação de um Server do User
-                int id = Integer.parseInt(loginSplit[2]);
-                this.bd.freeServer(emailU,id);
-                response = "SUCCESS REM " + id;
-                    out.println(response);
-                    out.flush();
-                System.out.println(bd.getUser(emailU).toStringUser());
+                int id = Integer.parseInt(requestSplit[2]);
+                this.free(email, id);
                 break;
             case "GET_USER_SERVERS": // pedido do User Object e da Lista de Servers
-                response = "SUCCESS SENDING_USER_SERVERS";
-                    out.println(response);
-                    out.flush();
-                this.sendUserAndServers();
-                System.out.println(bd.getUser(emailU).toStringUser());
-                System.out.println(bd.toStringServidores());
+                this.get();
                 break;
             default: response = "FAIL UNKNOWN_REQUEST";
                 break;
         }
         return response;
     }
-
+    // Parse helpers ////////////
+    private void demand(String tipo){
+        String response;
+        List<Server> free = bd.getFreeServersByType(tipo);
+        if(free.size()>0){
+            Server server = free.get(0);
+            server.lock();
+            if(server.getUsed()){
+                // potencialmente o servidor foi alocado entretanto...
+                response = "FAIL SERVER_UNAVAILABLE";
+            }
+            else{
+                int idReserva = bd.demand(email, server);
+                response = "SUCCESS ID " + idReserva;
+            }
+            server.unlock();
+        }
+        else 
+            response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
+        out.println(response);
+        out.flush();
+        System.out.println(bd.getUser(email).toStringUser());
+    }
+    private void bid(){
+        
+    }
+    private void free(String email, int id){
+        this.bd.freeServer(email,id);
+        out.println("SUCCESS REM " + id);
+        out.flush();
+        System.out.println(bd.getUser(email).toStringUser());
+    }
+    private void get(){
+        out.println("SUCCESS SENDING_USER_SERVERS");
+        out.flush();
+        this.sendUserAndServers();
+        System.out.println(bd.getUser(email).toStringUser());
+        System.out.println(bd.toStringServidores());
+    }
+    /////////////////////////////
+    
     // Envia Object User e HashMap de Servers para o Client
     private void sendUserAndServers(){
         try{
