@@ -32,7 +32,7 @@ public class ClienteConnection{
     }
     /////////////////////////////
 
-    // Connection managment
+    // Connection managment /////
     public String connect(String email, String password){
         try {
             this.socket = new Socket("127.0.0.1", 1234);
@@ -40,10 +40,19 @@ public class ClienteConnection{
             this.out = new PrintWriter(socket.getOutputStream());
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // autenticao
-            this.out = new PrintWriter(socket.getOutputStream());
+            String status = autenticacao(email, password);
+            return status;
+        }
+        catch (IOException e) {
+            System.out.println("[ClienteCon] Connect - RIP Socket !!!");
+            System.out.println(e);
+            return "FAIL";
+        }
+    }
+    private String autenticacao(String email, String password){
+        try{
             this.out.println("LOGIN " + email + " " + password);
             this.out.flush();
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String login = this.in.readLine();
             System.out.println("[ClienteCon] Connect> "+login);
             if( login.equals("SUCCESS") ){
@@ -57,13 +66,16 @@ public class ClienteConnection{
             }
         }
         catch (IOException e) {
-            System.out.println("[ClienteCon] Socket RIP !!!");
+            System.out.println("[ClienteCon] Autenticação - RIP in.readLine() !!!");
             System.out.println(e);
             return "FAIL";
         }
     }
     public void closeConnection(){
         try {
+            this.in.close();
+            this.out.close();
+            this.fromServer.close();
             this.socket.close();
             System.out.println("[ClienteCon] Ligação terminada com sucesso!!!");
         } catch (IOException e) {
@@ -71,6 +83,7 @@ public class ClienteConnection{
             System.out.println(e);
         }
     }
+    /////////////////////////////
 
 
     /**

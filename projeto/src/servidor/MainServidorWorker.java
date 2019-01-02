@@ -42,12 +42,12 @@ public class MainServidorWorker extends Thread {
 //                    out.println(response);
 //                    out.flush();
                 }
-                System.out.println("[Worker] Terminando conexao");
+                System.out.println("[Worker] LOGOUT - Terminando conexao");
             }
             clienteSocket.close();
         }
         catch(IOException e){
-            System.out.println("[Worker] EXCEPTION - Terminando conexao!!!");
+            System.out.println("[Worker] EXCEPTION - Ligação terminada pelo User!!!");
             System.out.println(e);
         }
     }
@@ -76,21 +76,20 @@ public class MainServidorWorker extends Thread {
             else { //SUCESSO
                 // guarda o email do user
                 this.email = emailU;
-                // mensagem de confirmação do sucesso de autenticacao
+                // devolve confirmação do sucesso de autenticacao
                 out.println("SUCCESS");
                 out.flush();
                 // envia o User e Servers para o Cliente
-//                this.sendUser();
-//                this.sendServers();
                 this.sendUserAndServers();
                 return true;
             }
+            // devolve confirmação do falha de autenticacao
             out.println("FAIL");
             out.flush();
             return false;
         }
         catch(IOException e){
-            System.out.println("[Worker] IO ardeu !!!");
+            System.out.println("[Worker] Autenticação - RIP in.readLine() !!!");
             System.out.println(e);
             return false;
         }
