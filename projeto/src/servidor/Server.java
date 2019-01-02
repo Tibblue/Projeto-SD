@@ -1,6 +1,8 @@
 package servidor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -118,6 +120,7 @@ public class Server implements Serializable {
         unlock();
     }
     public synchronized void setLastBid(double valor){
+        valor = round(valor,2);
         lock();
         this.lastBid=valor;
         unlock();
@@ -148,10 +151,14 @@ public class Server implements Serializable {
     }
 
 
-    public Server clone(){
-        return new Server(this);
-    }
+    private static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
 
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+    
     public String toStringServer(){
         StringBuilder server = new StringBuilder();
         server.append("=>Tipo: ").append(this.tipo).append("\n");
@@ -161,6 +168,10 @@ public class Server implements Serializable {
         server.append("  Last Bid: ").append(this.lastBid).append("\n");
         server.append("  Leilão? ").append(this.isLeilao).append("\n");
         return server.toString();
+    }
+
+    public Server clone(){
+        return new Server(this);
     }
 
 }

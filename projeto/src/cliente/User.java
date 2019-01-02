@@ -1,6 +1,8 @@
 package cliente;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import servidor.Server;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
@@ -26,13 +28,6 @@ public class User implements Serializable {
         this.email = email;
         this.password = password;
         this.servidoresAlocados = new ArrayList<>();
-    }
-
-    public User(User u){
-        this.lockUser = u.getLock();
-        this.email = u.getEmail();
-        this.password = u.getPassword();
-        this.servidoresAlocados = u.getServidoresAlocados();
     }
 
     // LOCK AND UNLOCK METHODS //
@@ -66,8 +61,16 @@ public class User implements Serializable {
         return servidoresA;
     }
 
-    public ReentrantLock getLock(){
-        return this.lockUser;
+    public double getPayPerHour(){
+        double pay = 0;
+        ArrayList<Server> servidoresA = this.getServidoresAlocados();
+        for( Server s : servidoresA ){
+            if( s.getIsLeilao() )
+                pay += s.getLastBid();
+            else
+                pay += s.getPrice();
+        }
+        return this.round(pay, 2);
     }
     // SETTERS //////////////////
     public void setDebt(double debt) {
@@ -89,11 +92,16 @@ public class User implements Serializable {
         unlock();
     }
 
-    public double getTotalPrice(){
-        return this.servidoresAlocados.stream().mapToDouble(a -> a.getPrice())
-                                       .sum();
-    }
+    
+    
+    private static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
 
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+    
     public String toStringUser(){
         StringBuilder user = new StringBuilder();
         user.append(">Email: ").append(this.email).append("\n");
@@ -101,10 +109,6 @@ public class User implements Serializable {
         for(Server server : this.servidoresAlocados)
             user.append(server.toStringServer());
         return user.toString();
-    }
-
-    public User clone(){
-        return new User(this);
     }
 
 }
