@@ -41,16 +41,6 @@ public class Server implements Serializable {
         this.isLeilao = false;
         this.horaDeInicio = LocalDateTime.now();
     }
-    public Server(Server s){
-        this.lockServer = s.getLock();
-        this.nome = s.getNome();
-        this.tipo = s.getTipo();
-        this.price = s.getPrice();
-        this.idReserva = s.getIdReserva();
-        this.lastBid = s.getLastBid();
-        this.isLeilao = s.getIsLeilao();
-        this.horaDeInicio = LocalDateTime.now();
-    }
 
     // LOCK AND UNLOCK METHODS //
     public void lock() {
@@ -62,10 +52,6 @@ public class Server implements Serializable {
     /////////////////////////////
 
     // GETTERS //////////////////
-    public ReentrantLock getLock(){
-        return this.lockServer;
-    }
-
     public String getNome() {
         return this.nome;
     }
@@ -112,17 +98,17 @@ public class Server implements Serializable {
     // TODO GETUSER by email
 
     // SETTERS //////////////////
-    public synchronized void setIsLeilao(boolean isLeilao) {
+    public void setIsLeilao(boolean isLeilao) {
         lock();
         this.isLeilao = isLeilao;
         unlock();
     }
-    public synchronized void setIdReserva(int idReserva) {
+    public void setIdReserva(int idReserva) {
         lock();
         this.idReserva = idReserva;
         unlock();
     }
-    public synchronized void setLastBid(double valor){
+    public void setLastBid(double valor){
         valor = round(valor,2);
         lock();
         this.lastBid=valor;
@@ -169,7 +155,6 @@ public class Server implements Serializable {
 
     private static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
-
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
@@ -187,10 +172,6 @@ public class Server implements Serializable {
             server.append("  Hora Inicio: ").append(this.horaDeInicio).append("\n");
         }
         return server.toString();
-    }
-
-    public Server clone(){
-        return new Server(this);
     }
 
 }

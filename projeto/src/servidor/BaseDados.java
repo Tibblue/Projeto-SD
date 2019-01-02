@@ -200,7 +200,7 @@ public class BaseDados {
     
     // Como apenas um cliente acede ao servidor em questão, não há necessidade de dar lock
     // Rever para a questão dos leilões
-    public synchronized void freeServer(String email, int idReserva){
+    public void freeServer(String email, int idReserva){
         Server serverAux=null;
         String tipoAux=null;
         
