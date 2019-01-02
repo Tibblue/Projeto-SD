@@ -208,6 +208,19 @@ public class BaseDados {
                 serverAux=server;
             }
         }
+        LocalDateTime horaInicio = serverAux.getHoraInicio();
+        LocalDateTime horaSaida = LocalDateTime.now();
+        double days = (double)ChronoUnit.DAYS.between(horaInicio, horaSaida);
+        double hours = (double)ChronoUnit.HOURS.between(horaInicio, horaSaida);
+        double minutes = (double)ChronoUnit.MINUTES.between(horaInicio, horaSaida);
+        double seconds = (double)ChronoUnit.SECONDS.between(horaInicio, horaSaida);
+        double price = days*24*serverAux.getPrice() + seconds*serverAux.getPrice()/3600;
+        System.out.println("[BD] DEBUG> DIAS:"+days+" h:"+hours+
+                            " m:"+minutes+" s:"+seconds);
+        System.out.println("[BD] DEBUG> preço:"+price);
+        user.lock();
+        user.setDebt(user.getDebt() + price);
+        user.unlock();
         if( !serverAux.getIsLeilao() )
             serverAux.freeReserva();
         else

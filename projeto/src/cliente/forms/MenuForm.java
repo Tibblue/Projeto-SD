@@ -47,6 +47,9 @@ public class MenuForm extends javax.swing.JFrame {
         this.setTitle("Cloud Server Manager - " + user.getEmail());
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        this.demandServersTable.setDefaultEditor(Object.class, null);
+        this.bidServersTable.setDefaultEditor(Object.class, null);
+        this.myServersTable.setDefaultEditor(Object.class, null);
     }
 
     public void fillDemandTable(){
@@ -91,7 +94,7 @@ public class MenuForm extends javax.swing.JFrame {
                 if(auxS!=null){
                     data[i][0] = tipo;
                     data[i][1] = aux.size();
-                    data[i][2] = 0.01;
+                    data[i][2] = auxS.getPrice()/2;
                 }
                 else{
                     data[i][0] = tipo;
@@ -119,6 +122,7 @@ public class MenuForm extends javax.swing.JFrame {
     public void fillMyInfoArea(){
         this.emailLabel.setText("User email: " + user.getEmail());
         this.payPerHourLabel.setText("Money per Hour: " + user.getPayPerHour());
+        this.debtLabel.setText("Debt: " + user.getDebt());
     }
 
     private void adjustColumnSizes(){
@@ -159,6 +163,7 @@ public class MenuForm extends javax.swing.JFrame {
         removeServerButton = new javax.swing.JButton();
         emailLabel = new javax.swing.JLabel();
         payPerHourLabel = new javax.swing.JLabel();
+        debtLabel = new javax.swing.JLabel();
         logoutButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
 
@@ -263,21 +268,23 @@ public class MenuForm extends javax.swing.JFrame {
         payPerHourLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         payPerHourLabel.setText("Per Hour");
 
+        debtLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        debtLabel.setText("Debt");
+
         javax.swing.GroupLayout myServersPanelLayout = new javax.swing.GroupLayout(myServersPanel);
         myServersPanel.setLayout(myServersPanelLayout);
         myServersPanelLayout.setHorizontalGroup(
             myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(myServersPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, myServersPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(debtLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(removeServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(myServersPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
-                            .addComponent(emailLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(payPerHourLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                    .addComponent(emailLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(payPerHourLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         myServersPanelLayout.setVerticalGroup(
@@ -289,8 +296,13 @@ public class MenuForm extends javax.swing.JFrame {
                 .addComponent(emailLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(payPerHourLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(removeServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(myServersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(myServersPanelLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(removeServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(myServersPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(debtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
 
@@ -455,6 +467,7 @@ public class MenuForm extends javax.swing.JFrame {
     private javax.swing.JTable bidServersTable;
     private javax.swing.JSpinner bidSpinner;
     private javax.swing.JButton buyButton;
+    private javax.swing.JLabel debtLabel;
     private javax.swing.JPanel demandPanel;
     private javax.swing.JTable demandServersTable;
     private javax.swing.JLabel emailLabel;
