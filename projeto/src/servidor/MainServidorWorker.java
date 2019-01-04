@@ -159,13 +159,13 @@ public class MainServidorWorker extends Thread {
     private String bid(String tipo, double bid){
         String response;
         
-        List<Server> freeServers = bd.getDemandableServersByType(tipo);
+        List<Server> freeServers = bd.getBidableServersByType(tipo);
         Server server;
         if(freeServers.size()>0){
             // selecionar o mais barato TODO
             server = freeServers.get(0);
-
             server.lock();
+            
             if( (server.getUsed() && !server.getIsLeilao()) || server.getLastBid() >= bid){
                 // potencialmente o servidor foi alocado entretanto...
                 response = "FAIL SERVER_UNAVAILABLE";
