@@ -186,7 +186,7 @@ public class MainServidorWorker extends Thread {
                 response = "FAIL SERVER_UNAVAILABLE";
             }
             else{
-                bd.freeServer(server.getOwner(), server.getIdReserva());
+//                bd.freeServer(server.getOwner(), server.getIdReserva());
                 int idReserva = bd.bid(email, server, bid);
                 response = "SUCCESS ID " + idReserva;
             }
