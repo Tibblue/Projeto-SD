@@ -136,21 +136,34 @@ public class MainServidorWorker extends Thread {
     private String demand(String tipo){
         String response;
         List<Server> free = bd.getDemandableServersByType(tipo);
-        if(free.size()>0){
-            Server server = free.get(0);
-            server.lock();
-            if(server.getUsed()){
-                // potencialmente o servidor foi alocado entretanto...
-                response = "FAIL SERVER_UNAVAILABLE";
-            }
-            else{
-                int idReserva = bd.demand(email, server);
-                response = "SUCCESS ID " + idReserva;
-            }
-            server.unlock();
+        Server sFree=null;
+        Server sLeilao=null;
+        
+        for( Server s : free){
+            if( sFree==null )
+                if( !s.getUsed())
+                    sFree=s;
+                else 
+                    sLeilao=s;
+        }
+        if( sFree!=null ){
+            sFree.lock();
+            int idReserva = bd.demand(email, sFree);
+            response = "SUCCESS ID " + idReserva;
+            sFree.unlock();
         }
         else 
-            response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
+            if( sLeilao!=null){
+                sLeilao.lock();
+                    // libertar do owner antigo
+                    bd.freeServer(sLeilao.getOwner(), sLeilao.getIdReserva());
+                int idReserva = bd.demand(email, sLeilao);
+                response = "SUCCESS ID " + idReserva;
+                sLeilao.unlock();
+            }
+            else
+                response = "FAIL OUT_OF_SERVERS_of_type " + tipo;
+        
         out.println(response);
         out.flush();
         System.out.println(bd.getUser(email).toStringUser());
@@ -159,14 +172,14 @@ public class MainServidorWorker extends Thread {
     private String bid(String tipo, double bid){
         String response;
         
-        List<Server> freeServers = bd.getDemandableServersByType(tipo);
+        List<Server> freeServers = bd.getBidableServersByType(tipo);
         Server server;
         if(freeServers.size()>0){
             // selecionar o mais barato TODO
             server = freeServers.get(0);
-
             server.lock();
-            if( (server.getUsed() && !server.getIsLeilao()) || server.getLastBid() > bid){
+            
+            if( (server.getUsed() && !server.getIsLeilao()) || server.getLastBid() >= bid){
                 // potencialmente o servidor foi alocado entretanto...
                 response = "FAIL SERVER_UNAVAILABLE";
             }

@@ -95,9 +95,9 @@ public class BaseDados {
         return servs;
     }
     public synchronized User getUser(String email){
-        lockAllUsers();
+        this.users.get(email).lock();
         User u = this.users.get(email);
-        unlockAllUsers();
+        this.users.get(email).unlock();
         return u;
     }
     public synchronized ArrayList<Server> getServersByType(String type){
@@ -114,8 +114,8 @@ public class BaseDados {
     }
     ////////////////////////////////////////////////////////////////////////////
     // GETTERS para o menu
-    public synchronized HashMap<String,ArrayList<Server>> getDemandableServers(){
-        // LOCK ALL SERVERS
+    public synchronized HashMap<String,ArrayList<Server>> getDemandableServers()
+    {
         lockAllServers();
 
         HashMap<String,ArrayList<Server>> lista = new HashMap<>();
@@ -130,7 +130,6 @@ public class BaseDados {
                 lista.put(tipo, aux);
             }
         }
-        // UNLOCK ALL SERVERS
         unlockAllServers();
 
         return lista;
@@ -174,13 +173,13 @@ public class BaseDados {
     // Requests
     public int demand(String email, Server server){
         int idReserva = this.nextIdReserva();
-        server.reserva(idReserva);
+        server.reserva(idReserva,email);
         this.userAddServer(email, server);
         return idReserva;
     }
     public int bid(String email, Server server, double bid){
         int idReserva = this.nextIdReserva();
-        server.reservaLeilao(idReserva,bid);
+        server.reservaLeilao(idReserva,bid,email);
         this.userAddServer(email, server);
         return idReserva;
     }
@@ -232,7 +231,7 @@ public class BaseDados {
         lockAllServers();
         ArrayList<Server> serversD = this.servers.get(type);
         unlockAllServers();
-        return serversD.stream().filter(s -> ( !s.getUsed() ))
+        return serversD.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
                             .collect(Collectors.toList());
     }
     public List<Server> getBidableServersByType(String type){
