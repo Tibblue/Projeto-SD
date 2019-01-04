@@ -155,8 +155,7 @@ public class MainServidorWorker extends Thread {
         else 
             if( sLeilao!=null){
                 sLeilao.lock();
-                    // libertar do owner antigo
-                    bd.freeServer(sLeilao.getOwner(), sLeilao.getIdReserva());
+                bd.freeServer(sLeilao.getOwner(), sLeilao.getIdReserva());
                 int idReserva = bd.demand(email, sLeilao);
                 response = "SUCCESS ID " + idReserva;
                 sLeilao.unlock();
@@ -174,6 +173,9 @@ public class MainServidorWorker extends Thread {
         
         List<Server> freeServers = bd.getBidableServersByType(tipo);
         Server server;
+        // TODO CAMAZ: isto deve precisar de ser melhorado.
+        // apenas pegar no primeira pode falhar qd deveria dar.
+        // ex: primeiro tem lastBid maior, mas o segundo ta mais barato e podia ser alugado
         if(freeServers.size()>0){
             // selecionar o mais barato TODO
             server = freeServers.get(0);
@@ -184,6 +186,7 @@ public class MainServidorWorker extends Thread {
                 response = "FAIL SERVER_UNAVAILABLE";
             }
             else{
+                bd.freeServer(server.getOwner(), server.getIdReserva());
                 int idReserva = bd.bid(email, server, bid);
                 response = "SUCCESS ID " + idReserva;
             }
