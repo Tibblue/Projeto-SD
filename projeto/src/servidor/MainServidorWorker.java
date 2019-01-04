@@ -166,7 +166,7 @@ public class MainServidorWorker extends Thread {
             server = freeServers.get(0);
 
             server.lock();
-            if( (server.getUsed() && !server.getIsLeilao()) || server.getLastBid() > bid){
+            if( (server.getUsed() && !server.getIsLeilao()) || server.getLastBid() >= bid){
                 // potencialmente o servidor foi alocado entretanto...
                 response = "FAIL SERVER_UNAVAILABLE";
             }
@@ -182,6 +182,7 @@ public class MainServidorWorker extends Thread {
         System.out.println(bd.getUser(email).toStringUser());
         return response;
     }
+    
     private String free(String email, int id){
         this.bd.freeServer(email,id);
         String response = "SUCCESS REM " + id;
