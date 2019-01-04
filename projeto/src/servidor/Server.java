@@ -26,8 +26,8 @@ public class Server implements Serializable {
         this.nome = "";
         this.tipo = "";
         this.price = 0.0;
-        this.idReserva = 999999;
         this.lastBid = 0.0;
+        this.idReserva = 0;
         this.isLeilao = false;
         this.horaDeInicio = LocalDateTime.now();
         this.owner = null;

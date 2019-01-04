@@ -167,8 +167,6 @@ public class LoginForm extends javax.swing.JFrame {
         this.connection = new ClienteConnection();
         String status = this.connection.connect(this.emailField.getText(),this.passwordField.getText());
         if( status.equals("SUCCESS") ){
-//            User user = this.connection.receiveUser();
-//            HashMap<String,ArrayList<Server>> bdServers = this.connection.receiveServers();
             this.connection.receiveUserAndServers();
             User user = this.connection.getUser();
             HashMap<String,ArrayList<Server>> bdServers = this.connection.getServers();
