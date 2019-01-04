@@ -18,7 +18,7 @@ public class Server implements Serializable {
     private int idReserva;
     private double lastBid;
     private boolean isLeilao;
-    private String owner; // ?email do user que esta a usar?
+    private String owner;
     private LocalDateTime horaDeInicio;
 
     public Server() {
@@ -30,6 +30,7 @@ public class Server implements Serializable {
         this.lastBid = 0.0;
         this.isLeilao = false;
         this.horaDeInicio = LocalDateTime.now();
+        this.owner = null;
     }
     public Server(String nome, String tipo, double price){
         this.lockServer = new ReentrantLock();
@@ -40,6 +41,7 @@ public class Server implements Serializable {
         this.lastBid = 0.0;
         this.isLeilao = false;
         this.horaDeInicio = LocalDateTime.now();
+        this.owner = null;
     }
 
     // LOCK AND UNLOCK METHODS //
@@ -95,8 +97,9 @@ public class Server implements Serializable {
     public LocalDateTime getHoraInicio() {
         return this.horaDeInicio;
     }
-    // TODO GETUSER by email
-
+    public String getOwner(){
+        return this.owner;
+    }
     // SETTERS //////////////////
     public void setIsLeilao(boolean isLeilao) {
         lock();
@@ -121,25 +124,28 @@ public class Server implements Serializable {
     
     // SERVER managment /////////
     // Reserva Demand (BUY)
-    public void reserva(int id){
+    public void reserva(int id, String email){
         lock();
         this.idReserva = id;
         this.horaDeInicio = LocalDateTime.now();
+        this.owner = email;
         unlock();
     }
     // Reserva Leilão (BID)
-    public void reservaLeilao(int id, double bid){
+    public void reservaLeilao(int id, double bid, String email){
         lock();
         this.idReserva = id;
         this.lastBid = round(bid,2);
         this.isLeilao = true;
         this.horaDeInicio = LocalDateTime.now();
+        this.owner = email;
         unlock();
     }
     // Libertar Reserva Demand (REM BUY)
     public void freeReserva(){
         lock();
         this.idReserva = 0;
+        this.owner = null;
         unlock();
     }
     // Libertar Reserva Leilão (REM BID)
@@ -148,6 +154,7 @@ public class Server implements Serializable {
         this.idReserva = 0;
         this.lastBid = 0.0;
         this.isLeilao = false;
+        this.owner = null;
         unlock();
     }
     /////////////////////////////
