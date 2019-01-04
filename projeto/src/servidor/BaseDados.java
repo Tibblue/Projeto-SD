@@ -126,6 +126,7 @@ public class BaseDados {
                     aux.add(server);
                 }
             }
+            
             if(!aux.isEmpty()){
                 lista.put(tipo, aux);
             }
@@ -229,17 +230,21 @@ public class BaseDados {
 
     public List<Server> getDemandableServersByType(String type){
         lockAllServers();
+        
         ArrayList<Server> serversD = this.servers.get(type);
+        
         unlockAllServers();
         return serversD.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
                             .collect(Collectors.toList());
     }
+    
     public List<Server> getBidableServersByType(String type){
         lockAllServers();
         ArrayList<Server> serversB = this.servers.get(type);
+        List<Server> ret = serversB.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
+                            .collect(Collectors.toList());   
         unlockAllServers();
-        return serversB.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
-                            .collect(Collectors.toList());
+        return ret;
     }
 
 

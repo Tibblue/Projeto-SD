@@ -195,6 +195,7 @@ public class MainServidorWorker extends Thread {
         System.out.println(bd.getUser(email).toStringUser());
         return response;
     }
+    
     private String free(String email, int id){
         this.bd.freeServer(email,id);
         String response = "SUCCESS REM " + id;
