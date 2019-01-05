@@ -172,16 +172,12 @@ public class MainServidorWorker extends Thread {
         String response;
         
         List<Server> freeServers = bd.getBidableServersByTypeFree(tipo);
-        if(freeServers.isEmpty())
-        {
-            freeServers = bd.getBidableServersByType(tipo);
-        }
         // (*) Ele primeiro tenta ir buscar um livre, se não tiver apresenta os que estão em leilão
         // por ordem crescente de preço
         Server server;
 
-        if(freeServers.size()>0){
-            // com o uso do sorted, o primeiro é sempre o mais barato e possívelmente um livre devido a (*) 
+        if(freeServers.size()>0)
+        { //(*)
             server = freeServers.get(0);
             server.lock();
             

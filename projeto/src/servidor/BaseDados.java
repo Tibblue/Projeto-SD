@@ -254,23 +254,21 @@ public class BaseDados {
         unlockAllServers();
         return ret;
     }
-    
-    public List<Server> getBidableServersByType(String type){
-        lockAllServers();
-        ArrayList<Server> serversB = this.servers.get(type);
-        List<Server> ret = serversB.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
-                            .sorted(priceComparator)
-                            .collect(Collectors.toList());   
-        unlockAllServers();
-        return ret;
-    }
 
     public List<Server> getBidableServersByTypeFree(String type)
     {
         lockAllServers();
         ArrayList<Server> serversB = this.servers.get(type);
         List<Server> ret = serversB.stream().filter(s -> ( !s.getUsed()))
-                            .collect(Collectors.toList());   
+                            .collect(Collectors.toList());
+        
+        if(ret.isEmpty())
+        {
+            ret = serversB.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
+                            .sorted(priceComparator)
+                            .collect(Collectors.toList());
+        }
+        
         unlockAllServers();
         return ret;
     }
