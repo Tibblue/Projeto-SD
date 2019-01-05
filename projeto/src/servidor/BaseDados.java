@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import static servidor.ServerComparator.priceComparator;
 
 /**
  *
@@ -248,22 +249,32 @@ public class BaseDados {
         lockAllServers();
         
         ArrayList<Server> serversD = this.servers.get(type);
-        
-        unlockAllServers();
-        return serversD.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
+        List<Server> ret = serversD.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
                             .collect(Collectors.toList());
+        unlockAllServers();
+        return ret;
     }
     
     public List<Server> getBidableServersByType(String type){
         lockAllServers();
         ArrayList<Server> serversB = this.servers.get(type);
         List<Server> ret = serversB.stream().filter(s -> ( !s.getUsed() || s.getUsed() && s.getIsLeilao() ))
+                            .sorted(priceComparator)
                             .collect(Collectors.toList());   
         unlockAllServers();
         return ret;
     }
 
-
+    public List<Server> getBidableServersByTypeFree(String type)
+    {
+        lockAllServers();
+        ArrayList<Server> serversB = this.servers.get(type);
+        List<Server> ret = serversB.stream().filter(s -> ( !s.getUsed()))
+                            .collect(Collectors.toList());   
+        unlockAllServers();
+        return ret;
+    }
+    
     // Users
     public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException{
        try{

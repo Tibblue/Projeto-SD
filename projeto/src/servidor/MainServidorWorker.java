@@ -171,13 +171,17 @@ public class MainServidorWorker extends Thread {
     private String bid(String tipo, double bid){
         String response;
         
-        List<Server> freeServers = bd.getBidableServersByType(tipo);
+        List<Server> freeServers = bd.getBidableServersByTypeFree(tipo);
+        if(freeServers.isEmpty())
+        {
+            freeServers = bd.getBidableServersByType(tipo);
+        }
+        // (*) Ele primeiro tenta ir buscar um livre, se não tiver apresenta os que estão em leilão
+        // por ordem crescente de preço
         Server server;
-        // TODO CAMAZ: isto deve precisar de ser melhorado.
-        // apenas pegar no primeira pode falhar qd deveria dar.
-        // ex: primeiro tem lastBid maior, mas o segundo ta mais barato e podia ser alugado
+
         if(freeServers.size()>0){
-            // selecionar o mais barato TODO
+            // com o uso do sorted, o primeiro é sempre o mais barato e possívelmente um livre devido a (*) 
             server = freeServers.get(0);
             server.lock();
             
@@ -186,9 +190,17 @@ public class MainServidorWorker extends Thread {
                 response = "FAIL SERVER_UNAVAILABLE";
             }
             else{
-//                bd.freeServer(server.getOwner(), server.getIdReserva());
-                int idReserva = bd.bid(email, server, bid);
-                response = "SUCCESS ID " + idReserva;
+                if(server.getLastBid() > 0.0)
+                {
+                    bd.freeServer(server.getOwner(), server.getIdReserva());
+                    int idReserva = bd.bid(email, server, bid);
+                    response = "SUCCESS ID " + idReserva;
+                }
+                else
+                {
+                    int idReserva = bd.bid(email, server, bid);
+                    response = "SUCCESS ID " + idReserva;
+                }
             }
             server.unlock();
         }
