@@ -11,18 +11,6 @@ public class MainSD {
     public static void main(String[] args) {
         BaseDados bd = new BaseDados();
 
-        /* PARA QUANDO TIVERMOS PERSISTENCIA
-        // persistencia da BD
-        try{
-            data = data.load();
-        }
-        catch (IOException i){
-            betess = betess.povoar();
-            betess.save(betess);
-        }
-        //betess = betess.load(); Acho que não é preciso fazer este
-        */
-
         Scanner input = new Scanner(System.in);
         System.out.println("1 - Cliente");
         System.out.println("2 - Servidor");
@@ -37,8 +25,6 @@ public class MainSD {
                 case 2:
                     MainServidor servidor = new MainServidor(bd);
                     servidor.start();
-//                    ServidorForm form = new ServidorForm(db);
-//                    form.setVisible(true);
                     break;
                 default:
                     System.exit(0);

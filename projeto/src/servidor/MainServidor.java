@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
-import servidor.forms.ServidorForm;
 
 /**
  *
@@ -41,7 +40,7 @@ public class MainServidor extends Thread{
     public void run() {
         System.out.println("[Servidor] Iniciando o Servidor");
         while(this.running.get()){
-            // debuging prints da lista de Users e Servers
+            // prints com estado da lista de Users e Servers
             System.out.println(this.bd.toStringUsers());
             System.out.println(this.bd.toStringServidores());
 

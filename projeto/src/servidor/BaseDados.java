@@ -18,7 +18,6 @@ public class BaseDados {
     private int lastIdReserva;
     private final HashMap<String,User> users;
     private final HashMap<String,ArrayList<Server>> servers;
-//    private final HashMap<String,ArrayList<Server>> reservas;
 
     public BaseDados(){
         this.lastIdReserva = 0;
@@ -160,7 +159,6 @@ public class BaseDados {
         for(String tipo : this.servers.keySet()){
             ArrayList<Server> aux = new ArrayList<>();
             for(Server server : this.servers.get(tipo)){
-                // TODO double check este if qd nao tiver com sono
                 if( !server.getUsed() || (server.getUsed() && server.getIsLeilao()) ){
                     aux.add(server);
                 }
@@ -273,66 +271,6 @@ public class BaseDados {
         return ret;
     }
     
-    // Users
-    public static void saveUsers(String nomeFicheiro, HashMap<String,String> users) throws FileNotFoundException{
-       try{
-           File file = new File(nomeFicheiro);
-           FileOutputStream fos = new FileOutputStream(file);
-           ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-           oos.writeObject(users);
-           oos.flush();
-           oos.close();
-           fos.close();
-       }
-       catch(Exception e){
-       }
-    }
-    public static HashMap<String,String> loadUsers(String nomeFicheiro) throws FileNotFoundException{
-       HashMap<String,String> users = new HashMap<>();
-       try{
-           File toRead = new File(nomeFicheiro);
-            try (FileInputStream fis = new FileInputStream(toRead);
-                    ObjectInputStream ois = new ObjectInputStream(fis)) {
-
-                users = (HashMap<String,String>) ois.readObject();
-
-            }
-       }
-       catch(IOException | ClassNotFoundException e){
-       }
-       return users;
-    }
-
-    // Servers
-    public static void saveServers(String nomeFicheiro, HashMap<String,String> servers) throws FileNotFoundException{
-       try{
-           File file = new File(nomeFicheiro);
-           FileOutputStream fos = new FileOutputStream(file);
-           ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-           oos.writeObject(servers);
-           oos.flush();
-           oos.close();
-           fos.close();
-       }
-       catch(Exception e){
-       }
-    }
-    public static HashMap<String,ArrayList<Server>> loadServers(String nomeFicheiro) throws FileNotFoundException{
-       HashMap<String,ArrayList<Server>> servers = new HashMap<>();
-       try{
-           File toRead = new File(nomeFicheiro);
-            try (FileInputStream fis = new FileInputStream(toRead);
-                 ObjectInputStream ois = new ObjectInputStream(fis)) {
-                servers = (HashMap<String,ArrayList<Server>>) ois.readObject();
-            }
-       }
-       catch(IOException | ClassNotFoundException e){
-       }
-       return servers;
-    }
-
     /**
      * Retorna a lista de Users
      * @return String

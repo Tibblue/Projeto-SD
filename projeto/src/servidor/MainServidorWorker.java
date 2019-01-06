@@ -49,8 +49,6 @@ public class MainServidorWorker extends Thread {
         }
     }
 
-    // faz autenticaçao de um User
-    // todo podemos alterar de bool para String e retorna o erro ao cliente
     private boolean autenticacao(){
         try{
             // Recebe o pedido de LOGIN
@@ -80,7 +78,7 @@ public class MainServidorWorker extends Thread {
                 this.sendUserAndServers();
                 return true;
             }
-            // devolve confirmação do falha de autenticacao
+            // devolve confirmação da falha de autenticacao
             out.println("FAIL");
             out.flush();
             return false;
@@ -112,7 +110,6 @@ public class MainServidorWorker extends Thread {
                 response = this.demand(tipo);
                 break;
             case "BID": // pedido de licitacao de um Server
-                // TODO double check this
                 String tipoS = requestSplit[2];
                 double bid = new Double(requestSplit[3]);
                 response = this.bid(tipoS,bid);

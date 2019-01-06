@@ -94,7 +94,7 @@ public class MenuForm extends javax.swing.JFrame {
                 if(auxS!=null){
                     data[i][0] = tipo;
                     data[i][1] = aux.size();
-                    data[i][2] = auxS.getPrice()/2;
+                    data[i][2] = 0.01;
                 }
                 else{
                     data[i][0] = tipo;
@@ -378,9 +378,7 @@ public class MenuForm extends javax.swing.JFrame {
         int row = demandServersTable.getSelectedRow();
         String tipo = demandServersTable.getModel().getValueAt(row, 0).toString();
 
-        // Efetuar o pedido ao servidor
         String response = this.connection.sendRequest("BUY " + user.getEmail() + " " + tipo);
-//            System.out.println("DEBUG "+response);
         String status = response.split(" ")[0];
         if( status.equals("SUCCESS") ){
             //Declarar como utilizado & adicionar à lista de servers do cliente!
