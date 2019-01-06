@@ -43,31 +43,31 @@ public class BaseDados {
         Server batatasS1 = new Server("batatasS1","potato.small",3600.00);
         Server batatasS2 = new Server("batatasS2","potato.small",3600.00);
         Server batatasM1 = new Server("batatasM1","potato.medium",60.00);
-//        Server nodeS1 = new Server("nodeS1","node.small",1800.00);
-//        Server nodeS2 = new Server("nodeS2","node.small",1800.00);
-//        Server nodeS3 = new Server("nodeS3","node.small",1800.00);
+        Server nodeS1 = new Server("nodeS1","node.small",1800.00);
+        Server nodeS2 = new Server("nodeS2","node.small",1800.00);
+        Server nodeS3 = new Server("nodeS3","node.small",1800.00);
         Server nodeB1 = new Server("nodeB1","node.big",7200.00);
         Server nodeB2 = new Server("nodeB2","node.big",7200.00);
         Server nodeB3 = new Server("nodeB3","node.big",7200.00);
         // criar ArrayList para cada tipo de server
         ArrayList<Server> potatosmall = new ArrayList<>();
         ArrayList<Server> potatomedium = new ArrayList<>();
-//        ArrayList<Server> nodesmall = new ArrayList<>();
+        ArrayList<Server> nodesmall = new ArrayList<>();
         ArrayList<Server> nodebig = new ArrayList<>();
         // adicionar servidor ao ser ArrayList respetivo
         potatosmall.add(batatasS1);
         potatosmall.add(batatasS2);
         potatomedium.add(batatasM1);
-//        nodesmall.add(nodeS1);
-//        nodesmall.add(nodeS2);
-//        nodesmall.add(nodeS3);
+        nodesmall.add(nodeS1);
+        nodesmall.add(nodeS2);
+        nodesmall.add(nodeS3);
         nodebig.add(nodeB1);
         nodebig.add(nodeB2);
         nodebig.add(nodeB3);
         // adicionar server a hash
         this.servers.put("potato.small", potatosmall);
         this.servers.put("potato.medium", potatomedium);
-//        this.servers.put("node.small", nodesmall);
+        this.servers.put("node.small", nodesmall);
         this.servers.put("node.big", nodebig);
     }
 
